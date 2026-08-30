@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>タイ料理会 準備物リスト</title>
+<style>
+  :root{
+    --bg:#faf7f0;
+    --surface:#ffffff;
+    --surface-2:#f4efe4;
+    --line:#e4dccb;
+    --line-strong:#d3c7ae;
+    --text:#221f1a;
+    --text-2:#6b6355;
+    --text-3:#948b7a;
+    --accent:#1f6b4f;
+    --accent-soft:#e6f0ea;
+    --chili:#c0392b;
+    --chili-soft:#fbeae7;
+    --amber:#b7791f;
+    --amber-soft:#fbf1de;
+    --indigo:#4a5899;
+    --indigo-soft:#e9ebf6;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(34,31,26,.05), 0 6px 20px -12px rgba(34,31,26,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#16150f;
+      --surface:#1f1e17;
+      --surface-2:#272519;
+      --line:#35322a;
+      --line-strong:#474235;
+      --text:#f0ece2;
+      --text-2:#b3ab9a;
+      --text-3:#8a8271;
+      --accent:#5fbf95;
+      --accent-soft:#1c2d25;
+      --chili:#e8796b;
+      --chili-soft:#33211f;
+      --amber:#d9a648;
+      --amber-soft:#302716;
+      --indigo:#95a1d8;
+      --indigo-soft:#212437;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px -12px rgba(0,0,0,.6);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:16px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px 72px}
+
+  /* ---------- header ---------- */
+  header{
+    padding:40px 0 24px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:8px;
+  }
+  .eyebrow{
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(28px,7vw,40px);line-height:1.25;margin:0 0 14px;
+    letter-spacing:-.01em;font-weight:800;
+  }
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:999px;padding:5px 12px;font-size:13px;color:var(--text-2);
+    font-variant-numeric:tabular-nums;
+  }
+  .chip b{color:var(--text);font-weight:700}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:saturate(180%) blur(12px);
+    -webkit-backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid var(--line);
+    margin:0 -16px 32px;padding:0 16px;
+  }
+  .navscroll{
+    display:flex;gap:4px;overflow-x:auto;padding:10px 0;
+    scrollbar-width:none;-ms-overflow-style:none;
+  }
+  .navscroll::-webkit-scrollbar{display:none}
+  .navscroll a{
+    flex:0 0 auto;text-decoration:none;color:var(--text-2);
+    font-size:13.5px;font-weight:600;padding:6px 12px;border-radius:999px;
+    white-space:nowrap;transition:background .15s,color .15s;
+  }
+  .navscroll a:hover{background:var(--surface-2);color:var(--text)}
+
+  /* ---------- sections ---------- */
+  section{margin:0 0 48px;scroll-margin-top:64px}
+  h2{
+    font-size:20px;font-weight:800;margin:0 0 6px;letter-spacing:-.005em;
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  }
+  h2 .num{
+    font-size:12px;color:var(--accent);font-weight:700;
+    letter-spacing:.1em;font-variant-numeric:tabular-nums;
+  }
+  .lede{color:var(--text-2);font-size:14.5px;margin:0 0 20px}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:18px;margin:0 0 14px;
+    box-shadow:var(--shadow);
+  }
+  .card h3{
+    font-size:15px;font-weight:800;margin:0 0 12px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .card h3 .count{
+    font-size:12px;font-weight:700;color:var(--text-3);
+    font-variant-numeric:tabular-nums;flex:0 0 auto;
+  }
+
+  /* ---------- callout ---------- */
+  .callout{
+    border-radius:var(--radius);padding:16px 18px;margin:0 0 20px;
+    border:1px solid var(--line);background:var(--surface-2);
+    font-size:14.5px;
+  }
+  .callout.warn{background:var(--chili-soft);border-color:color-mix(in srgb,var(--chili) 28%,transparent)}
+  .callout.good{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 26%,transparent)}
+  .callout .ttl{font-weight:800;font-size:14px;margin:0 0 6px;display:block}
+  .callout.warn .ttl{color:var(--chili)}
+  .callout.good .ttl{color:var(--accent)}
+  .callout p{margin:0}
+  .callout ul{margin:8px 0 0;padding-left:20px}
+  .callout li{margin:3px 0}
+
+  /* ---------- checklist ---------- */
+  ul.check{list-style:none;margin:0;padding:0}
+  ul.check li{
+    display:flex;gap:12px;align-items:flex-start;
+    padding:11px 0;border-top:1px solid var(--line);
+  }
+  ul.check li:first-child{border-top:none;padding-top:2px}
+  ul.check label{
+    display:flex;gap:12px;align-items:flex-start;width:100%;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  ul.check input[type=checkbox]{
+    flex:0 0 auto;appearance:none;-webkit-appearance:none;
+    width:22px;height:22px;margin:2px 0 0;border-radius:7px;
+    border:2px solid var(--line-strong);background:transparent;
+    cursor:pointer;position:relative;transition:background .12s,border-color .12s;
+  }
+  ul.check input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  ul.check input[type=checkbox]:checked::after{
+    content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;
+    border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(42deg);
+  }
+  .itxt{flex:1;min-width:0;font-size:15px;line-height:1.6}
+  .itxt .amt{font-weight:800;font-variant-numeric:tabular-nums}
+  .itxt .note{display:block;font-size:13px;color:var(--text-2);margin-top:2px;line-height:1.6}
+  input[type=checkbox]:checked ~ .itxt{color:var(--text-3);text-decoration:line-through;text-decoration-color:var(--line-strong)}
+  input[type=checkbox]:checked ~ .itxt .note{text-decoration:none}
+  .tag{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:.03em;
+    padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:1px;
+    background:var(--chili-soft);color:var(--chili);
+  }
+  .tag.opt{background:var(--surface-2);color:var(--text-3)}
+  .tag.new{background:var(--accent-soft);color:var(--accent)}
+
+  /* ---------- progress ---------- */
+  .progwrap{
+    position:sticky;bottom:0;z-index:15;margin:0 -16px;padding:12px 16px;
+    background:color-mix(in srgb, var(--bg) 94%, transparent);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;
+  }
+  .bar{flex:1;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .25s ease}
+  .ptxt{font-size:12.5px;font-weight:700;color:var(--text-2);font-variant-numeric:tabular-nums;flex:0 0 auto}
+  .reset{
+    flex:0 0 auto;font-size:12px;color:var(--text-3);background:none;border:1px solid var(--line);
+    border-radius:8px;padding:4px 9px;cursor:pointer;font-family:inherit;
+  }
+  .reset:hover{color:var(--text);border-color:var(--line-strong)}
+
+  /* ---------- table ---------- */
+  .tablescroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -18px;padding:0 18px}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:13.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.06em;color:var(--text-3);font-weight:800;white-space:nowrap}
+  td:first-child{font-weight:700;white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  .yes{color:var(--accent);font-weight:700}
+  .no{color:var(--chili);font-weight:700}
+
+  /* ---------- timeline ---------- */
+  .tl{list-style:none;margin:0;padding:0}
+  .tl li{
+    display:grid;grid-template-columns:56px 1fr;gap:14px;
+    padding:0 0 20px;position:relative;
+  }
+  .tl li::before{
+    content:"";position:absolute;left:63px;top:22px;bottom:-2px;width:2px;
+    background:var(--line);
+  }
+  .tl li:last-child::before{display:none}
+  .tl .t{
+    font-size:13px;font-weight:800;color:var(--text-2);text-align:right;
+    font-variant-numeric:tabular-nums;padding-top:1px;letter-spacing:-.02em;
+  }
+  .tl .body{position:relative;padding-left:18px}
+  .tl .body::before{
+    content:"";position:absolute;left:-8px;top:7px;width:11px;height:11px;
+    border-radius:50%;background:var(--surface);border:2.5px solid var(--line-strong);
+  }
+  .tl li.A .body::before{border-color:var(--accent)}
+  .tl li.B .body::before{border-color:var(--amber)}
+  .tl li.C .body::before{border-color:var(--chili)}
+  .tl li.D .body::before{border-color:var(--indigo)}
+  .tl li.hero .body::before{background:var(--chili);border-color:var(--chili)}
+  .tl .act{font-size:14.5px;line-height:1.65}
+  .tl .who{
+    display:inline-block;font-size:11px;font-weight:800;padding:1px 7px;
+    border-radius:5px;margin-left:2px;vertical-align:1.5px;
+  }
+  .who.A{background:var(--accent-soft);color:var(--accent)}
+  .who.B{background:var(--amber-soft);color:var(--amber)}
+  .who.C{background:var(--chili-soft);color:var(--chili)}
+  .who.D{background:var(--indigo-soft);color:var(--indigo)}
+  .tl li.hero .act{font-weight:800}
+
+  .teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 22px}
+  .team{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+  .team .k{font-size:11px;font-weight:800;letter-spacing:.06em;margin:0 0 3px}
+  .team.A .k{color:var(--accent)} .team.B .k{color:var(--amber)}
+  .team.C .k{color:var(--chili)} .team.D .k{color:var(--indigo)}
+  .team .n{font-size:14.5px;font-weight:800;margin:0 0 4px;line-height:1.4}
+  .team .d{font-size:12.5px;color:var(--text-2);margin:0;line-height:1.55}
+
+  /* ---------- ordered notes ---------- */
+  ol.rules{margin:0;padding:0;list-style:none;counter-reset:r}
+  ol.rules li{
+    counter-increment:r;position:relative;padding:0 0 0 40px;margin:0 0 16px;
+    font-size:14.5px;line-height:1.7;
+  }
+  ol.rules li::before{
+    content:counter(r);position:absolute;left:0;top:2px;
+    width:26px;height:26px;border-radius:8px;background:var(--surface-2);
+    color:var(--text-2);font-size:12px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+  }
+  ol.rules li.hot::before{background:var(--chili);color:#fff}
+  strong{font-weight:800}
+  .u{background:linear-gradient(transparent 62%, color-mix(in srgb,var(--accent) 30%,transparent) 62%)}
+
+  footer{
+    border-top:1px solid var(--line);padding-top:20px;margin-top:8px;
+    font-size:12.5px;color:var(--text-3);line-height:1.8;
+  }
+  @media (max-width:400px){
+    .tl li{grid-template-columns:48px 1fr;gap:10px}
+    .tl li::before{left:53px}
+  }
+  @media print{
+    nav,.progwrap,.reset{display:none}
+    body{background:#fff}
+    .card{break-inside:avoid;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Thai Cooking Party</p>
+  <h1>タイ料理会<br>準備物リスト</h1>
+  <p class="meta">
+    <span class="chip">👥 <b>8人</b></span>
+    <span class="chip">🔥 調理開始 <b>18:00</b></span>
+    <span class="chip">🍽 実食 <b>19:30</b></span>
+    <span class="chip">📋 全<b>6</b>品</span>
+  </p>
+</header>
+
+<nav>
+  <div class="navscroll">
+    <a href="#kit">キット確認</a>
+    <a href="#shop">買い物リスト</a>
+    <a href="#prep">事前仕込み</a>
+    <a href="#day">当日の流れ</a>
+    <a href="#rules">注意点</a>
+  </div>
+</nav>
+
+<!-- ============ 0. KIT ============ -->
+<section id="kit">
+  <h2><span class="num">00</span>購入済みキットの内容</h2>
+  <p class="lede">ペースト類は購入済み。その内容から「別途買うもの」が決まる。</p>
+
+  <div class="card">
+    <div class="tablescroll">
+      <table>
+        <thead><tr><th>料理</th><th>キットに入っているもの</th><th>別途買う必要があるもの</th></tr></thead>
+        <tbody>
+          <tr><td>グリーンカレー</td><td>ペーストのみ</td><td><span class="no">ココナッツミルク（同梱なし）</span>、具材、ナンプラー・砂糖</td></tr>
+          <tr><td>トムヤムクン</td><td>ペーストのみ</td><td><span class="no">スープのベース</span>（エビ殻出汁＋鶏がらスープの素）、具材、ライム</td></tr>
+          <tr><td>パッポンカリー</td><td><span class="yes">カレー粉を含む</span></td><td>卵、牛乳/エバミルク、エビ、野菜</td></tr>
+          <tr><td>レモングラスチキン</td><td>ペーストのみ</td><td>鶏もも肉だけ。<span class="yes">漬け込み用のハーブは不要</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="ttl">⚠️ 残る未確認事項</span>
+    <p>各キットの「◯人前」表記。市販キットは2〜3人前が多いので、<strong>8人分なら各3箱前後</strong>が目安。足りない場合はナンプラー＋砂糖＋ココナッツミルクで伸ばせるよう、予備を確保しておく。</p>
+  </div>
+</section>
+
+<!-- ============ 1. SHOPPING ============ -->
+<section id="shop">
+  <h2><span class="num">01</span>買い物リスト</h2>
+  <p class="lede">タップでチェック。状態はこの端末に保存される。</p>
+
+  <div class="callout warn">
+    <span class="ttl">🚨 これだけは絶対に忘れない</span>
+    <ul>
+      <li><strong>ココナッツミルク 5〜6缶</strong> — グリーンカレーのキットに入っていない。無いと料理が成立しない</li>
+      <li><strong>ナンプラー</strong> — 全料理で使う。切らすと詰む</li>
+      <li><strong>殻付きエビ</strong> — トムヤムの出汁は頭と殻から取る。むきエビだけだと味が出ない</li>
+      <li><strong>もち米</strong> — 前日夜に浸水が必要。当日買っても間に合わない</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🍤 肉・魚介 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">有頭エビ / 殻付きエビ <span class="amt">500g（8〜10尾）</span><span class="note">トムヤムクン用。<strong>殻付き必須</strong> — 頭と殻を炒めて出汁を取る</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">大エビ / むきエビ <span class="amt">600〜700g</span><span class="note">パッポンカリー用。冷凍バナメイで可</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">鶏もも肉 <span class="amt">1.6kg（6〜7枚）</span><span class="note">グリーンカレー800g＋レモングラスチキン800g。皮付きが旨い。事前予約推奨</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🌿 野菜・ハーブ <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">なす <span class="amt">3〜4本</span><span class="note">グリーンカレー。タイなすがあれば1パック</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">たけのこ水煮 <span class="amt">200g</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">赤パプリカ <span class="amt">1個</span><span class="note">グリーンカレーの彩り</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">スイートバジル <span class="amt">1〜2パック</span><span class="note">ホーリーバジルがあればなお良し。グリーンカレー仕上げ</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">玉ねぎ <span class="amt">2個</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">セロリ <span class="amt">1本</span> ／ 長ねぎ <span class="amt">2本</span><span class="note">パッポンカリー</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">マッシュルーム <span class="amt">1パック</span>（or ふくろ茸水煮1缶）</span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">ミニトマト <span class="amt">1パック</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">レモングラス（生 or 冷凍） <span class="amt">2〜3本</span><span class="note">トムヤム専用。チキンはペーストで完結するので少量でOK</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag">必須</span>ライム <span class="amt">4〜5個</span><span class="note">トムヤムクンの決め手。レモンでも可だが酸の質が変わる</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">パクチー <span class="amt">2〜3束</span><span class="note">全料理の仕上げ</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">にんにく <span class="amt">4〜5片</span> ／ しょうが <span class="amt">1片</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag opt">任意</span>生赤唐辛子（プリッキーヌ） <span class="amt">1パック</span><span class="note">卓上の辛さ調整用。8人いれば好みは割れる</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag opt">任意</span>こぶみかんの葉 ／ ガランガル<span class="note">ペーストに香りは入っているので必須ではない。あれば格段にタイらしくなる（乾燥可・ガランガルは生姜で代用可）</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🥥 缶・乳・卵 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag">最重要</span>ココナッツミルク缶（400ml） <span class="amt">5〜6缶</span><span class="note">グリーンカレー2缶＋デザート2缶＋予備1〜2缶。<strong>キットに同梱されていないので必ず買う</strong></span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">卵 <span class="amt">8個</span><span class="note">パッポンカリー6個＋予備2</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">牛乳 or エバミルク <span class="amt">200ml</span><span class="note">パッポンカリーのふわとろ用</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🍚 米・主食 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">もち米 <span class="amt">750g（5合）</span><span class="note">蒸しもち米＝カオニャオ用。<strong>前日夜に浸水するので当日買いはNG</strong></span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">ジャスミンライス or 白米 <span class="amt">4合</span><span class="note">もち米だけだとカレーが食べにくいので併用推奨</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🍮 デザート（タピオカココナッツミルク） <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">タピオカパール（小粒・白） <span class="amt">200g</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">グラニュー糖 or パームシュガー <span class="amt">200g</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag opt">任意</span>マンゴー缶 or かぼちゃ<span class="note">トッピング</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🧂 基本調味料（家の在庫を確認） <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag">最重要</span>ナンプラー <span class="amt">1本（200ml以上）</span><span class="note">全料理で使う。切らすと詰む</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">パームシュガー or きび砂糖 <span class="amt">1袋</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag new">今回追加</span>鶏がらスープの素<span class="note">トムヤムはペーストのみ＝スープのベースを自前で作る必要がある</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">オイスターソース<span class="note">パッポンカリーのコク足し</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">サラダ油 or ココナッツオイル<span class="note">タイ料理は油を多めに使う</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">塩・黒こしょう ／ 片栗粉（エビの下処理用・少量）</span></label></li>
+    </ul>
+    <div class="callout good" style="margin:14px 0 0">
+      <span class="ttl">✓ カレー粉は買わなくてよい</span>
+      <p>パッポンカリーのキットに含まれている。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🍺 飲み物・消耗品 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">ビール（シンハー／チャーン）、炭酸、ソフトドリンク</span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">氷 <span class="amt">2袋</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">キッチンペーパー、ラップ、ジップロック（大2枚）<span class="note">ジップロックは鶏の漬け込み用</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">紙皿・取り皿・レンゲ（8人分）、割り箸</span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🍳 器具（無ければ借りる／代用） <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">蒸し器 or せいろ<span class="note">もち米用。無ければ「鍋＋ざる＋濡れさらし布巾＋蓋」で代用可</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">さらし布 or ガーゼ<span class="note">もち米を包む</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">大鍋 <span class="amt">3つ</span><span class="note">グリーンカレー／トムヤム／蒸し用</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">大きめフライパン or 中華鍋 <span class="amt">2つ</span><span class="note">パッポンカリー／チキン</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🛒 買い出しの分担案</h3>
+    <div class="tablescroll">
+      <table>
+        <thead><tr><th>店</th><th>買うもの</th></tr></thead>
+        <tbody>
+          <tr><td>アジア食材店<br>カルディ / 業務スーパー</td><td><strong>ココナッツミルク5〜6缶</strong>、レモングラス、タピオカパール、ナンプラー、パームシュガー、ジャスミンライス、（あれば）こぶみかんの葉・ガランガル</td></tr>
+          <tr><td>一般スーパー</td><td>肉・エビ・野菜・卵・牛乳・もち米・白米・基本調味料・鶏がらスープの素</td></tr>
+          <tr><td>ドラッグストア<br>コンビニ</td><td>飲み物、氷、紙皿、割り箸、キッチンペーパー</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. PREP ============ -->
+<section id="prep">
+  <h2><span class="num">02</span>事前仕込み</h2>
+  <p class="lede">ここをやらないと19:30には間に合わない。</p>
+
+  <div class="card">
+    <h3>🌙 前日夜 — 必須 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt"><span class="tag">リカバリー不可</span>もち米を浸水する<span class="note">もち米5合を洗って、たっぷりの水に<strong>最低6時間（できれば一晩）</strong>浸ける。忘れると芯が残り、当日どうにもならない</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">タピオカココナッツミルクを作って冷やす<span class="note">① タピオカを茹でる（小粒で15〜20分＋火を止めて15分蒸らし → 中心の白い点が消えるまで）② 冷水にとってぬめりを取る ③ ココナッツミルク2缶＋砂糖200g＋塩ひとつまみを温めて溶かし、タピオカを合わせて冷蔵。<strong>当日は出すだけ</strong></span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🕒 当日 15:00〜16:00 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">レモングラスチキンを漬け込む（最低2時間）<span class="note">鶏もも800gの水気を拭き、<strong>購入済みペーストを揉み込む</strong>（8人分なら2〜3袋想定）。油大さじ1を足すとパサつかず焼き色もつく。塩気が足りなければナンプラー少々。ジップロックで冷蔵</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">エビの下処理をまとめて済ませる<span class="note"><strong>トムヤム用</strong>: 頭と殻を外して<strong>必ず取っておく</strong>（出汁に使う）、背わた除去 ／ <strong>パッポン用</strong>: 殻をむいて背わた除去、塩と片栗粉で揉んで洗う</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">野菜を全部切っておく<span class="note">なす乱切り／パプリカ細切り／玉ねぎくし切り／セロリ斜め切り／長ねぎ4cm／にんにくみじん切り／パクチーざく切り／ライムくし切り／レモングラスは叩いて5cm幅。料理ごとにバットに分けると当日の混乱がゼロになる</span></span></label></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🕠 当日 17:30 <span class="count"></span></h3>
+    <ul class="check">
+      <li><label><input type="checkbox"><span class="itxt">もち米の水を切り、さらし布に包んで蒸し器にセット<span class="note">火はまだ点けない</span></span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">白米を炊飯器にセット</span></label></li>
+      <li><label><input type="checkbox"><span class="itxt">調理台を4ゾーンに分ける<span class="note">料理ごとに「キット＋切った具材＋調味料」を一箇所にまとめる</span></span></label></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 3. DAY ============ -->
+<section id="day">
+  <h2><span class="num">03</span>当日の流れ</h2>
+  <p class="lede">18:00 調理開始 → 19:30 実食。8人＝2人×4チーム。</p>
+
+  <div class="teams">
+    <div class="team A"><p class="k">TEAM A</p><p class="n">グリーンカレー</p><p class="d">18:05開始・18:40完成。早く終わるので後半は盛り付けヘルプへ</p></div>
+    <div class="team B"><p class="k">TEAM B</p><p class="n">レモングラスチキン</p><p class="d">18:20開始。焼いている間はパッポンの補助</p></div>
+    <div class="team C"><p class="k">TEAM C</p><p class="n">トムヤムクン</p><p class="d">18:00の出汁取りから通しで担当。最長ライン</p></div>
+    <div class="team D"><p class="k">TEAM D</p><p class="n">もち米＋パッポンカリー</p><p class="d">蒸し → 18:30に野菜炒め → 19:00に本番</p></div>
+  </div>
+
+  <div class="card">
+    <ul class="tl">
+      <li class="D"><span class="t">18:00</span><div class="body"><p class="act"><strong>もち米を蒸し始める</strong>（強火30分。途中1回上下を返す）<span class="who D">D</span></p></div></li>
+      <li class="C"><span class="t">18:00</span><div class="body"><p class="act">エビの頭・殻を油で炒め、水1.5L＋鶏がらスープの素で<strong>トムヤムの出汁</strong>を取り始める（20分）<span class="who C">C</span></p></div></li>
+      <li class="A"><span class="t">18:05</span><div class="body"><p class="act">グリーンカレー: 油でペーストを香りが立つまで炒める → <strong>ココナッツミルク</strong>（缶の上の濃い部分から）を投入<span class="who A">A</span></p></div></li>
+      <li class="A"><span class="t">18:15</span><div class="body"><p class="act">グリーンカレー: 鶏肉 → なす・たけのこ → 煮込み15分<span class="who A">A</span></p></div></li>
+      <li class="B"><span class="t">18:20</span><div class="body"><p class="act">レモングラスチキンをオーブン200℃にIN（25分）or フライパンで皮目から焼き始め<span class="who B">B</span></p></div></li>
+      <li class="C"><span class="t">18:20</span><div class="body"><p class="act">トムヤム: 出汁を漉す → <strong>ペースト</strong>を溶き入れる（＋あればレモングラス・こぶみかんの葉）<span class="who C">C</span></p></div></li>
+      <li class="D"><span class="t">18:30</span><div class="body"><p class="act"><strong>もち米 蒸し上がり</strong> → 布ごと保温（おひつ or 蓋つき容器＋布）<span class="who D">D</span></p></div></li>
+      <li class="D"><span class="t">18:30</span><div class="body"><p class="act">パッポンカリー: 玉ねぎ・セロリ・長ねぎを炒めておく（ここで一旦止める）<span class="who D">D</span></p></div></li>
+      <li class="A"><span class="t">18:40</span><div class="body"><p class="act">グリーンカレー: ナンプラー・砂糖で味決め → バジルを入れて火を止める（<strong>完成・保温</strong>）<span class="who A">A</span></p></div></li>
+      <li class="C"><span class="t">18:45</span><div class="body"><p class="act">トムヤム: きのこ・ミニトマト投入<span class="who C">C</span></p></div></li>
+      <li class="B"><span class="t">18:50</span><div class="body"><p class="act">チキン焼き上がり → 少し休ませてカット、パクチー・ライムを添える（<strong>完成</strong>）<span class="who B">B</span></p></div></li>
+      <li class="D hero"><span class="t">19:00</span><div class="body"><p class="act">パッポンカリー本番: エビを炒める → ソース → 溶き卵＋牛乳を回し入れ、<strong>半熟で火を止める</strong><span class="who D">D</span><span class="who B">B</span></p><p class="act" style="font-size:13px;color:var(--text-2);font-weight:400;margin:2px 0 0">最終工程。作り置き厳禁</p></div></li>
+      <li class="C hero"><span class="t">19:10</span><div class="body"><p class="act">トムヤム: <strong>エビを入れて2〜3分</strong> → 火を止めてからナンプラー＋ライム汁で味を締める<span class="who C">C</span></p></div></li>
+      <li><span class="t">19:15</span><div class="body"><p class="act">全品盛り付け・パクチー散らし・ライム添え・取り皿配置<span class="who A">全員</span></p></div></li>
+      <li><span class="t">19:25</span><div class="body"><p class="act">飲み物を注ぐ。デザートは冷蔵庫で待機<span class="who A">全員</span></p></div></li>
+      <li class="hero"><span class="t">19:30</span><div class="body"><p class="act">🥂 乾杯・実食</p></div></li>
+      <li><span class="t">食後</span><div class="body"><p class="act">タピオカココナッツミルクを冷蔵庫から出して盛るだけ</p></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 4. RULES ============ -->
+<section id="rules">
+  <h2><span class="num">04</span>失敗しないための注意点</h2>
+  <p class="lede">当日はこれだけ守れば成立する。</p>
+
+  <div class="card">
+    <ol class="rules">
+      <li class="hot"><strong>もち米の浸水を前日にやる</strong> — 唯一リカバリー不可能な工程。</li>
+      <li class="hot"><strong>ココナッツミルクを買い忘れない</strong> — グリーンカレーのキットに入っていない。無いとグリーンカレーが成立しない。</li>
+      <li><strong>パッポンカリーは一番最後</strong>。卵は余熱で固まるので、少しゆるいくらいで火を止める。</li>
+      <li><strong>トムヤムのライム汁は火を止めてから</strong>。煮ると香りが飛んで苦くなる。</li>
+      <li><strong>ナンプラーは必ず味見しながら</strong>。キットに既に塩分がある。足すのは簡単、引けない。</li>
+      <li><strong>辛さは卓上で各自調整</strong>。生唐辛子の小口切りとナンプラーを出しておく。</li>
+      <li>コンロが2〜3口なら、<strong>グリーンカレーを先に完成させて保温</strong>しコンロを空ける（上のタイムラインはこの前提）。</li>
+      <li>ココナッツミルクは<strong>缶の上の固い部分（ヘッド）が濃厚</strong>。グリーンカレーはここから先に炒めると香りが立つ。</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  タイ料理会 準備物リスト — 8人 / 18:00調理開始・19:30実食<br>
+  作成 2026-08-30 ・ rev.2（購入済みキットの内容を反映）
+</footer>
+
+<div class="progwrap">
+  <span class="ptxt" id="ptxt">0 / 0</span>
+  <div class="bar"><i id="pbar"></i></div>
+  <button class="reset" id="reset">リセット</button>
+</div>
+
+</div>
+<script>
+(function(){
+  var KEY = 'thai-party-prep-v2';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('ul.check input[type=checkbox]'));
+  boxes.forEach(function(b,i){ b.dataset.k = 'i'+i; });
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }
+    catch(e){ return {}; }
+  }
+  function save(s){
+    try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){}
+  }
+
+  var state = load();
+  boxes.forEach(function(b){ if(state[b.dataset.k]) b.checked = true; });
+
+  function counts(){
+    document.querySelectorAll('.card').forEach(function(card){
+      var el = card.querySelector('.count');
+      if(!el) return;
+      var bs = card.querySelectorAll('ul.check input[type=checkbox]');
+      if(!bs.length){ el.textContent = ''; return; }
+      var done = 0;
+      bs.forEach(function(b){ if(b.checked) done++; });
+      el.textContent = done + ' / ' + bs.length;
+      el.style.color = (done === bs.length) ? 'var(--accent)' : '';
+    });
+    var d = boxes.filter(function(b){ return b.checked; }).length;
+    document.getElementById('ptxt').textContent = d + ' / ' + boxes.length;
+    document.getElementById('pbar').style.width = boxes.length ? (d/boxes.length*100) + '%' : '0%';
+  }
+
+  boxes.forEach(function(b){
+    b.addEventListener('change', function(){
+      if(b.checked) state[b.dataset.k] = 1; else delete state[b.dataset.k];
+      save(state); counts();
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', function(){
+    boxes.forEach(function(b){ b.checked = false; });
+    state = {}; save(state); counts();
+  });
+
+  counts();
+})();
+</script>
+</body>
+</html>
