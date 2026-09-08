@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Achieve English Gym 管理画面 — 画面モック</title>
+<title>Achieve English Gym 管理画面 — 画面モック（v5.1・2026-09-08）</title>
 <style>
 :root{
   /* v4 テーマ: 既存サイト（レモンイエロー＋黒の極太ゴシック）に合わせる */
@@ -362,6 +362,32 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
 .ticon{font-size:15px; flex:0 0 auto}
 .rank{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:var(--brand); color:var(--ink); font-size:11.5px; font-weight:900; flex:0 0 auto}
 .bignum{font-size:19px; font-weight:900; font-variant-numeric:tabular-nums; flex:0 0 auto}
+/* v5: 週間予定の日付小見出し／折り返し可能な行 */
+.dayhead{display:flex; align-items:center; gap:6px; margin:14px 0 0; padding:0 0 4px; border-bottom:2px solid var(--brand); font-size:12.5px; font-weight:900; color:var(--muted); letter-spacing:.02em}
+.dayhead:first-child{margin-top:0}
+.dayhead .dh-empty{font-weight:700; font-size:11.5px}
+.lrow-wrap{flex-wrap:wrap; row-gap:4px}
+.lrow-wrap .nm{flex:1 1 auto}
+
+/* v5.1: 今後1週間の予定＝日付を横に7列、各列に予定を縦積み */
+.wk7{display:flex; align-items:flex-start; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; margin-top:4px}
+.wk7 .day{flex:1 1 150px; min-width:120px; display:flex; flex-direction:column; gap:5px}
+.wk7 .dh{display:flex; align-items:center; gap:4px; flex-wrap:wrap; padding:0 2px 5px; border-bottom:2px solid var(--brand); font-size:12.5px; font-weight:900; color:var(--ink); letter-spacing:.02em}
+.wk7 .day.is-today .dh{border-bottom-color:var(--brand-deep)}
+.wk7 .day.is-closed .dh{border-bottom-color:var(--border); color:var(--muted)}
+.wk7 .dh .badge{font-size:10.5px; padding:1px 6px}
+.wk7 .item{display:block; padding:6px; border:1px solid var(--border); border-radius:9px; background:#fff; min-width:0; cursor:pointer}
+.wk7 .item:hover{background:#FFFCEC}
+.wk7 .item.no-click{cursor:default; background:var(--bg)}
+.wk7 .item.no-click:hover{background:var(--bg)}
+.wk7 .item .l1{display:flex; align-items:center; gap:3px; min-width:0; font-size:12px; font-weight:800; line-height:1.3}
+.wk7 .item .l1 .t{flex:0 0 auto; font-weight:900; font-variant-numeric:tabular-nums}
+.wk7 .item .l1 .ic{flex:0 0 auto; font-size:11px}
+.wk7 .item .l1 .nm{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.wk7 .item .l2{margin-top:4px}
+.wk7 .item .l2 .badge{font-size:11px}
+.wk7 .none{color:var(--muted); font-size:11.5px; padding:3px 2px}
+
 .mockchip{display:inline-block; margin:8px 14px 0; padding:3px 10px; border-radius:999px; background:#fff; color:var(--ink); border:1.5px solid var(--ink); font-size:11.5px; font-weight:800}
 .sortlink{cursor:pointer; user-select:none}
 .sortlink:hover{color:var(--link)}
@@ -375,6 +401,7 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
 @media (max-width:900px){
   .layout{flex-direction:column; align-items:stretch; padding:12px; gap:12px}
   .main{width:100%; max-width:100%}
+  .wk7 .day{flex:0 0 150px; min-width:150px}
   .sidebar{
     position:static; width:100%; flex:1 1 auto; display:none; padding:8px;
   }
@@ -435,7 +462,7 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
       <button class="btn btn-sm" id="btnLogout">ログアウト</button>
     </div>
   </div>
-  <div><span class="mockchip">モック · 9/1（火）21:00 ICT</span></div>
+  <div><span class="mockchip">モック v5.1・2026-09-08 · 9/1（火）21:00 ICT</span></div>
 
   <div class="layout">
     <nav class="navrail" id="navRail"></nav>
@@ -634,15 +661,17 @@ state.students = [
   mkStudent({ id:'s4',  name:'中村 結衣', kana:'なかむら ゆい', romaji:'NAKAMURA Yui', birth:'2011-11-05', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'中村 恵', email:'nakamura.megumi@example.com', phone:'080-xxxx-3312', memberNo:'V-02045', grade:'2級', classId:'r2', tickets:1, active:true, lastAttended:'2026-08-28', notice:true, stats:{term:6,total:18,absent:0,lateCancel:1} }),
   mkStudent({ id:'s5',  name:'伊藤 大和', kana:'いとう やまと', romaji:'ITO Yamato', birth:'2017-06-30', school:'バンコク日本人学校', schoolGrade:'小学3年', parent:'伊藤 香織', email:'ito.kaori@example.com', phone:'080-xxxx-4423', memberNo:'', grade:'5級', classId:'r5', tickets:9, active:true, lastAttended:'2026-08-31', stats:{term:1,total:3,absent:0,lateCancel:0} }),
   mkStudent({ id:'s6',  name:'渡辺 さくら', kana:'わたなべ さくら', romaji:'WATANABE Sakura', birth:'2010-01-18', school:'インター校（BKK）', schoolGrade:'高校1年', parent:'渡辺 直子', email:'watanabe.naoko@example.com', phone:'080-xxxx-5534', memberNo:'V-01777', grade:'準1級', classId:'r1h', tickets:4, active:true, lastAttended:'2026-08-29', stats:{term:5,total:14,absent:1,lateCancel:0} }),
-  mkStudent({ id:'s7',  name:'小林 颯太', kana:'こばやし そうた', romaji:'KOBAYASHI Sota', birth:'2013-08-08', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'小林 亜紀', email:'kobayashi.aki@example.com', phone:'080-xxxx-6645', memberNo:'V-02110', grade:'3級', classId:'r3', tickets:6, active:true, lastAttended:'2026-08-26', stats:{term:4,total:9,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s7',  name:'小林 颯太', kana:'こばやし そうた', romaji:'KOBAYASHI Sota', birth:'2013-08-08', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'小林 亜紀', email:'kobayashi.aki@example.com', phone:'080-xxxx-6645', memberNo:'V-02110', grade:'3級', classId:'r3', tickets:6, active:true, lastAttended:'2026-07-29', stats:{term:4,total:9,absent:0,lateCancel:0}, memo:'8月に入ってから予約が途切れている。9/13 の対面グループはキャンセル待ち中。' }),
   mkStudent({ id:'s8',  name:'加藤 美月', kana:'かとう みつき', romaji:'KATO Mitsuki', birth:'2012-03-25', school:'バンコク日本人学校', schoolGrade:'中学2年', parent:'加藤 真理', email:'kato.mari@example.com', phone:'080-xxxx-7756', memberNo:'V-01555', grade:'準2級プラス', classId:'r2hp', tickets:3, active:true, lastAttended:'2026-08-29', stats:{term:7,total:16,absent:0,lateCancel:1} }),
   mkStudent({ id:'s9',  name:'山本 陸', kana:'やまもと りく', romaji:'YAMAMOTO Riku', birth:'2015-05-14', school:'バンコク日本人学校', schoolGrade:'小学5年', parent:'山本 恭子', email:'yamamoto.kyoko@example.com', phone:'080-xxxx-8867', memberNo:'', grade:'4級', classId:'r4', tickets:0, active:false, lastAttended:'2026-06-16', stats:{term:0,total:10,absent:0,lateCancel:0} }),
-  mkStudent({ id:'s10', name:'松本 芽依', kana:'まつもと めい', romaji:'MATSUMOTO Mei', birth:'2011-07-02', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'松本 里奈', email:'matsumoto.rina@example.com', phone:'080-xxxx-9978', memberNo:'V-02233', grade:'2級', classId:'r2', tickets:8, active:true, lastAttended:'2026-08-28', stats:{term:2,total:5,absent:0,lateCancel:0} }),
-  mkStudent({ id:'s11', name:'井上 湊', kana:'いのうえ みなと', romaji:'INOUE Minato', birth:'2018-02-11', school:'バンコク日本人学校', schoolGrade:'小学2年', parent:'井上 千尋', email:'inoue.chihiro@example.com', phone:'080-xxxx-1089', memberNo:'', grade:'5級', classId:'r5', tickets:10, active:true, lastAttended:'—', stats:{term:0,total:0,absent:0,lateCancel:0}, memo:'2026-08-30 新規登録。初回受講はこれから。' }),
-  mkStudent({ id:'s12', name:'木村 心春', kana:'きむら こはる', romaji:'KIMURA Koharu', birth:'2013-12-01', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'木村 綾', email:'kimura.aya@example.com', phone:'080-xxxx-1190', memberNo:'V-01901', grade:'3級', classId:'r3', tickets:2, active:true, lastAttended:'2026-08-25', stats:{term:1,total:7,absent:0,lateCancel:0}, memo:'7〜8月は予約が途切れていたが8月末に復帰。チケット残2のため要フォロー。' })
+  mkStudent({ id:'s10', name:'松本 芽依', kana:'まつもと めい', romaji:'MATSUMOTO Mei', birth:'2011-07-02', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'松本 里奈', email:'matsumoto.rina@example.com', phone:'080-xxxx-9978', memberNo:'V-02233', grade:'2級', classId:'r2', tickets:8, active:true, lastAttended:'2026-08-04', stats:{term:2,total:5,absent:0,lateCancel:0}, memo:'8月上旬以降は受講なし。チケットは8回残っている。' }),
+  mkStudent({ id:'s11', name:'井上 湊', kana:'いのうえ みなと', romaji:'INOUE Minato', birth:'2018-02-11', school:'バンコク日本人学校', schoolGrade:'小学2年', parent:'井上 千尋', email:'inoue.chihiro@example.com', phone:'080-xxxx-1089', memberNo:'', grade:'5級', classId:'r5', tickets:10, active:true, lastAttended:'', stats:{term:0,total:0,absent:0,lateCancel:0}, memo:'2026-08-30 新規登録。初回受講はこれから。' }),
+  mkStudent({ id:'s12', name:'木村 心春', kana:'きむら こはる', romaji:'KIMURA Koharu', birth:'2013-12-01', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'木村 綾', email:'kimura.aya@example.com', phone:'080-xxxx-1190', memberNo:'V-01901', grade:'3級', classId:'r3', tickets:2, active:true, lastAttended:'2026-07-14', stats:{term:1,total:7,absent:0,lateCancel:0}, memo:'7月中旬から予約が途切れている。チケット残2のため要フォロー。' })
 ];
 
 /* 詳細データを持たない生徒に、チケット履歴・受講履歴・今後の予約を自動生成 */
+/* v5: 自動生成の基準日は「最終受講日」。lastAttended を過去にずらしても履歴と矛盾しない */
+function seedBase(st){ return /^\d{4}-\d{2}-\d{2}$/.test(st.lastAttended) ? st.lastAttended : '2026-08-28'; }
 (function seedStudents(){
   state.students.forEach(function(st){
     if (st.ticketHistory.length === 0) {
@@ -654,7 +683,7 @@ state.students = [
         bal += 10;
       }
       need = bal - st.tickets;
-      d = '2026-08-28';
+      d = seedBase(st);
       for (var i = 0; i < need; i++) {
         hist.push({ date: addDaysStr(d, -7 * i), delta: -1, reason: (i === 0 && st.stats.absent > 0) ? '欠席' : '定期レッスン受講' });
       }
@@ -662,7 +691,7 @@ state.students = [
       st.ticketHistory = hist;
     }
     if (st.past.length === 0) {
-      var past = [], base = '2026-08-28', k = 0, n = Math.min(st.stats.total, 8);
+      var past = [], base = seedBase(st), k = 0, n = Math.min(st.stats.total, 8);
       for (var j = 0; j < n; j++) { past.push({ date: addDaysStr(base, -7 * k++), title: className(st.classId), type:'regular', status:'attended', comment:'', score:'' }); }
       if (st.stats.absent > 0) past.push({ date: addDaysStr(base, -7 * k++), title: className(st.classId), type:'regular', status:'absent', comment:'', score:'' });
       if (st.stats.lateCancel > 0) past.push({ date: addDaysStr(base, -7 * k++), title: className(st.classId), type:'regular', status:'cancel_over', at: addDaysStr(base, -7 * (k-1)) + ' 09:30', comment:'', score:'' });
@@ -760,7 +789,7 @@ function miniPunch(st){
 
 /* ---------------- 画面ヘッダー＋ヘルプ（段階的開示） ---------------- */
 var HELP = {
-  dashboard: ['残1回以下で生徒側に振込案内を自動表示', '今期＝直近2か月（7/1〜9/1）の受講回数', '数字の下のチップから該当生徒へ移動'],
+  dashboard: ['予定は今日から1週間先（9/1〜9/7）まで。日付ごとに開講枠を表示', '「最近来ていない生徒」＝最終受講日から21日以上あいている生徒（受講記録なしを含む）', '残1回以下で生徒側に振込案内を自動表示', '今期＝直近2か月（7/1〜9/1）の受講回数', '名前・チップをクリックすると該当生徒へ移動'],
   calendar:  ['色の付いた帯 = レッスン枠、白い格子 = 空いている時間', '空いている時間をクリックすると、その時間に枠を作成できる', '帯の色 … 緑=空きあり ／ 青=一部予約 ／ 灰=満席・予約済み', '👥 = 予約人数、空き = あと入れる人数（定期は定員なし）', '休校日は定期レッスンが 🚫 表示になり予約不可', '💻 定期オンライン ／ 🏫 対面単発 ／ 👤 マンツーマン'],
   weekcount: ['枠 … 休校を除いた、その週のレッスン枠の数', '予約 … 予約されている延べ人数', '空き … 定員のある枠（🏫 対面単発・👤 マンツーマン）の残席', '💻 定期オンラインは定員なし（∞）のため「空き」には含めない'],
   students:  ['ドット＝10回券の残り。赤は振込案内中', '見出しタップで並べ替え（今期／累計）', 'チケットは級の制限なく使える'],
@@ -930,22 +959,42 @@ function addTicketHistory(st, delta, reason, dateStr){
    ダッシュボード
    ========================================================= */
 function renderDashboard(){
-  var todayLessons = lessonsOn(TODAY);
-  var openCount = todayLessons.filter(function(l){ return l.type !== 'closed'; }).length;
-
-  /* 今日のレッスン: 時間・名前・種別アイコン・予約人数チップの1行 */
-  var todayHtml = todayLessons.map(function(l){
-    if (l.type === 'closed') {
-      return '<div class="lrow"><span class="t">' + l.start + '</span><span class="nm">' + esc(l.title) + '</span>' + chip('b-closed', '🚫 休校') + '</div>';
-    }
-    var c = l.type === 'oneoff' ? seatChip(l.book.length, l.cap)
-          : (l.type === 'mono' ? (l.book.length ? chip('b-mono', '✅ 予約済') : chip('b-ok', '空き 1'))
-          : chip('b-regular', '予約 ' + l.book.length));
-    return '<div class="lrow" data-open-lesson="' + l.key + '">' +
-      '<span class="t">' + l.start + '</span>' +
-      '<span class="ticon">' + typeIcon(l.type) + '</span>' +
-      '<span class="nm">' + esc(l.title) + '</span>' + c + '</div>';
-  }).join('') || '<p class="muted small">予定なし</p>';
+  /* ---- 今後1週間（TODAY 〜 +6日）の予定 ---- */
+  var WEEK_DAYS = 7;
+  var weekEnd = addDaysStr(TODAY, WEEK_DAYS - 1);
+  var weekRange = jaDate(TODAY) + '〜' + jaDate(weekEnd);
+  var openCount = 0;
+  /* v5.1: 日付を横に7列並べ、その下にその日の予定を縦へ詰める */
+  var weekCols = '';
+  for (var wd = 0; wd < WEEK_DAYS; wd++) {
+    var ds = addDaysStr(TODAY, wd);
+    var dayLessons = lessonsOn(ds);
+    openCount += dayLessons.filter(function(l){ return l.type !== 'closed'; }).length;
+    var cdd = isClosed(ds);
+    var items = dayLessons.map(function(l){
+      if (l.type === 'closed') {
+        return '<div class="item no-click" title="' + esc(l.start + ' ' + l.title) + '">' +
+          '<div class="l1"><span class="t">' + l.start + '</span>' +
+          '<span class="ic">' + typeIcon(l.type) + '</span>' +
+          '<span class="nm">' + esc(l.title) + '</span></div>' +
+          '<div class="l2">' + chip('b-closed', '🚫 休校') + '</div></div>';
+      }
+      var c = l.type === 'oneoff' ? seatChip(l.book.length, l.cap)
+            : (l.type === 'mono' ? (l.book.length ? chip('b-mono', '✅ 予約済') : chip('b-ok', '空き 1'))
+            : chip('b-regular', '予約 ' + l.book.length));
+      return '<div class="item" data-open-lesson="' + l.key + '" title="' + esc(l.start + ' ' + l.title) + '">' +
+        '<div class="l1"><span class="t">' + l.start + '</span>' +
+        '<span class="ic">' + typeIcon(l.type) + '</span>' +
+        '<span class="nm">' + esc(l.title) + '</span></div>' +
+        '<div class="l2">' + c + '</div></div>';
+    }).join('') || '<div class="none">予定なし</div>';
+    weekCols += '<div class="day' + (ds === TODAY ? ' is-today' : '') + (cdd ? ' is-closed' : '') + '">' +
+      '<div class="dh">' + jaDate(ds) +
+      (ds === TODAY ? ' ' + chip('b-brand', '今日') : '') +
+      (cdd ? ' ' + chip('b-closed', '休校') : '') + '</div>' +
+      items + '</div>';
+  }
+  var weekHtml = '<div class="wk7">' + weekCols + '</div>';
 
   /* チケット残り1回以下 */
   var low = state.students.filter(function(s){ return s.active && s.tickets <= 1; });
@@ -963,15 +1012,31 @@ function renderDashboard(){
       '<span class="mnum warn">' + o.wait.length + '</span></span>';
   }).join('') || '<span class="muted small">なし</span>';
 
-  var ranked = state.students.slice().sort(function(a,b){ return b.stats.term - a.stats.term; });
-  var top5 = ranked.slice(0, 5).map(function(s, i){
-    return '<div class="lrow" data-goto-student="' + s.id + '">' +
-      '<span class="rank">' + (i+1) + '</span>' +
+  /* ---- 最近来ていない生徒（最終受講日から21日以上） ---- */
+  var STALE_DAYS = 21, STALE_MAX = 8;
+  var stale = state.students.map(function(s){
+    var has = /^\d{4}-\d{2}-\d{2}$/.test(s.lastAttended);
+    var days = has ? Math.round((parseD(TODAY) - parseD(s.lastAttended)) / 86400000) : null;
+    return { st:s, has:has, days:days };
+  }).filter(function(x){ return !x.has || x.days >= STALE_DAYS; })
+    .sort(function(a, b){
+      if (a.has !== b.has) return a.has ? 1 : -1;   /* 受講記録なしを先頭に */
+      return b.days - a.days;                        /* 経過日数が長い順 */
+    }).slice(0, STALE_MAX);
+
+  var staleHtml = stale.map(function(x){
+    var s = x.st;
+    return '<div class="lrow lrow-wrap" data-goto-student="' + s.id + '">' +
       '<span class="nm">' + esc(s.name) + '</span>' +
       chip('b-muted', esc(s.grade)) +
-      '<span class="bignum">' + s.stats.term + '</span>' +
-      '<span class="tiny muted">/ ' + s.stats.total + '</span></div>';
-  }).join('');
+      '<span class="tiny muted">' + (x.has ? '最終 ' + jaDate(s.lastAttended) : '受講記録なし') + '</span>' +
+      '<span class="bignum">' + (x.has ? x.days : '—') + '</span>' +
+      '<span class="tiny muted">' + (x.has ? '日' : '') + '</span>' +
+      (s.active ? '' : ' ' + chip('b-muted', '休会')) +
+      (s.upcoming.length ? '' : ' ' + chip('b-danger', '予約なし')) + '</div>';
+  }).join('') || '<p class="muted small">21日以上あいている生徒はいません</p>';
+
+  /* 今期 0 回（v4 から継続） */
   var zero = state.students.filter(function(s){ return s.stats.term === 0; });
   var zeroChips = zero.map(function(s){
     return '<span class="pchip" data-goto-student="' + s.id + '">' + esc(s.name) +
@@ -982,15 +1047,16 @@ function renderDashboard(){
   $('#screen-dashboard').innerHTML =
     headHtml('ダッシュボード', '9/1（火）', 'dashboard') +
     '<div class="grid grid-3">' +
-      '<div class="kpi"><div class="l">📌 今日 9/1（火）のレッスン</div><div class="n ok">' + openCount + '</div>' +
-        '<div style="margin-top:6px">' + todayHtml + '</div></div>' +
+      '<div class="kpi"><div class="l">📌 今後1週間の開講数</div><div class="n ok">' + openCount + '</div>' +
+        '<div class="tiny muted" style="margin-top:4px">' + weekRange + '</div></div>' +
       '<div class="kpi"><div class="l">🎟 残り1回以下</div><div class="n danger">' + low.length + '</div>' +
         '<div class="pchips">' + lowChips + '</div></div>' +
       '<div class="kpi"><div class="l">⏳ キャンセル待ち</div><div class="n warn">' + waitTotal + '</div>' +
         '<div class="pchips">' + waitChips + '</div></div>' +
     '</div>' +
+    '<div class="card"><h3>📅 今後1週間の予定 <span class="tiny muted">' + weekRange + '</span></h3>' + weekHtml + '</div>' +
     '<div class="grid grid-2">' +
-      '<div class="card"><h3>📊 受講回数 上位5名 <span class="tiny muted">今期 / 累計</span></h3>' + top5 +
+      '<div class="card"><h3>🔔 最近来ていない生徒 <span class="tiny muted">21日以上</span></h3>' + staleHtml +
         '<div class="divider"></div>' +
         '<h4>今期 0 回 <span class="badge b-warn">' + zero.length + '</span></h4>' +
         '<div class="pchips">' + zeroChips + '</div>' +
@@ -1618,7 +1684,7 @@ function renderStudents(){
       '<td class="wrap">' + esc(s.grade) + '<div class="tiny muted">' + typeIcon('regular') + ' ' + esc(className(s.classId)) + '</div></td>' +
       '<td>' + (s.active ? chip('b-ok', '受講中') : chip('b-muted', '休会')) + '</td>' +
       '<td class="wrap">' + esc(s.parent) + '<div class="tiny muted">' + esc(s.phone) + '</div></td>' +
-      '<td>' + esc(s.lastAttended) + '</td></tr>';
+      '<td>' + esc(s.lastAttended || '—') + '</td></tr>';
   }).join('') || '<tr><td colspan="7" class="muted">該当なし</td></tr>';
 
   $('#screen-students').innerHTML =
