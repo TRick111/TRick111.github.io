@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Achieve English Gym 管理画面 — 画面モック（v5.1・2026-09-08）</title>
+<title>Achieve English Gym 管理画面 — 画面モック（v5.2・2026-09-08）</title>
 <style>
 :root{
   /* v4 テーマ: 既存サイト（レモンイエロー＋黒の極太ゴシック）に合わせる */
@@ -369,7 +369,7 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
 .lrow-wrap{flex-wrap:wrap; row-gap:4px}
 .lrow-wrap .nm{flex:1 1 auto}
 
-/* v5.1: 今後1週間の予定＝日付を横に7列、各列に予定を縦積み */
+/* v5.2: 今後1週間の予定＝日付を横に7列、各列に予定を縦積み */
 .wk7{display:flex; align-items:flex-start; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px; margin-top:4px}
 .wk7 .day{flex:1 1 150px; min-width:120px; display:flex; flex-direction:column; gap:5px}
 .wk7 .dh{display:flex; align-items:center; gap:4px; flex-wrap:wrap; padding:0 2px 5px; border-bottom:2px solid var(--brand); font-size:12.5px; font-weight:900; color:var(--ink); letter-spacing:.02em}
@@ -462,7 +462,7 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
       <button class="btn btn-sm" id="btnLogout">ログアウト</button>
     </div>
   </div>
-  <div><span class="mockchip">モック v5.1・2026-09-08 · 9/1（火）21:00 ICT</span></div>
+  <div><span class="mockchip">モック v5.2・2026-09-08 · 9/1（火）21:00 ICT</span></div>
 
   <div class="layout">
     <nav class="navrail" id="navRail"></nav>
@@ -964,7 +964,7 @@ function renderDashboard(){
   var weekEnd = addDaysStr(TODAY, WEEK_DAYS - 1);
   var weekRange = jaDate(TODAY) + '〜' + jaDate(weekEnd);
   var openCount = 0;
-  /* v5.1: 日付を横に7列並べ、その下にその日の予定を縦へ詰める */
+  /* v5.2: 日付を横に7列並べ、その下にその日の予定を縦へ詰める */
   var weekCols = '';
   for (var wd = 0; wd < WEEK_DAYS; wd++) {
     var ds = addDaysStr(TODAY, wd);
@@ -1699,11 +1699,6 @@ function renderStudents(){
           '<option value="active"' + (listFilter.status==='active'?' selected':'') + '>受講中</option>' +
           '<option value="inactive"' + (listFilter.status==='inactive'?' selected':'') + '>休会</option></select></div>' +
       '</div>' +
-      '<div class="btn-row" style="margin-bottom:10px">' +
-        '<button class="btn btn-sm" data-export="CSV">CSV出力</button>' +
-        '<button class="btn btn-sm" data-export="Excel">Excel出力</button>' +
-        '<button class="btn btn-sm" data-import="1">CSV取込</button>' +
-      '</div>' +
       '<div class="table-wrap"><table><thead><tr>' +
         '<th class="sortable wrap" data-sort="name">生徒' + arrow('name') + '</th>' +
         '<th class="sortable" data-sort="tickets">🎟' + arrow('tickets') + '</th>' +
@@ -2225,8 +2220,6 @@ document.addEventListener('click', function(e){
   if ((el = t.closest('[data-editlesson]'))) { editLessonModal(el.getAttribute('data-editlesson')); return; }
   if ((el = t.closest('[data-dellesson]'))) { closeModal(); deleteLesson(el.getAttribute('data-dellesson')); return; }
   if ((el = t.closest('[data-waitnotify]'))) { toast('空席通知メールを再送しました', 'ok'); return; }
-  if ((el = t.closest('[data-export]'))) { toast('モックのため出力しません', 'warn'); return; }
-  if ((el = t.closest('[data-import]'))) { toast('モックのため取り込みません', 'warn'); return; }
 
   if ((el = t.closest('[data-cal]'))) { calView = el.getAttribute('data-cal'); renderCalendar(); return; }
   if ((el = t.closest('[data-calmode]'))) { calMode = el.getAttribute('data-calmode'); renderCalendar(); return; }
