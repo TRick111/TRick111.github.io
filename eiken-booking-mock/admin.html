@@ -1,0 +1,2307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Achieve English Gym 管理画面 — 画面モック</title>
+<style>
+:root{
+  /* v4 テーマ: 既存サイト（レモンイエロー＋黒の極太ゴシック）に合わせる */
+  --brand:#FBF36A; --brand-deep:#F5C400; --brand-soft:#FDEFC9;
+  --bg:#FFFBEA; --card:#FFFFFF; --ink:#222222; --text:#222222; --muted:#6B6B6B;
+  --border:#EADFB0; --line:#E7E0C8;
+  --pink:#F78DA7; --pink-soft:#FFE0E8; --pink-ink:#B03A5B;
+  --orange:#FF6A00; --orange-soft:#FFE8D2; --orange-ink:#A34500;
+  --danger:#CF2D2D; --danger-soft:#FBC9C9; --danger-ink:#A81F1F;
+  --success:#3C8A2E; --success-soft:#E9FBC4; --success-ink:#2E6B22;
+  --sky:#5B8DD6; --sky-soft:#BCD5F3; --sky-ink:#2E5FA3;
+  --purple:#9B51E0; --purple-soft:#F0E2FB; --purple-ink:#6A2FA0;
+  --type-online:#5B8DD6; --type-onsite:#3C8A2E; --type-private:#9B51E0;
+  --link:#0B5CD5; --radius:14px; --slot-h:32px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;max-width:100%;overflow-x:hidden}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+  font-size:14px; line-height:1.6; -webkit-text-size-adjust:100%;
+}
+img{max-width:100%}
+h1,h2,h3,h4{margin:0 0 8px; line-height:1.35; word-break:break-word; color:var(--ink)}
+h1{font-size:20px; font-weight:900; letter-spacing:-.01em} h2{font-size:18px; font-weight:800}
+h3{font-size:15px; font-weight:800} h4{font-size:14px; font-weight:800}
+p{margin:0 0 8px; word-break:break-word}
+a{color:var(--link)}
+button{font-family:inherit; font-size:14px}
+input,select,textarea{
+  font-family:inherit; font-size:14px; width:100%; max-width:100%;
+  padding:10px 12px; border:1px solid var(--border); border-radius:10px;
+  background:#fff; color:var(--text); min-height:44px;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand-deep); outline-offset:1px}
+textarea{min-height:96px; resize:vertical}
+label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px; font-weight:700}
+.field{margin-bottom:12px; min-width:0}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-height:44px; padding:9px 16px; border-radius:999px; border:2px solid var(--ink);
+  background:#fff; color:var(--ink); cursor:pointer; font-weight:800; text-align:center;
+  word-break:break-word;
+}
+.btn:hover{background:var(--brand-soft)}
+.btn-primary{background:var(--brand); border-color:var(--ink); color:var(--ink); font-weight:900}
+.btn-primary:hover,.btn-primary:active{background:var(--brand-deep)}
+.btn-accent{background:var(--orange); border-color:var(--ink); color:#fff}
+.btn-accent:hover{filter:brightness(.94)}
+.btn-danger{background:var(--danger); border-color:var(--danger); color:#fff}
+.btn-danger:hover{background:#A81F1F; border-color:#A81F1F}
+/* 一覧の行内など小さい危険ボタンは枠線タイプ（赤の面が並びすぎないように） */
+.btn-danger.btn-sm{background:#fff; border-color:var(--danger); color:var(--danger)}
+.btn-danger.btn-sm:hover{background:var(--danger-soft); border-color:var(--danger); color:var(--danger-ink)}
+.btn-sm{min-height:34px; padding:5px 12px; font-size:12.5px; border-width:1.5px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+.btn-row{display:flex; flex-wrap:wrap; gap:8px}
+
+/* ---------- layout ---------- */
+.app{display:none}
+.app.on{display:block}
+.topbar{
+  position:sticky; top:0; z-index:30; background:var(--brand); border-bottom:3px solid var(--brand-deep);
+  display:flex; align-items:center; gap:10px; padding:10px 14px; min-width:0;
+}
+.topbar .brand{font-weight:900; font-size:16px; letter-spacing:-.02em; color:var(--ink); min-width:0; word-break:break-word; line-height:1.2}
+.topbar .brand small{display:block; font-weight:700; font-size:11px; letter-spacing:0; color:var(--ink); opacity:.72}
+.topbar .spacer{flex:1 1 auto; min-width:0}
+.who{display:flex; align-items:center; gap:8px; flex-shrink:0}
+.who .chip{background:#fff; color:var(--ink); border:1.5px solid var(--ink); border-radius:999px; padding:3px 10px; font-size:12px; font-weight:800; white-space:nowrap}
+.mock-note{background:var(--brand-soft); color:var(--ink); border-bottom:1px solid var(--border); padding:6px 14px; font-size:12px}
+.layout{display:flex; align-items:flex-start; gap:16px; padding:16px; min-width:0}
+.sidebar{width:220px; flex:0 0 220px; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:10px; position:sticky; top:70px}
+.sidebar .navtitle{font-size:11px; color:var(--muted); font-weight:800; padding:6px 8px}
+.navbtn{
+  display:flex; align-items:center; gap:8px; width:100%; text-align:left; border:0; background:transparent;
+  padding:11px 10px; border-radius:10px; cursor:pointer; color:var(--ink); font-weight:700; min-height:44px;
+}
+.navbtn:hover{background:var(--brand-soft)}
+.navbtn.active{background:var(--brand-soft); color:var(--ink); font-weight:900; box-shadow:inset 3px 0 0 var(--brand-deep)}
+.main{flex:1 1 auto; min-width:0; max-width:100%}
+.hamburger{display:none}
+
+/* ---------- cards ---------- */
+.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:14px; min-width:0}
+.card h3{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.grid{display:grid; gap:14px}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.screen{display:none}
+.screen.on{display:block}
+.screen-head{display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+.screen-head .sub{color:var(--muted); font-size:12.5px}
+
+/* ---------- badges / chips ---------- */
+.badge{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:800; white-space:nowrap}
+.b-regular{background:var(--sky-soft); color:var(--sky-ink)}
+.b-oneoff{background:var(--success-soft); color:var(--success-ink)}
+.b-mono{background:var(--purple-soft); color:var(--purple-ink)}
+.b-warn{background:var(--orange-soft); color:var(--orange-ink)}
+.b-wait{background:var(--pink-soft); color:var(--pink-ink)}
+.b-danger{background:var(--danger-soft); color:var(--danger-ink)}
+.b-ok{background:var(--success-soft); color:var(--success-ink)}
+.b-muted{background:#EEEEEE; color:#666666}
+.b-closed{background:#EEEEEE; color:#777777}
+.b-brand{background:var(--brand); color:var(--ink)}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.tiny{font-size:11.5px}
+.strong{font-weight:800}
+
+/* ---------- tables ---------- */
+.table-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; border:1px solid var(--border); border-radius:10px}
+table{border-collapse:collapse; width:100%; font-size:13px}
+th,td{padding:9px 10px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top; white-space:nowrap}
+th{background:var(--brand-soft); color:var(--ink); font-size:11.5px; font-weight:800; position:sticky; top:0}
+tbody tr:last-child td{border-bottom:0}
+tr.clickable{cursor:pointer}
+tr.clickable:hover{background:#FFFCEC}
+th.sortable{cursor:pointer; user-select:none}
+th.sortable:hover{color:var(--link)}
+td.wrap,th.wrap{white-space:normal; min-width:140px}
+
+/* ---------- stat tiles ---------- */
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px}
+.tile{background:var(--brand-soft); border:1px solid var(--border); border-radius:10px; padding:10px}
+.tile .n{font-size:28px; font-weight:900; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--ink)}
+.tile .l{font-size:11.5px; color:var(--muted); font-weight:800}
+.tile.warn .n{color:var(--orange-ink)} .tile.danger .n{color:var(--danger)} .tile.ok .n{color:var(--success-ink)}
+
+/* ---------- list rows ---------- */
+.rowitem{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:9px 0; border-bottom:1px dashed var(--border); min-width:0}
+.rowitem:last-child{border-bottom:0}
+.rowitem .grow{flex:1 1 160px; min-width:0; word-break:break-word}
+
+/* ---------- calendar (共通) ---------- */
+.calbar{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+.seg{display:inline-flex; border:2px solid var(--ink); border-radius:999px; overflow:hidden; background:#fff}
+.seg button{border:0; background:#fff; padding:9px 14px; min-height:44px; cursor:pointer; font-weight:800; color:#555}
+.seg button.active{background:var(--brand); color:var(--ink); font-weight:900}
+.seg button:hover{background:var(--brand-soft)}
+.cal-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%}
+.week{display:grid; grid-template-columns:repeat(7,minmax(132px,1fr)); gap:8px; min-width:0}
+.daycol{background:#fff; border:1px solid var(--border); border-radius:10px; padding:8px; min-width:0}
+.daycol.today{border-color:var(--brand-deep); box-shadow:0 0 0 2px var(--brand) inset}
+.dayhead{font-size:12px; font-weight:800; margin-bottom:6px; color:var(--muted); word-break:break-word}
+.dayhead .dnum{font-size:15px; color:var(--ink)}
+.lesson-card{
+  display:block; width:100%; text-align:left; border:1px solid var(--border); border-radius:9px;
+  background:#fff; padding:8px; margin-bottom:7px; cursor:pointer; min-width:0; border-left:4px solid #C9C9C9;
+}
+.lesson-card:hover{background:#FFFCEC}
+.lc-time{font-size:11.5px; font-weight:900; color:var(--ink); font-variant-numeric:tabular-nums}
+.lc-name{font-weight:800; font-size:13px; word-break:break-word; color:var(--ink)}
+.lc-meta{font-size:11.5px; color:var(--muted); word-break:break-word}
+.lc-open{background:var(--success-soft); border-left-color:var(--success)}
+.lc-partial{background:var(--sky-soft); border-left-color:var(--sky)}
+.lc-full{background:#EEEEEE; border-left-color:#9A9A9A}
+.lc-chips{display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; min-width:0}
+.closed-chip{background:var(--danger-soft); border:1px dashed var(--danger); border-radius:8px; padding:8px; text-align:center; color:var(--danger-ink); font-size:12px; font-weight:800}
+.capbar{height:4px; border-radius:999px; background:#fff; border:1px solid var(--border); margin-top:6px; overflow:hidden}
+.capbar i{display:block; height:100%; border-radius:999px; background:var(--sky)}
+.capbar.full i{background:#9A9A9A}
+.callegend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; font-size:11.5px; font-weight:800; color:var(--muted); min-width:0}
+.callegend em{display:inline-flex; align-items:center; gap:5px; font-style:normal; white-space:nowrap}
+.lgd{display:inline-block; width:11px; height:11px; border-radius:3px; flex:0 0 auto}
+.lgd.free{background:var(--success-soft); border:1px solid var(--success)}
+.lgd.part{background:var(--sky-soft); border:1px solid var(--sky)}
+.lgd.full{background:#EEEEEE; border:1px solid #9A9A9A}
+.lgd.empty{background:#fff; border:1px dashed var(--border)}
+.daysum{
+  display:flex; align-items:center; gap:5px; flex-wrap:wrap; font-size:11.5px; font-weight:800;
+  background:var(--brand-soft); border:1px solid var(--border); border-radius:7px; padding:3px 7px; margin-bottom:6px; min-width:0;
+}
+.daysum .b{color:var(--sky-ink)} .daysum .f{color:var(--success-ink)} .daysum .f.zero{color:var(--muted)}
+.daysum .sep{color:#C9BE95; font-weight:700}
+.month{display:grid; grid-template-columns:repeat(7,minmax(44px,1fr)); gap:5px}
+.mcell{background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px 4px; min-height:62px; cursor:pointer; font-size:11.5px; min-width:0; overflow:hidden}
+.mcell:hover{border-color:var(--brand-deep); background:#FFFCEC}
+.mcell.out{opacity:.4}
+.mcell.today{border-color:var(--brand-deep); background:var(--brand-soft)}
+.mcell .d{font-weight:900; color:var(--ink)}
+.mdot{display:inline-block; width:6px; height:6px; border-radius:50%; margin:1px 1px 0 0}
+.mc-line{display:block; font-size:10.5px; font-weight:800; line-height:1.4; white-space:nowrap; font-variant-numeric:tabular-nums}
+.mc-b{color:var(--sky-ink)} .mc-b.zero{color:#A8A08A}
+.mc-f{color:var(--success-ink)} .mc-f.zero{color:#A8A08A}
+.ltiles{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; margin-bottom:12px}
+.ltiles .tile{padding:8px 6px; text-align:center}
+.ltiles .tile .n{font-size:22px}
+.ltiles .tile .l{font-size:11px}
+
+/* ---------- v4: 時間帯グリッド（週・日） ---------- */
+.weeksum{
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:10px;
+  background:var(--brand); border:2px solid var(--ink); border-radius:999px; padding:5px 12px;
+  font-size:12.5px; font-weight:800; color:var(--ink); min-width:0;
+}
+.weeksum b{font-size:16px; font-weight:900; font-variant-numeric:tabular-nums}
+.weeksum .sep{opacity:.45}
+.weeksum .helpbtn{width:26px; height:26px; font-size:12px; margin-left:2px; border-color:var(--ink); background:#fff}
+.tg-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:100%; background:var(--card); border:1px solid var(--border); border-radius:var(--radius)}
+.tg{display:grid; grid-template-columns:52px repeat(var(--n,7),minmax(128px,1fr)); min-width:0}
+.tg-corner{position:sticky; left:0; z-index:5; background:var(--brand-soft); border-right:1px solid var(--border); border-bottom:2px solid var(--border)}
+.tg-head{
+  background:var(--brand-soft); border-bottom:2px solid var(--border); border-left:1px solid var(--line);
+  padding:6px 7px 5px; min-width:0;
+}
+.tg-head.today{background:var(--brand); box-shadow:inset 0 -3px 0 var(--brand-deep)}
+.tg-head .d{font-size:12.5px; font-weight:900; color:var(--ink); white-space:nowrap}
+.tg-head .daysum{margin-bottom:0; margin-top:4px; background:#fff}
+.tg-axis{position:sticky; left:0; z-index:4; background:var(--card); border-right:1px solid var(--border)}
+.tg-hour{height:calc(var(--slot-h)*2); border-bottom:1px solid var(--line); font-size:10.5px; font-weight:800; color:var(--muted); text-align:right; padding:1px 6px 0 0; font-variant-numeric:tabular-nums}
+.tg-col{position:relative; border-left:1px solid var(--line); min-width:0}
+.tg-slot{height:var(--slot-h); border-bottom:1px dashed #F1E9CE; position:relative; cursor:pointer}
+.tg-slot.hr{border-bottom:1px solid var(--line)}
+.tg-slot:hover{background:#FFF8D9}
+.tg-blocks{position:absolute; inset:0; pointer-events:none}
+.tg-block{
+  position:absolute; pointer-events:auto; display:block; text-align:left; font:inherit; color:var(--ink);
+  background:#fff; border:1px solid var(--border); border-left:4px solid #C9C9C9; border-radius:8px;
+  padding:1px 6px; overflow:hidden; cursor:pointer; min-width:0;
+}
+.tg-block:hover{box-shadow:0 0 0 2px var(--brand-deep)}
+.tgb-open{background:var(--success-soft); border-left-color:var(--success)}
+.tgb-partial{background:var(--sky-soft); border-left-color:var(--sky)}
+.tgb-full{background:#EEEEEE; border-left-color:#9A9A9A}
+.tgb-closed{background:var(--danger-soft); border-left-color:var(--danger); text-decoration:line-through; color:var(--danger-ink)}
+.tgb-dim{opacity:.25}
+.tgb-t{font-size:10.5px; line-height:1.3; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tgb-n{font-size:12px; line-height:1.3; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tgb-c{display:flex; gap:3px; flex-wrap:wrap; margin-top:1px; overflow:hidden}
+.tgb-c .badge{font-size:10.5px; line-height:1.25; padding:1px 6px}
+.tgb-row{display:flex; align-items:center; gap:7px; overflow:hidden; white-space:nowrap; line-height:1.5}
+.tgb-row .tgb-c{margin-top:0; flex-wrap:nowrap; flex:0 0 auto}
+.tgb-row .tgb-n{flex:0 1 auto}
+.tgb-row .tgb-t{flex:0 0 auto}
+.tg-block.sm{padding:1px 6px}
+.tg-names{font-size:11px; color:#3B3B3B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px}
+@media (min-width:901px){
+  .tg-slot:hover::after{
+    content:'＋'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#8A6A00; font-weight:900; font-size:16px; line-height:1;
+  }
+}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px; margin-bottom:12px}
+.tabs button{
+  border:2px solid var(--ink); background:#fff; border-radius:999px; padding:8px 14px;
+  min-height:42px; cursor:pointer; font-weight:800; white-space:nowrap; color:var(--ink);
+}
+.tabs button.active{background:var(--brand); color:var(--ink); font-weight:900}
+
+/* ---------- login ---------- */
+.login-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px}
+.login-card{background:#fff; border:2px solid var(--ink); border-radius:var(--radius); padding:22px; width:100%; max-width:400px}
+.login-hero{background:var(--brand); border:2px solid var(--ink); border-radius:10px; padding:12px 10px; text-align:center; margin-bottom:16px}
+.login-hero h1{font-weight:900; letter-spacing:-.02em; margin-bottom:2px}
+.login-logo{font-size:26px}
+
+/* ---------- modal ---------- */
+.overlay{
+  position:fixed; inset:0; background:rgba(34,34,34,.5); display:none; z-index:60;
+  align-items:flex-end; justify-content:center; padding:0;
+}
+.overlay.on{display:flex}
+.modal{
+  background:#fff; border-radius:var(--radius) var(--radius) 0 0; width:100%; max-width:640px; max-height:92vh;
+  overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px;
+}
+.modal-head{display:flex; align-items:flex-start; gap:10px; margin-bottom:10px}
+.modal-head h3{flex:1 1 auto; min-width:0}
+.xbtn{border:1.5px solid var(--ink); background:#fff; border-radius:999px; width:36px; height:36px; cursor:pointer; font-size:16px; flex:0 0 auto}
+.modal-foot{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+@media (min-width:640px){
+  .overlay{align-items:center; padding:20px}
+  .modal{border-radius:var(--radius)}
+}
+
+/* ---------- toast ---------- */
+.toasts{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; z-index:90; width:calc(100% - 32px); max-width:420px; pointer-events:none}
+.toast{
+  background:#2B2B2B; color:#fff; border-radius:10px; padding:11px 14px; margin-top:8px;
+  font-size:13px; box-shadow:0 6px 20px rgba(0,0,0,.2); word-break:break-word;
+}
+.toast.ok{background:#2E6B22} .toast.warn{background:#A34500} .toast.err{background:#A81F1F}
+
+.note{background:var(--brand-soft); border:1px solid var(--border); border-left:3px solid var(--brand-deep); border-radius:8px; padding:9px 11px; font-size:12.5px; color:var(--ink); margin:10px 0}
+.note.warn{border-left-color:var(--orange); background:var(--orange-soft); color:var(--orange-ink)}
+.divider{height:1px; background:var(--border); margin:12px 0}
+.kv{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:7px 18px}
+.kv > div{min-width:0; display:grid; grid-template-columns:92px minmax(0,1fr); gap:8px; align-items:baseline; border-bottom:1px dashed var(--border); padding-bottom:5px}
+.kv .k{font-size:11.5px; color:var(--muted); font-weight:800}
+.kv .v{font-size:13.5px; word-break:break-word; font-weight:700}
+.ticket-big{font-size:40px; font-weight:900; line-height:1; color:var(--ink)}
+.filters{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:12px}
+
+/* ---------- help / punch card / chips / rows ---------- */
+.helpbtn{
+  width:32px; height:32px; border-radius:50%; border:1.5px solid var(--ink); background:#fff;
+  color:var(--ink); font-weight:900; font-size:14px; cursor:pointer; flex:0 0 auto; line-height:1;
+}
+.helpbtn:hover{background:var(--brand)}
+.helplist{margin:0; padding-left:20px}
+.helplist li{margin-bottom:6px; font-size:13.5px}
+.screen-head .helpbtn{margin-left:auto}
+
+.punch{display:grid; grid-template-columns:repeat(10,1fr); gap:5px; max-width:300px; min-width:0}
+.punch .p{aspect-ratio:1/1; min-height:14px; border-radius:50%; border:1.5px solid var(--ink); background:#fff}
+.punch .p.empty{border-style:dashed; border-color:#C9BE95}
+.punch .p.fill{background:var(--brand)}
+.punch .p.plan{background:repeating-linear-gradient(45deg, var(--brand) 0 3px, #fff 3px 6px)}
+.punch.warn .p.fill,.punch.warn .p.plan{border-color:var(--orange)}
+.punch.danger .p.fill,.punch.danger .p.plan{border-color:var(--danger)}
+.punch-wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap; min-width:0}
+.punch-col{flex:1 1 220px; min-width:0}
+.punch-n{font-size:40px; font-weight:900; line-height:1; font-variant-numeric:tabular-nums}
+.punch-n.ok{color:var(--ink)} .punch-n.warn{color:var(--orange-ink)} .punch-n.danger{color:var(--danger)}
+.punch-l{font-size:11.5px; color:var(--muted); font-weight:800}
+.plusbadge{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; font-size:11px; font-weight:800; background:var(--brand); color:var(--ink)}
+
+.mpunch{display:inline-flex; gap:2px; align-items:center; vertical-align:middle}
+.mpunch i{width:7px; height:7px; border-radius:50%; background:#fff; border:1px solid #C9BE95; display:block}
+.mpunch i.on{background:var(--brand); border-color:var(--ink)}
+.mpunch i.pl{background:repeating-linear-gradient(45deg, var(--brand) 0 2px, #fff 2px 4px); border-color:var(--ink)}
+.mpunch.warn i.on,.mpunch.warn i.pl{border-color:var(--orange)}
+.mpunch.danger i.on,.mpunch.danger i.pl{border-color:var(--danger)}
+.mnum{font-weight:900; font-variant-numeric:tabular-nums; margin-left:6px}
+.mnum.ok{color:var(--ink)} .mnum.warn{color:var(--orange-ink)} .mnum.danger{color:var(--danger)}
+
+.kpi{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; min-width:0}
+.kpi .l{font-size:12px; color:var(--muted); font-weight:800}
+.kpi .n{font-size:40px; font-weight:900; line-height:1.05; font-variant-numeric:tabular-nums; color:var(--ink)}
+.kpi .n.ok{color:var(--ink)} .kpi .n.warn{color:var(--orange-ink)} .kpi .n.danger{color:var(--danger)}
+.pchips{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; min-width:0}
+.pchip{
+  display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--ink); background:#fff;
+  border-radius:999px; padding:5px 11px; font-size:12.5px; font-weight:800; cursor:pointer;
+  min-height:34px; color:var(--ink); max-width:100%; word-break:break-word;
+}
+.pchip:hover{background:var(--brand-soft)}
+.miniadd{
+  border:1.5px solid var(--ink); background:var(--brand); color:var(--ink); border-radius:999px; font-weight:900;
+  font-size:11.5px; padding:3px 9px; cursor:pointer; min-height:26px;
+}
+.miniadd:hover{background:var(--brand-deep)}
+.lrow{display:flex; align-items:center; gap:9px; padding:11px 0; border-bottom:1px solid var(--border); cursor:pointer; min-width:0}
+.lrow:last-child{border-bottom:0}
+.lrow:hover{background:#FFFCEC}
+.lrow .t{font-weight:900; font-size:13.5px; color:var(--ink); font-variant-numeric:tabular-nums; flex:0 0 auto}
+.lrow .nm{flex:1 1 90px; min-width:0; font-weight:700; word-break:break-word}
+.ticon{font-size:15px; flex:0 0 auto}
+.rank{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:var(--brand); color:var(--ink); font-size:11.5px; font-weight:900; flex:0 0 auto}
+.bignum{font-size:19px; font-weight:900; font-variant-numeric:tabular-nums; flex:0 0 auto}
+.mockchip{display:inline-block; margin:8px 14px 0; padding:3px 10px; border-radius:999px; background:#fff; color:var(--ink); border:1.5px solid var(--ink); font-size:11.5px; font-weight:800}
+.sortlink{cursor:pointer; user-select:none}
+.sortlink:hover{color:var(--link)}
+
+/* ---------- responsive ---------- */
+@media (max-width:440px){
+  .topbar .brand{font-size:14px}
+  .topbar{gap:8px; padding:9px 12px}
+  .punch{max-width:100%}
+}
+@media (max-width:900px){
+  .layout{flex-direction:column; align-items:stretch; padding:12px; gap:12px}
+  .main{width:100%; max-width:100%}
+  .sidebar{
+    position:static; width:100%; flex:1 1 auto; display:none; padding:8px;
+  }
+  .sidebar.open{display:block}
+  .navrail{
+    display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:6px; width:100%;
+  }
+  .navrail .navbtn{width:auto; white-space:nowrap; flex:0 0 auto; padding:9px 12px}
+  .sidebar .navtitle{display:none}
+  .hamburger{display:inline-flex}
+  .week{grid-template-columns:1fr; min-width:0}
+  .cal-wrap{overflow-x:visible}
+  .month{grid-template-columns:repeat(7,minmax(0,1fr)); font-size:10.5px}
+  .mcell{min-height:52px; padding:4px 2px}
+  .mc-line{font-size:9.5px}
+  .ltiles{gap:6px}
+  .ltiles .tile .n{font-size:19px}
+  .tg{grid-template-columns:46px repeat(var(--n,7),minmax(118px,1fr))}
+}
+@media (min-width:901px){ .navrail{display:none} }
+</style>
+</head>
+<body>
+
+<!-- ============ ログイン ============ -->
+<section class="screen on" id="screen-login">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-hero">
+        <div class="login-logo">📘</div>
+        <h1 style="margin-bottom:2px">Achieve English Gym</h1>
+        <div class="muted small">予約システム ／ <span class="strong">管理画面</span></div>
+        <div class="mockchip" style="margin:8px 0 0">モック画面</div>
+      </div>
+      <div class="field">
+        <label for="loginMail">メールアドレス</label>
+        <input id="loginMail" type="email" value="admin@achieve-eg.example.com">
+      </div>
+      <div class="field">
+        <label for="loginPw">パスワード</label>
+        <input id="loginPw" type="password" value="demo1234">
+      </div>
+      <button class="btn btn-primary btn-block" id="btnLogin">ログイン</button>
+      <p class="tiny muted" style="margin-top:12px">保護者ログインは別画面</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ アプリ本体 ============ -->
+<div class="app" id="app">
+  <div class="topbar">
+    <button class="btn btn-sm hamburger" id="btnMenu" aria-label="メニュー">☰</button>
+    <div class="brand">Achieve English Gym<small>管理画面</small></div>
+    <div class="spacer"></div>
+    <div class="who">
+      <span class="chip">管理者</span>
+      <button class="btn btn-sm" id="btnLogout">ログアウト</button>
+    </div>
+  </div>
+  <div><span class="mockchip">モック · 9/1（火）21:00 ICT</span></div>
+
+  <div class="layout">
+    <nav class="navrail" id="navRail"></nav>
+    <aside class="sidebar" id="sidebar">
+      <div class="navtitle">メニュー</div>
+      <div id="navList"></div>
+    </aside>
+
+    <main class="main">
+      <!-- ダッシュボード -->
+      <section class="screen" id="screen-dashboard"></section>
+      <!-- 予約カレンダー -->
+      <section class="screen" id="screen-calendar"></section>
+      <!-- 生徒一覧 -->
+      <section class="screen" id="screen-students"></section>
+      <!-- 生徒詳細 -->
+      <section class="screen" id="screen-student-detail"></section>
+      <!-- レッスン枠管理 -->
+      <section class="screen" id="screen-lessons"></section>
+      <!-- 講座設定 -->
+      <section class="screen" id="screen-settings"></section>
+      <!-- レッスン結果入力 -->
+      <section class="screen" id="screen-results"></section>
+      <!-- 英検結果入力 -->
+      <section class="screen" id="screen-eiken"></section>
+    </main>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="modalTitle">タイトル</h3>
+      <button class="xbtn" id="modalClose" aria-label="閉じる">✕</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* =========================================================
+   Achieve English Gym 管理画面 モック
+   すべてダミーデータ。state を書き換えて再描画する方式。
+   ========================================================= */
+
+var TODAY = '2026-09-01';
+var NOW = new Date(2026, 8, 1, 21, 0); // 2026-09-01 21:00 (ICT想定)
+var GRADES = ['5級', '4級', '3級', '準2級', '準2級プラス', '2級', '準1級'];
+var PAY_METHODS = ['バーツ振込（8,000バーツ）', '日本円振込（42,000円）', 'ボイス受付にてお支払'];
+
+var state = {
+  settings: {
+    regular: { key:'regular', label:'定期オンライングループ', deadlineDays:1, deadlineTime:'20:00', ticketCost:1, waitlist:false },
+    oneoff:  { key:'oneoff',  label:'対面単発グループ',       deadlineDays:3, deadlineTime:'20:00', ticketCost:1, waitlist:true  },
+    mono:    { key:'mono',    label:'マンツーマン',           deadlineDays:1, deadlineTime:'20:00', ticketCost:2, waitlist:false, limitW:4, limitS:2 }
+  },
+  recurring: [
+    { id:'r5',   name:'5級クラス',        grade:'5級',        dow:1, start:'17:00', end:'17:50', url:'https://zoom.example.com/j/5001' },
+    { id:'r3',   name:'3級クラス',        grade:'3級',        dow:2, start:'18:00', end:'18:50', url:'https://zoom.example.com/j/3001' },
+    { id:'r4',   name:'4級クラス',        grade:'4級',        dow:3, start:'17:00', end:'17:50', url:'https://zoom.example.com/j/4001' },
+    { id:'r2h',  name:'準2級クラス',      grade:'準2級',      dow:5, start:'18:00', end:'18:50', url:'https://zoom.example.com/j/2501' },
+    { id:'r2',   name:'2級クラス',        grade:'2級',        dow:5, start:'19:00', end:'19:50', url:'https://zoom.example.com/j/2001' },
+    { id:'r1h',  name:'準1級クラス',      grade:'準1級',      dow:6, start:'10:00', end:'10:50', url:'https://zoom.example.com/j/1501' },
+    { id:'r2hp', name:'準2級プラスクラス', grade:'準2級プラス', dow:6, start:'11:00', end:'11:50', url:'https://zoom.example.com/j/2551' }
+  ],
+  closedDays: [
+    { date:'2026-09-15', reason:'教室行事のため休校' },
+    { date:'2026-09-23', reason:'祝日のため休校' },
+    { date:'2026-10-13', reason:'講師研修のため休校' }
+  ],
+  oneoff: [
+    { id:'o1', date:'2026-09-06', start:'10:00', end:'11:30', place:'VOICE ホビークラブ 教室', cap:6, note:'全級合同・過去問演習',      book:['s1','s3','s7','s10','s12'], wait:[] },
+    { id:'o2', date:'2026-09-13', start:'10:00', end:'11:30', place:'VOICE ホビークラブ 教室', cap:6, note:'全級合同・二次面接対策',    book:['s3','s4','s5','s6','s8','s10'], wait:[{sid:'s7', at:'2026-08-28 19:12'},{sid:'s1', at:'2026-08-30 09:41'}] },
+    { id:'o3', date:'2026-09-20', start:'14:00', end:'15:30', place:'VOICE ホビークラブ 教室', cap:8, note:'ライティング特訓',          book:['s5','s6','s11'], wait:[] },
+    { id:'o4', date:'2026-09-27', start:'10:00', end:'11:30', place:'VOICE ホビークラブ 教室', cap:6, note:'リスニング強化',            book:['s8','s12'], wait:[] }
+  ],
+  mono: [
+    { id:'m1', date:'2026-09-05', start:'13:00', end:'13:30', kind:'W', sid:'s1' },
+    { id:'m2', date:'2026-09-05', start:'13:30', end:'14:00', kind:'W', sid:null },
+    { id:'m3', date:'2026-09-05', start:'14:00', end:'14:30', kind:'S', sid:null },
+    { id:'m4', date:'2026-09-12', start:'13:00', end:'13:30', kind:'W', sid:'s6' },
+    { id:'m5', date:'2026-09-12', start:'13:30', end:'14:00', kind:'S', sid:null },
+    { id:'m6', date:'2026-09-19', start:'13:00', end:'13:30', kind:'W', sid:null },
+    { id:'m7', date:'2026-09-19', start:'13:30', end:'14:00', kind:'S', sid:null }
+  ],
+  // 定期レッスンの日付ごとの予約者（未定義の日はクラス既定名簿を使う）
+  regBook: {},
+  defaultRoster: {
+    r5:  ['s5','s11'],
+    r4:  ['s2','s5','s11','s12'],
+    r3:  ['s3','s7','s12'],
+    r2h: ['s1'],
+    r2:  ['s4','s10'],
+    r1h: ['s6'],
+    r2hp:['s8']
+  },
+  weekSummary: { booked:38, canceled:5, absent:2 },
+  students: []
+};
+
+/* ---------------- 生徒マスタ ---------------- */
+function mkStudent(o){
+  return Object.assign({
+    id:'', name:'', kana:'', romaji:'', birth:'', school:'', schoolGrade:'',
+    parent:'', parentKana:'', email:'', phone:'', memberNo:'',
+    grade:'5級', classId:'', tickets:0, active:true, lastAttended:'',
+    siblings:[], examTerm:'2026年度 第2回', notice:false,
+    monoW:0, monoS:0,
+    stats:{ term:0, total:0, absent:0, lateCancel:0 },
+    ticketHistory:[], upcoming:[], past:[], eiken:[], memo:''
+  }, o);
+}
+
+state.students = [
+  mkStudent({
+    id:'s1', name:'佐藤 陽菜', kana:'さとう ひな', romaji:'SATO Hina', birth:'2013-04-12',
+    school:'バンコク日本人学校', schoolGrade:'中学1年',
+    parent:'佐藤 美咲', parentKana:'さとう みさき', email:'sato.misaki@example.com', phone:'080-xxxx-1234',
+    memberNo:'V-01234', grade:'準2級', classId:'r2h', tickets:7, active:true, lastAttended:'2026-08-28',
+    siblings:['s2'], examTerm:'2026年度 第2回', notice:false, monoW:1, monoS:0,
+    stats:{ term:4, total:10, absent:1, lateCancel:1 },
+    ticketHistory:[
+      { date:'2026-05-09', delta:10, reason:'入金確認（バーツ振込）' },
+      { date:'2026-05-16', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-05-23', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-05-30', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-06-06', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-06-13', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-06-20', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-07-01', delta:10, reason:'入金確認（日本円振込）' },
+      { date:'2026-08-02', delta:-2, reason:'マンツーマン ライティング 受講' },
+      { date:'2026-08-09', delta:-1, reason:'対面グループ 受講' },
+      { date:'2026-08-14', delta:-1, reason:'欠席' },
+      { date:'2026-08-21', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-08-28', delta:-1, reason:'定期レッスン受講（準2級クラス）' },
+      { date:'2026-08-30', delta:-1, reason:'キャンセル期限超過によるキャンセル' }
+    ],
+    upcoming:[
+      { uid:'u1', date:'2026-09-04', start:'18:00', title:'準2級クラス（定期オンライン）', type:'regular', ref:null },
+      { uid:'u2', date:'2026-09-05', start:'13:00', title:'マンツーマン ライティング', type:'mono', ref:'m1' },
+      { uid:'u3', date:'2026-09-06', start:'10:00', title:'対面グループレッスン', type:'oneoff', ref:'o1' }
+    ],
+    past:[
+      { date:'2026-08-30', title:'対面グループレッスン', type:'oneoff', status:'cancel_over', at:'2026-08-30 09:05', comment:'', score:'' },
+      { date:'2026-08-28', title:'準2級クラス', type:'regular', status:'attended', comment:'長文読解◎', score:'' },
+      { date:'2026-08-21', title:'準2級クラス', type:'regular', status:'attended', comment:'語彙の取りこぼしあり', score:'' },
+      { date:'2026-08-14', title:'準2級クラス', type:'regular', status:'absent', comment:'', score:'' },
+      { date:'2026-08-09', title:'対面グループレッスン', type:'oneoff', status:'attended', comment:'面接練習に積極的', score:'' },
+      { date:'2026-08-02', title:'マンツーマン ライティング', type:'mono', status:'attended', comment:'構成は良好。語数調整が課題', score:'12/16' },
+      { date:'2026-06-20', title:'準2級クラス', type:'regular', status:'attended', comment:'', score:'' },
+      { date:'2026-06-13', title:'準2級クラス', type:'regular', status:'attended', comment:'', score:'' }
+    ],
+    eiken:[
+      { date:'2026-06-07', grade:'3級', pass:'合格', r:'22/30', l:'24/30', w:'12/16', s:'25/33', cse:'1610', memo:'一次・二次とも一発合格' }
+    ],
+    memo:'保護者は日本語対応。9月以降は準2級プラスへの移行を検討中。'
+  }),
+  mkStudent({
+    id:'s2', name:'佐藤 蓮', kana:'さとう れん', romaji:'SATO Ren', birth:'2016-09-03',
+    school:'バンコク日本人学校', schoolGrade:'小学4年',
+    parent:'佐藤 美咲', parentKana:'さとう みさき', email:'sato.misaki@example.com', phone:'080-xxxx-1234',
+    memberNo:'V-01234', grade:'4級', classId:'r4', tickets:1, active:true, lastAttended:'2026-08-29',
+    siblings:['s1'], examTerm:'2026年度 第2回', notice:true, monoW:0, monoS:0,
+    stats:{ term:8, total:8, absent:1, lateCancel:0 },
+    ticketHistory:[
+      { date:'2026-07-01', delta:10, reason:'入金確認（バーツ振込）' },
+      { date:'2026-07-07', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-07-14', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-07-21', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-07-28', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-08-04', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-08-11', delta:-1, reason:'欠席' },
+      { date:'2026-08-18', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-08-25', delta:-1, reason:'定期レッスン受講（4級クラス）' },
+      { date:'2026-08-29', delta:-1, reason:'対面グループ 受講' }
+    ],
+    upcoming:[
+      { uid:'u4', date:'2026-09-02', start:'17:00', title:'4級クラス（定期オンライン）', type:'regular', ref:null },
+      { uid:'u5', date:'2026-09-09', start:'17:00', title:'4級クラス（定期オンライン）', type:'regular', ref:null }
+    ],
+    past:[
+      { date:'2026-08-29', title:'対面グループレッスン', type:'oneoff', status:'attended', comment:'集中して取り組めた', score:'' },
+      { date:'2026-08-25', title:'4級クラス', type:'regular', status:'attended', comment:'', score:'' },
+      { date:'2026-08-18', title:'4級クラス', type:'regular', status:'attended', comment:'', score:'' },
+      { date:'2026-08-11', title:'4級クラス', type:'regular', status:'absent', comment:'', score:'' },
+      { date:'2026-08-04', title:'4級クラス', type:'regular', status:'attended', comment:'', score:'' },
+      { date:'2026-07-28', title:'4級クラス', type:'regular', status:'attended', comment:'', score:'' }
+    ],
+    eiken:[],
+    memo:'チケット残1。振込案内を表示中（保護者へ連絡済み）。'
+  }),
+  mkStudent({ id:'s3',  name:'高橋 悠斗', kana:'たかはし ゆうと', romaji:'TAKAHASHI Yuto', birth:'2014-02-20', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'高橋 由美', email:'takahashi.yumi@example.com', phone:'080-xxxx-2201', memberNo:'V-01988', grade:'3級', classId:'r3', tickets:1, active:true, lastAttended:'2026-08-26', notice:true, stats:{term:7,total:21,absent:1,lateCancel:0} }),
+  mkStudent({ id:'s4',  name:'中村 結衣', kana:'なかむら ゆい', romaji:'NAKAMURA Yui', birth:'2011-11-05', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'中村 恵', email:'nakamura.megumi@example.com', phone:'080-xxxx-3312', memberNo:'V-02045', grade:'2級', classId:'r2', tickets:1, active:true, lastAttended:'2026-08-28', notice:true, stats:{term:6,total:18,absent:0,lateCancel:1} }),
+  mkStudent({ id:'s5',  name:'伊藤 大和', kana:'いとう やまと', romaji:'ITO Yamato', birth:'2017-06-30', school:'バンコク日本人学校', schoolGrade:'小学3年', parent:'伊藤 香織', email:'ito.kaori@example.com', phone:'080-xxxx-4423', memberNo:'', grade:'5級', classId:'r5', tickets:9, active:true, lastAttended:'2026-08-31', stats:{term:1,total:3,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s6',  name:'渡辺 さくら', kana:'わたなべ さくら', romaji:'WATANABE Sakura', birth:'2010-01-18', school:'インター校（BKK）', schoolGrade:'高校1年', parent:'渡辺 直子', email:'watanabe.naoko@example.com', phone:'080-xxxx-5534', memberNo:'V-01777', grade:'準1級', classId:'r1h', tickets:4, active:true, lastAttended:'2026-08-29', stats:{term:5,total:14,absent:1,lateCancel:0} }),
+  mkStudent({ id:'s7',  name:'小林 颯太', kana:'こばやし そうた', romaji:'KOBAYASHI Sota', birth:'2013-08-08', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'小林 亜紀', email:'kobayashi.aki@example.com', phone:'080-xxxx-6645', memberNo:'V-02110', grade:'3級', classId:'r3', tickets:6, active:true, lastAttended:'2026-08-26', stats:{term:4,total:9,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s8',  name:'加藤 美月', kana:'かとう みつき', romaji:'KATO Mitsuki', birth:'2012-03-25', school:'バンコク日本人学校', schoolGrade:'中学2年', parent:'加藤 真理', email:'kato.mari@example.com', phone:'080-xxxx-7756', memberNo:'V-01555', grade:'準2級プラス', classId:'r2hp', tickets:3, active:true, lastAttended:'2026-08-29', stats:{term:7,total:16,absent:0,lateCancel:1} }),
+  mkStudent({ id:'s9',  name:'山本 陸', kana:'やまもと りく', romaji:'YAMAMOTO Riku', birth:'2015-05-14', school:'バンコク日本人学校', schoolGrade:'小学5年', parent:'山本 恭子', email:'yamamoto.kyoko@example.com', phone:'080-xxxx-8867', memberNo:'', grade:'4級', classId:'r4', tickets:0, active:false, lastAttended:'2026-06-16', stats:{term:0,total:10,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s10', name:'松本 芽依', kana:'まつもと めい', romaji:'MATSUMOTO Mei', birth:'2011-07-02', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'松本 里奈', email:'matsumoto.rina@example.com', phone:'080-xxxx-9978', memberNo:'V-02233', grade:'2級', classId:'r2', tickets:8, active:true, lastAttended:'2026-08-28', stats:{term:2,total:5,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s11', name:'井上 湊', kana:'いのうえ みなと', romaji:'INOUE Minato', birth:'2018-02-11', school:'バンコク日本人学校', schoolGrade:'小学2年', parent:'井上 千尋', email:'inoue.chihiro@example.com', phone:'080-xxxx-1089', memberNo:'', grade:'5級', classId:'r5', tickets:10, active:true, lastAttended:'—', stats:{term:0,total:0,absent:0,lateCancel:0}, memo:'2026-08-30 新規登録。初回受講はこれから。' }),
+  mkStudent({ id:'s12', name:'木村 心春', kana:'きむら こはる', romaji:'KIMURA Koharu', birth:'2013-12-01', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'木村 綾', email:'kimura.aya@example.com', phone:'080-xxxx-1190', memberNo:'V-01901', grade:'3級', classId:'r3', tickets:2, active:true, lastAttended:'2026-08-25', stats:{term:1,total:7,absent:0,lateCancel:0}, memo:'7〜8月は予約が途切れていたが8月末に復帰。チケット残2のため要フォロー。' })
+];
+
+/* 詳細データを持たない生徒に、チケット履歴・受講履歴・今後の予約を自動生成 */
+(function seedStudents(){
+  state.students.forEach(function(st){
+    if (st.ticketHistory.length === 0) {
+      var hist = [];
+      var bal = 0, need = 0, d;
+      var adds = Math.max(1, Math.ceil((st.tickets + st.stats.total + st.stats.absent + st.stats.lateCancel) / 10));
+      for (var a = 0; a < adds; a++) {
+        hist.push({ date: addDaysStr('2026-05-01', a * 45), delta: 10, reason: '入金確認（' + (a % 2 === 0 ? 'バーツ振込' : '日本円振込') + '）' });
+        bal += 10;
+      }
+      need = bal - st.tickets;
+      d = '2026-08-28';
+      for (var i = 0; i < need; i++) {
+        hist.push({ date: addDaysStr(d, -7 * i), delta: -1, reason: (i === 0 && st.stats.absent > 0) ? '欠席' : '定期レッスン受講' });
+      }
+      hist.sort(function(a2, b2){ return a2.date < b2.date ? -1 : 1; });
+      st.ticketHistory = hist;
+    }
+    if (st.past.length === 0) {
+      var past = [], base = '2026-08-28', k = 0, n = Math.min(st.stats.total, 8);
+      for (var j = 0; j < n; j++) { past.push({ date: addDaysStr(base, -7 * k++), title: className(st.classId), type:'regular', status:'attended', comment:'', score:'' }); }
+      if (st.stats.absent > 0) past.push({ date: addDaysStr(base, -7 * k++), title: className(st.classId), type:'regular', status:'absent', comment:'', score:'' });
+      if (st.stats.lateCancel > 0) past.push({ date: addDaysStr(base, -7 * k++), title: className(st.classId), type:'regular', status:'cancel_over', at: addDaysStr(base, -7 * (k-1)) + ' 09:30', comment:'', score:'' });
+      past.sort(function(a3, b3){ return a3.date < b3.date ? 1 : -1; });
+      st.past = past;
+    }
+    if (st.upcoming.length === 0 && st.active) {
+      var up = [], cls = recurringById(st.classId), cnt = 0;
+      for (var dd = 1; dd <= 28 && cnt < 3; dd++) {
+        var ds = addDaysStr(TODAY, dd);
+        if (cls && dowOf(ds) === cls.dow && !isClosed(ds)) {
+          up.push({ uid: st.id + '-r' + dd, date: ds, start: cls.start, title: cls.name + '（定期オンライン）', type:'regular', ref:null });
+          cnt++;
+        }
+      }
+      state.oneoff.forEach(function(o){
+        if (o.book.indexOf(st.id) >= 0) up.push({ uid: st.id + '-' + o.id, date:o.date, start:o.start, title:'対面グループレッスン', type:'oneoff', ref:o.id });
+      });
+      state.mono.forEach(function(m){
+        if (m.sid === st.id) up.push({ uid: st.id + '-' + m.id, date:m.date, start:m.start, title:'マンツーマン ' + kindLabel(m.kind), type:'mono', ref:m.id });
+      });
+      up.sort(function(a4, b4){ return (a4.date + a4.start) < (b4.date + b4.start) ? -1 : 1; });
+      st.upcoming = up;
+    }
+  });
+})();
+
+/* =========================================================
+   ユーティリティ
+   ========================================================= */
+function $(sel, root){ return (root || document).querySelector(sel); }
+function $all(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+function pad(n){ return (n < 10 ? '0' : '') + n; }
+function parseD(s){ var p = String(s).split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function fmtD(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function addDaysStr(s, n){ var d = parseD(s); d.setDate(d.getDate() + n); return fmtD(d); }
+function dowOf(s){ return parseD(s).getDay(); }
+var DOW_JA = ['日','月','火','水','木','金','土'];
+function jaDate(s){ var d = parseD(s); return (d.getMonth()+1) + '/' + d.getDate() + '（' + DOW_JA[d.getDay()] + '）'; }
+function jaFull(s){ var d = parseD(s); return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + '（' + DOW_JA[d.getDay()] + '）'; }
+function studentById(id){ for (var i=0;i<state.students.length;i++) if (state.students[i].id === id) return state.students[i]; return null; }
+function nameOf(id){ var s = studentById(id); return s ? s.name : '(不明)'; }
+function recurringById(id){ for (var i=0;i<state.recurring.length;i++) if (state.recurring[i].id === id) return state.recurring[i]; return null; }
+function className(id){ var r = recurringById(id); return r ? r.name : '—'; }
+function isClosed(ds){ for (var i=0;i<state.closedDays.length;i++) if (state.closedDays[i].date === ds) return state.closedDays[i]; return null; }
+function kindLabel(k){ return k === 'W' ? 'ライティング' : 'スピーキング'; }
+function typeLabel(t){ return t === 'regular' ? '定期オンライン' : (t === 'oneoff' ? '対面単発' : 'マンツーマン'); }
+/* v2: 種別は固定アイコンで統一（💻 定期オンライン / 🏫 対面単発 / 👤 マンツーマン） */
+function typeIcon(t){ return t === 'regular' ? '💻' : (t === 'oneoff' ? '🏫' : (t === 'mono' ? '👤' : '🚫')); }
+function typeShort(t){ return t === 'regular' ? 'オンライン' : (t === 'oneoff' ? '対面' : '個別'); }
+function typeBadge(t){
+  return '<span class="badge ' + (t === 'regular' ? 'b-regular' : t === 'oneoff' ? 'b-oneoff' : 'b-mono') + '">' + typeIcon(t) + ' ' + typeShort(t) + '</span>';
+}
+/* 状態チップ */
+function chip(cls, text){ return '<span class="badge ' + cls + '">' + text + '</span>'; }
+function seatChip(book, cap){
+  var free = cap - book;
+  return free > 0 ? chip('b-ok', '空き ' + free) : chip('b-muted', '満席');
+}
+
+/* ---------------- 10回券パンチカード ---------------- */
+function ticketState(n){ return n <= 1 ? 'danger' : (n <= 3 ? 'warn' : 'ok'); }
+function punchHtml(st){
+  var n = st.tickets, planned = plannedCost(st);
+  var usable = Math.max(0, n - planned);
+  var stt = ticketState(n), dots = '';
+  for (var i = 0; i < 10; i++) {
+    var cls = i < Math.min(usable, 10) ? 'fill' : (i < Math.min(n, 10) ? 'plan' : 'empty');
+    dots += '<span class="p ' + cls + '"></span>';
+  }
+  return '<div class="punch ' + stt + '" title="残 ' + n + ' 回（使える ' + usable + ' / 予約済み ' + Math.min(planned, n) + '）">' + dots + '</div>';
+}
+function punchCard(st){
+  var n = st.tickets, planned = plannedCost(st), usable = Math.max(0, n - planned), stt = ticketState(n);
+  return '<div class="punch-wrap">' +
+    '<div><div class="punch-n ' + stt + '">' + n + (n > 10 ? '<span class="plusbadge">+' + (n - 10) + '</span>' : '') + '</div>' +
+    '<div class="punch-l">🎟 残り</div></div>' +
+    '<div class="punch-col">' + punchHtml(st) +
+      '<div class="tiny muted" style="margin-top:6px">使える ' + usable + ' ・ 予約済み ' + planned + '</div>' +
+    '</div>' +
+    (st.notice ? '<div>' + chip('b-danger', '🔔 振込案内中') + '</div>' : '') +
+    '</div>';
+}
+function miniPunch(st){
+  var n = st.tickets, planned = plannedCost(st), usable = Math.max(0, n - planned);
+  var stt = ticketState(n), dots = '';
+  for (var i = 0; i < 10; i++) {
+    var c = i < Math.min(usable, 10) ? 'on' : (i < Math.min(n, 10) ? 'pl' : '');
+    dots += '<i class="' + c + '"></i>';
+  }
+  return '<span class="mpunch ' + stt + '" title="残 ' + n + ' 回">' + dots + '</span>' +
+    '<span class="mnum ' + stt + '">' + n + '</span>' + (n > 10 ? '<span class="plusbadge">+' + (n - 10) + '</span>' : '');
+}
+
+/* ---------------- 画面ヘッダー＋ヘルプ（段階的開示） ---------------- */
+var HELP = {
+  dashboard: ['残1回以下で生徒側に振込案内を自動表示', '今期＝直近2か月（7/1〜9/1）の受講回数', '数字の下のチップから該当生徒へ移動'],
+  calendar:  ['色の付いた帯 = レッスン枠、白い格子 = 空いている時間', '空いている時間をクリックすると、その時間に枠を作成できる', '帯の色 … 緑=空きあり ／ 青=一部予約 ／ 灰=満席・予約済み', '👥 = 予約人数、空き = あと入れる人数（定期は定員なし）', '休校日は定期レッスンが 🚫 表示になり予約不可', '💻 定期オンライン ／ 🏫 対面単発 ／ 👤 マンツーマン'],
+  weekcount: ['枠 … 休校を除いた、その週のレッスン枠の数', '予約 … 予約されている延べ人数', '空き … 定員のある枠（🏫 対面単発・👤 マンツーマン）の残席', '💻 定期オンラインは定員なし（∞）のため「空き」には含めない'],
+  students:  ['ドット＝10回券の残り。赤は振込案内中', '見出しタップで並べ替え（今期／累計）', 'チケットは級の制限なく使える'],
+  detail:    ['塗り＝使える分、薄い塗り＝予約済み分', '消費は受講確定・欠席・期限超過キャンセル時', '10回追加で振込案内は自動的に消える'],
+  lessons:   ['定期は毎週固定・定員なし', '対面単発は定員あり・満席時のみキャンセル待ち', 'マンツーマンは定員1名・1コマ 🎟×2'],
+  settings:  ['変更は今後の予約のみに適用', '期限内キャンセルはチケット消費なし', '期限超過・欠席はチケットを消費'],
+  results:   ['保存した時点でチケットを消費', '欠席も同じ回数を消費（無断欠席と同扱い）', '確定した回は「今後の予約」から外れる'],
+  eiken:     ['4技能スコアと CSE を記録', '保存すると生徒詳細に反映', '結果待ちのまま登録も可']
+};
+function headHtml(title, sub, helpKey, backBtn){
+  return '<div class="screen-head">' + (backBtn || '') +
+    '<h1>' + title + '</h1>' +
+    (sub ? '<div class="sub">' + sub + '</div>' : '') +
+    '<button class="helpbtn" data-help="' + helpKey + '" aria-label="ヘルプ">?</button></div>';
+}
+function openHelp(key){
+  var items = HELP[key] || [];
+  openModal('ヘルプ', '<ul class="helplist">' + items.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>',
+    [{ label:'閉じる', fn: closeModal }]);
+}
+function cost(t){ return state.settings[t].ticketCost; }
+/* 予約時点ではチケットを消費しない。今後の予約分の「消費予定」を集計する */
+function plannedCost(st){
+  var sum = 0;
+  st.upcoming.forEach(function(u){ sum += cost(u.type); });
+  return sum;
+}
+function availableTickets(st){ return st.tickets - plannedCost(st); }
+
+/* キャンセル期限 */
+function deadlineOf(dateStr, type){
+  var s = state.settings[type];
+  var d = parseD(dateStr);
+  d.setDate(d.getDate() - s.deadlineDays);
+  var hm = s.deadlineTime.split(':');
+  var dt = new Date(d.getFullYear(), d.getMonth(), d.getDate(), +hm[0], +hm[1]);
+  return { dt: dt, text: fmtD(d) + ' ' + s.deadlineTime };
+}
+function isOverdue(dateStr, type){ return NOW.getTime() > deadlineOf(dateStr, type).dt.getTime(); }
+
+/* トースト */
+function toast(msg, kind){
+  var box = $('#toasts');
+  var el = document.createElement('div');
+  el.className = 'toast ' + (kind || '');
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 3200);
+}
+
+/* モーダル */
+var modalActions = {};
+function openModal(title, bodyHtml, actions){
+  $('#modalTitle').textContent = title;
+  $('#modalBody').innerHTML = bodyHtml;
+  var foot = $('#modalFoot');
+  foot.innerHTML = '';
+  modalActions = {};
+  (actions || []).forEach(function(a, i){
+    var b = document.createElement('button');
+    b.className = 'btn ' + (a.cls || '');
+    b.textContent = a.label;
+    b.setAttribute('data-act', 'a' + i);
+    modalActions['a' + i] = a.fn;
+    foot.appendChild(b);
+  });
+  $('#overlay').classList.add('on');
+}
+function closeModal(){ $('#overlay').classList.remove('on'); }
+$('#overlay').addEventListener('click', function(e){
+  if (e.target.id === 'overlay') closeModal();
+  var b = e.target.closest ? e.target.closest('[data-act]') : null;
+  if (b && modalActions[b.getAttribute('data-act')]) modalActions[b.getAttribute('data-act')]();
+});
+$('#modalClose').addEventListener('click', closeModal);
+
+function confirmModal(title, msg, okLabel, fn, danger){
+  openModal(title, '<div>' + msg + '</div>', [
+    { label:'やめる', fn: closeModal },
+    { label: okLabel, cls: danger ? 'btn-danger' : 'btn-primary', fn: function(){ closeModal(); fn(); } }
+  ]);
+}
+
+/* =========================================================
+   ナビゲーション
+   ========================================================= */
+var NAV = [
+  { id:'screen-dashboard',  icon:'🏠', label:'ダッシュボード' },
+  { id:'screen-calendar',   icon:'📅', label:'予約カレンダー' },
+  { id:'screen-students',   icon:'👦', label:'生徒一覧' },
+  { id:'screen-lessons',    icon:'🗂', label:'レッスン枠管理' },
+  { id:'screen-results',    icon:'📝', label:'レッスン結果入力' },
+  { id:'screen-eiken',      icon:'🏅', label:'英検結果入力' },
+  { id:'screen-settings',   icon:'⚙️', label:'講座設定' }
+];
+function buildNav(){
+  var html = NAV.map(function(n){
+    return '<button class="navbtn" data-screen="' + n.id + '"><span>' + n.icon + '</span><span>' + n.label + '</span></button>';
+  }).join('');
+  $('#navList').innerHTML = html;
+  $('#navRail').innerHTML = html;
+}
+var currentScreen = 'screen-dashboard';
+function showScreen(id, arg){
+  currentScreen = id;
+  $all('#app .screen').forEach(function(s){ s.classList.toggle('on', s.id === id); });
+  $all('.navbtn').forEach(function(b){
+    var target = b.getAttribute('data-screen');
+    b.classList.toggle('active', target === id || (id === 'screen-student-detail' && target === 'screen-students'));
+  });
+  if (id === 'screen-dashboard') renderDashboard();
+  if (id === 'screen-calendar') renderCalendar();
+  if (id === 'screen-students') renderStudents();
+  if (id === 'screen-student-detail') renderStudentDetail(arg || currentStudentId);
+  if (id === 'screen-lessons') renderLessons();
+  if (id === 'screen-settings') renderSettings();
+  if (id === 'screen-results') renderResults();
+  if (id === 'screen-eiken') renderEiken(arg);
+  $('#sidebar').classList.remove('open');
+  window.scrollTo(0, 0);
+}
+
+/* =========================================================
+   レッスンインスタンス
+   ========================================================= */
+function lessonsOn(ds){
+  var out = [];
+  var cd = isClosed(ds);
+  state.recurring.forEach(function(r){
+    if (dowOf(ds) !== r.dow) return;
+    if (cd) { out.push({ key:'closed|' + r.id + '|' + ds, type:'closed', title:r.name, date:ds, start:r.start, end:r.end, reason:cd.reason }); return; }
+    out.push({ key:'reg|' + r.id + '|' + ds, type:'regular', rid:r.id, title:r.name, date:ds, start:r.start, end:r.end, url:r.url, book:regBook(r.id, ds) });
+  });
+  state.oneoff.forEach(function(o){
+    if (o.date !== ds) return;
+    out.push({ key:'one|' + o.id, type:'oneoff', oid:o.id, title:'対面グループレッスン', date:ds, start:o.start, end:o.end, place:o.place, cap:o.cap, note:o.note, book:o.book, wait:o.wait });
+  });
+  state.mono.forEach(function(m){
+    if (m.date !== ds) return;
+    out.push({ key:'mono|' + m.id, type:'mono', mid:m.id, title:'マンツーマン ' + kindLabel(m.kind), kind:m.kind, date:ds, start:m.start, end:m.end, book: m.sid ? [m.sid] : [] });
+  });
+  out.sort(function(a, b){ return a.start < b.start ? -1 : 1; });
+  return out;
+}
+function regBook(rid, ds){
+  var k = rid + '|' + ds;
+  if (!state.regBook[k]) state.regBook[k] = (state.defaultRoster[rid] || []).slice();
+  return state.regBook[k];
+}
+function getLesson(key){
+  var p = key.split('|');
+  if (p[0] === 'reg') { var arr = lessonsOn(p[2]); for (var i=0;i<arr.length;i++) if (arr[i].key === key) return arr[i]; return null; }
+  if (p[0] === 'one') { var o = null; state.oneoff.forEach(function(x){ if (x.id === p[1]) o = x; }); if (!o) return null; var l = lessonsOn(o.date); for (var j=0;j<l.length;j++) if (l[j].key === key) return l[j]; return null; }
+  if (p[0] === 'mono') { var m = null; state.mono.forEach(function(x){ if (x.id === p[1]) m = x; }); if (!m) return null; var l2 = lessonsOn(m.date); for (var k2=0;k2<l2.length;k2++) if (l2[k2].key === key) return l2[k2]; return null; }
+  return null;
+}
+
+/* チケット操作 */
+function addTicketHistory(st, delta, reason, dateStr){
+  st.ticketHistory.push({ date: dateStr || TODAY, delta: delta, reason: reason });
+  st.tickets += delta;
+  if (st.tickets > 1) st.notice = false;
+  if (st.tickets <= 1) st.notice = true;
+}
+
+/* =========================================================
+   ダッシュボード
+   ========================================================= */
+function renderDashboard(){
+  var todayLessons = lessonsOn(TODAY);
+  var openCount = todayLessons.filter(function(l){ return l.type !== 'closed'; }).length;
+
+  /* 今日のレッスン: 時間・名前・種別アイコン・予約人数チップの1行 */
+  var todayHtml = todayLessons.map(function(l){
+    if (l.type === 'closed') {
+      return '<div class="lrow"><span class="t">' + l.start + '</span><span class="nm">' + esc(l.title) + '</span>' + chip('b-closed', '🚫 休校') + '</div>';
+    }
+    var c = l.type === 'oneoff' ? seatChip(l.book.length, l.cap)
+          : (l.type === 'mono' ? (l.book.length ? chip('b-mono', '✅ 予約済') : chip('b-ok', '空き 1'))
+          : chip('b-regular', '予約 ' + l.book.length));
+    return '<div class="lrow" data-open-lesson="' + l.key + '">' +
+      '<span class="t">' + l.start + '</span>' +
+      '<span class="ticon">' + typeIcon(l.type) + '</span>' +
+      '<span class="nm">' + esc(l.title) + '</span>' + c + '</div>';
+  }).join('') || '<p class="muted small">予定なし</p>';
+
+  /* チケット残り1回以下 */
+  var low = state.students.filter(function(s){ return s.active && s.tickets <= 1; });
+  var lowChips = low.map(function(s){
+    return '<span class="pchip" data-goto-student="' + s.id + '">' + esc(s.name) + ' ' +
+      '<span class="mnum ' + ticketState(s.tickets) + '">' + s.tickets + '</span>' +
+      '<button class="miniadd" data-quick-add="' + s.id + '">＋10</button></span>';
+  }).join('') || '<span class="muted small">なし</span>';
+
+  /* キャンセル待ち */
+  var waitLessons = state.oneoff.filter(function(o){ return o.wait.length > 0; });
+  var waitTotal = waitLessons.reduce(function(a, o){ return a + o.wait.length; }, 0);
+  var waitChips = waitLessons.map(function(o){
+    return '<span class="pchip" data-open-lesson="one|' + o.id + '">🏫 ' + jaDate(o.date) + ' ' + o.start + ' ' +
+      '<span class="mnum warn">' + o.wait.length + '</span></span>';
+  }).join('') || '<span class="muted small">なし</span>';
+
+  var ranked = state.students.slice().sort(function(a,b){ return b.stats.term - a.stats.term; });
+  var top5 = ranked.slice(0, 5).map(function(s, i){
+    return '<div class="lrow" data-goto-student="' + s.id + '">' +
+      '<span class="rank">' + (i+1) + '</span>' +
+      '<span class="nm">' + esc(s.name) + '</span>' +
+      chip('b-muted', esc(s.grade)) +
+      '<span class="bignum">' + s.stats.term + '</span>' +
+      '<span class="tiny muted">/ ' + s.stats.total + '</span></div>';
+  }).join('');
+  var zero = state.students.filter(function(s){ return s.stats.term === 0; });
+  var zeroChips = zero.map(function(s){
+    return '<span class="pchip" data-goto-student="' + s.id + '">' + esc(s.name) +
+      (s.active ? '' : ' ' + chip('b-muted', '休会')) +
+      (s.upcoming.length ? '' : ' ' + chip('b-danger', '予約なし')) + '</span>';
+  }).join('') || '<span class="muted small">なし</span>';
+
+  $('#screen-dashboard').innerHTML =
+    headHtml('ダッシュボード', '9/1（火）', 'dashboard') +
+    '<div class="grid grid-3">' +
+      '<div class="kpi"><div class="l">📌 今日 9/1（火）のレッスン</div><div class="n ok">' + openCount + '</div>' +
+        '<div style="margin-top:6px">' + todayHtml + '</div></div>' +
+      '<div class="kpi"><div class="l">🎟 残り1回以下</div><div class="n danger">' + low.length + '</div>' +
+        '<div class="pchips">' + lowChips + '</div></div>' +
+      '<div class="kpi"><div class="l">⏳ キャンセル待ち</div><div class="n warn">' + waitTotal + '</div>' +
+        '<div class="pchips">' + waitChips + '</div></div>' +
+    '</div>' +
+    '<div class="grid grid-2">' +
+      '<div class="card"><h3>📊 受講回数 上位5名 <span class="tiny muted">今期 / 累計</span></h3>' + top5 +
+        '<div class="divider"></div>' +
+        '<h4>今期 0 回 <span class="badge b-warn">' + zero.length + '</span></h4>' +
+        '<div class="pchips">' + zeroChips + '</div>' +
+      '</div>' +
+      '<div class="card"><h3>📈 直近1週間</h3>' +
+        '<div class="tiles">' +
+          '<div class="tile ok"><div class="n">' + state.weekSummary.booked + '</div><div class="l">予約</div></div>' +
+          '<div class="tile warn"><div class="n">' + state.weekSummary.canceled + '</div><div class="l">キャンセル</div></div>' +
+          '<div class="tile danger"><div class="n">' + state.weekSummary.absent + '</div><div class="l">欠席</div></div>' +
+        '</div>' +
+        '<div class="btn-row" style="margin-top:12px"><button class="btn btn-sm" data-screen="screen-calendar">カレンダー</button>' +
+        '<button class="btn btn-sm" data-screen="screen-results">結果入力</button></div>' +
+      '</div>' +
+    '</div>';
+}
+
+/* =========================================================
+   予約カレンダー
+   ========================================================= */
+var calView = 'week';
+var weekStart = '2026-08-31';
+var dayDate = TODAY;
+var monthAnchor = '2026-09-01';
+var calFilter = 'all'; // all | free | booked
+/* v4: 時間割（時間帯グリッド）／リスト の切替。PC は時間割、スマホはリストが既定 */
+var calMode = (typeof window !== 'undefined' && window.innerWidth <= 900) ? 'list' : 'grid';
+
+/* 枠の 予約 / 定員 / 空き / 待ち を1か所で算出 */
+function lessonCounts(l){
+  if (!l || l.type === 'closed') return { booked:0, cap:0, free:0, wait:0, unlimited:false, closed:true };
+  var booked = (l.book || []).length;
+  if (l.type === 'regular') return { booked:booked, cap:0, free:0, wait:0, unlimited:true, closed:false };
+  if (l.type === 'oneoff') return { booked:booked, cap:l.cap, free:Math.max(0, l.cap - booked), wait:(l.wait || []).length, unlimited:false, closed:false };
+  return { booked:booked, cap:1, free:booked ? 0 : 1, wait:0, unlimited:false, closed:false }; // mono
+}
+/* 空きあり=緑 / 一部予約=青 / 満席・予約済=灰 / 休校=薄赤 */
+function lessonStateKey(l){
+  var c = lessonCounts(l);
+  if (c.closed) return 'closed';
+  if (c.unlimited) return 'open';
+  if (c.free <= 0) return 'full';
+  if (c.booked > 0) return 'partial';
+  return 'open';
+}
+function lessonStateClass(l){ var k = lessonStateKey(l); return k === 'closed' ? '' : 'lc-' + k; }
+function passCalFilter(l){
+  if (calFilter === 'all') return true;
+  var c = lessonCounts(l);
+  if (c.closed) return false;
+  if (calFilter === 'free') return c.unlimited || c.free > 0;
+  return c.booked > 0;
+}
+function lessonsShown(ds){ return lessonsOn(ds).filter(passCalFilter); }
+/* 空き人数の表記（定員なしの定期があれば「+」／定員あり枠が無ければ「∞」） */
+function freeLabel(free, inf){ return inf ? (free > 0 ? free + '+' : '∞') : String(free); }
+/* その日の 予約合計・空き合計（定期は定員なしなので合計に含めず「+」を付ける） */
+function tally(list){
+  var t = { booked:0, free:0, inf:false, open:0 };
+  list.forEach(function(l){
+    var c = lessonCounts(l);
+    if (c.closed) return;
+    t.open++;
+    t.booked += c.booked;
+    if (c.unlimited) t.inf = true; else t.free += c.free;
+  });
+  t.hasFree = t.free > 0 || t.inf;
+  t.freeText = freeLabel(t.free, t.inf);
+  return t;
+}
+function daySummary(ds){ return tally(lessonsOn(ds)); }
+function daySummaryHtml(ds){
+  var s = daySummary(ds);
+  if (!s.open) return '';
+  return '<div class="daysum"><span class="b">👥 ' + s.booked + '</span><span class="sep">・</span>' +
+    '<span class="f' + (s.hasFree ? '' : ' zero') + '">空き ' + s.freeText + '</span></div>';
+}
+/* 週の合計（枠 / 予約 / 空き） */
+function weekTotals(){
+  var t = { slots:0, booked:0, free:0, inf:false };
+  for (var i = 0; i < 7; i++) {
+    lessonsOn(addDaysStr(weekStart, i)).forEach(function(l){
+      var c = lessonCounts(l);
+      if (c.closed) return;
+      t.slots++; t.booked += c.booked;
+      if (c.unlimited) t.inf = true; else t.free += c.free;
+    });
+  }
+  t.freeText = freeLabel(t.free, false);
+  return t;
+}
+
+function renderCalendar(){
+  var isGrid = calMode === 'grid' && calView !== 'month';
+  var head =
+    headHtml('予約カレンダー', '', 'calendar') +
+    '<div class="calbar">' +
+      '<div class="seg">' +
+        '<button data-cal="day" class="' + (calView==='day'?'active':'') + '">日</button>' +
+        '<button data-cal="week" class="' + (calView==='week'?'active':'') + '">週</button>' +
+        '<button data-cal="month" class="' + (calView==='month'?'active':'') + '">月</button>' +
+      '</div>' +
+      (calView !== 'month'
+        ? '<div class="seg">' +
+            '<button data-calmode="list" class="' + (calMode==='list'?'active':'') + '">リスト</button>' +
+            '<button data-calmode="grid" class="' + (calMode==='grid'?'active':'') + '">時間割</button>' +
+          '</div>'
+        : '') +
+      (calView === 'week' ? '<button class="btn btn-sm" data-week="-1">← 前の週</button><button class="btn btn-sm" data-week="1">次の週 →</button>' : '') +
+      (calView === 'day' ? '<button class="btn btn-sm" data-day="-1">← 前の日</button><button class="btn btn-sm" data-day="1">次の日 →</button>' : '') +
+      (calView === 'month' ? '<button class="btn btn-sm" data-month="-1">← 前の月</button><button class="btn btn-sm" data-month="1">次の月 →</button>' : '') +
+      '<span class="small muted">' + calRangeLabel() + '</span>' +
+    '</div>' +
+    '<div class="calbar">' +
+      '<div class="seg">' +
+        '<button data-calfilter="all" class="' + (calFilter==='all'?'active':'') + '">すべて</button>' +
+        '<button data-calfilter="free" class="' + (calFilter==='free'?'active':'') + '">空き枠のみ</button>' +
+        '<button data-calfilter="booked" class="' + (calFilter==='booked'?'active':'') + '">予約ありのみ</button>' +
+      '</div>' +
+      '<div class="callegend">' +
+        '<em><span class="lgd free"></span>空きあり</em>' +
+        '<em><span class="lgd part"></span>一部予約</em>' +
+        '<em><span class="lgd full"></span>満席/予約済</em>' +
+        (isGrid ? '<em><span class="lgd empty"></span>空き時間（クリックで枠作成）</em>' : '') +
+        '<em>🚫 休校</em>' +
+      '</div>' +
+    '</div>';
+
+  var body;
+  if (calView === 'month') body = monthHtml();
+  else if (calView === 'week') body = (isGrid ? weekSumHtml() + weekGridHtml() : weekListHtml());
+  else body = (isGrid ? dayGridHtml() : dayListHtml());
+  $('#screen-calendar').innerHTML = head + body;
+}
+function calRangeLabel(){
+  if (calView === 'week') return jaFull(weekStart) + ' 〜 ' + jaFull(addDaysStr(weekStart, 6));
+  if (calView === 'day') return jaFull(dayDate);
+  var d = parseD(monthAnchor); return d.getFullYear() + '年' + (d.getMonth()+1) + '月';
+}
+function weekSumHtml(){
+  var t = weekTotals();
+  return '<div class="weeksum">今週: 枠 <b>' + t.slots + '</b><span class="sep">・</span>予約 <b>' + t.booked + '</b>' +
+    '<span class="sep">・</span>空き <b>' + t.freeText + '</b>' +
+    '<button class="helpbtn" data-help="weekcount" aria-label="数え方">?</button></div>';
+}
+
+/* ---------------- 枠のチップ（時間割・リスト共通） ---------------- */
+function lessonChips(l){
+  var c = lessonCounts(l);
+  if (l.type === 'regular') {
+    return chip(c.booked ? 'b-regular' : 'b-muted', '👥 ' + c.booked) + chip('b-muted', '定員なし');
+  }
+  if (l.type === 'oneoff') {
+    return chip(c.booked ? 'b-regular' : 'b-muted', '👥 ' + c.booked + '/' + c.cap) +
+      (c.free > 0 ? chip('b-ok', '空き ' + c.free) : chip('b-muted', '満席')) +
+      (c.wait ? chip('b-wait', '⏳ ' + c.wait) : '');
+  }
+  return c.booked ? chip('b-mono', '✅ ' + esc(nameOf(l.book[0]))) : chip('b-ok', '空き 1');
+}
+/* リスト表示のカード: 時間・名前・種別アイコン・2チップ */
+function lessonCardHtml(l){
+  if (l.type === 'closed') {
+    return '<div class="closed-chip"><s>🚫 休校</s><br><span class="tiny"><s>' + esc(l.title) + '</s></span></div>';
+  }
+  var c = lessonCounts(l), bar = '';
+  if (l.type === 'oneoff') {
+    bar = '<div class="capbar' + (c.free > 0 ? '' : ' full') + '"><i style="width:' +
+      Math.round(Math.min(1, c.cap ? c.booked / c.cap : 0) * 100) + '%"></i></div>';
+  }
+  return '<button class="lesson-card ' + lessonStateClass(l) + '" data-open-lesson="' + l.key + '">' +
+    '<div class="lc-time">' + l.start + '–' + l.end + '</div>' +
+    '<div class="lc-name">' + typeIcon(l.type) + ' ' + esc(l.title) + '</div>' +
+    '<div class="lc-chips">' + lessonChips(l) + '</div>' + bar + '</button>';
+}
+function emptyCellHtml(cls){
+  return '<div class="' + cls + '">' + (calFilter === 'all' ? '予定なし' : '該当なし') + '</div>';
+}
+
+/* =========================================================
+   v4: 時間帯グリッド（9:00〜21:00 / 30分 = 1マス）
+   ========================================================= */
+var TG_FROM = 9 * 60, TG_TO = 21 * 60, TG_SLOT = 32, TG_ROWS = (TG_TO - TG_FROM) / 30;
+function hm2min(hm){ var p = String(hm || '').split(':'); return (+p[0] || 0) * 60 + (+p[1] || 0); }
+function min2hm(m){ return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+function tgClamp(m){ return Math.max(TG_FROM, Math.min(TG_TO, m)); }
+function tgTop(m){ return (tgClamp(m) - TG_FROM) / 30 * TG_SLOT; }
+
+/* 重なる枠を横に並べるためのレイアウト計算 */
+function tgLayout(list){
+  var items = list.map(function(l){
+    return { l:l, s:hm2min(l.start), e:Math.max(hm2min(l.start) + 30, hm2min(l.end || l.start)), col:0, n:1 };
+  }).sort(function(a, b){ return a.s - b.s || a.e - b.e; });
+  var group = [], groupEnd = -1;
+  function flush(){
+    if (!group.length) return;
+    group.forEach(function(g){ g.n = group.length; });
+    group = [];
+  }
+  items.forEach(function(it){
+    if (group.length && it.s >= groupEnd) flush();
+    it.col = group.length;
+    group.push(it);
+    groupEnd = Math.max(groupEnd, it.e);
+  });
+  flush();
+  return items;
+}
+/* 枠1つ分のミニチップ（30分など高さの足りないブロック用） */
+function lessonMiniChip(l){
+  var c = lessonCounts(l);
+  if (l.type === 'regular') return chip(c.booked ? 'b-regular' : 'b-muted', '👥 ' + c.booked);
+  if (l.type === 'oneoff') return c.free > 0 ? chip('b-ok', '空き ' + c.free) : chip('b-muted', '満席');
+  return c.booked ? chip('b-muted', '✅ 予約済') : chip('b-ok', '空き 1');
+}
+function tgBlockHtml(it, dayMode){
+  var l = it.l, top = tgTop(it.s), h = Math.max(TG_SLOT - 3, tgTop(it.e) - top - 3);
+  var w = 100 / it.n, left = it.col * w;
+  var pos = 'top:' + top + 'px; height:' + h + 'px; left:calc(' + left + '% + 2px); width:calc(' + w + '% - 4px);';
+  var dim = passCalFilter(l) ? '' : ' tgb-dim';
+  var time = l.start + '–' + l.end;
+  if (l.type === 'closed') {
+    return '<div class="tg-block tgb-closed' + dim + '" style="' + pos + '">' +
+      '<div class="tgb-row"><span class="tgb-t">🚫 ' + l.start + '</span>' +
+      '<span class="tgb-n">' + esc(l.title) + ' 休校</span></div></div>';
+  }
+  var cls = 'tg-block tgb-' + lessonStateKey(l) + dim;
+  var head = '<span class="tgb-t">' + time + '</span>' +
+    '<span class="tgb-n">' + typeIcon(l.type) + ' ' + esc(l.title) + '</span>';
+  /* 日表示: 幅いっぱいなので1行目に 時間・名前・チップ、2行目に予約者名 */
+  if (dayMode) {
+    var names = '';
+    if (h >= 42 && l.book && l.book.length) {
+      var ns = l.book.slice(0, 3).map(function(id){ return esc(nameOf(id)); }).join('、');
+      if (l.book.length > 3) ns += ' 他' + (l.book.length - 3) + '名';
+      names = '<div class="tg-names">' + ns + '</div>';
+    }
+    return '<button class="' + cls + '" data-open-lesson="' + l.key + '" style="' + pos + '">' +
+      '<div class="tgb-row">' + head + '<span class="tgb-c">' + lessonChips(l) + '</span></div>' + names + '</button>';
+  }
+  /* 週表示: 高さが足りない枠（30分）は1行に圧縮 */
+  if (h < 40) {
+    return '<button class="' + cls + ' sm" data-open-lesson="' + l.key + '" style="' + pos + '">' +
+      '<div class="tgb-row"><span class="tgb-t">' + typeIcon(l.type) + ' ' + l.start + '</span>' +
+      '<span class="tgb-c">' + lessonMiniChip(l) + '</span></div></button>';
+  }
+  return '<button class="' + cls + '" data-open-lesson="' + l.key + '" style="' + pos + '">' +
+    '<div class="tgb-t">' + time + '</div>' +
+    '<div class="tgb-n">' + typeIcon(l.type) + ' ' + esc(l.title) + '</div>' +
+    (h >= 46 ? '<div class="tgb-c">' + lessonChips(l) + '</div>' : '') + '</button>';
+}
+function tgColHtml(ds, dayMode){
+  var slots = '';
+  for (var i = 0; i < TG_ROWS; i++) {
+    var hm = min2hm(TG_FROM + i * 30);
+    slots += '<div class="tg-slot' + (i % 2 ? ' hr' : '') + '" data-newslot="' + ds + '|' + hm + '" title="' + hm + ' に枠を作成"></div>';
+  }
+  var blocks = tgLayout(lessonsOn(ds)).map(function(it){ return tgBlockHtml(it, dayMode); }).join('');
+  return '<div class="tg-col" style="height:' + (TG_ROWS * TG_SLOT) + 'px">' + slots +
+    '<div class="tg-blocks">' + blocks + '</div></div>';
+}
+function tgAxisHtml(){
+  var rows = '';
+  for (var m = TG_FROM; m < TG_TO; m += 60) rows += '<div class="tg-hour">' + Math.floor(m / 60) + ':00</div>';
+  return '<div class="tg-axis">' + rows + '</div>';
+}
+function tgHeadHtml(ds){
+  var cd = isClosed(ds);
+  return '<div class="tg-head' + (ds === TODAY ? ' today' : '') + '">' +
+    '<div class="d">' + DOW_JA[dowOf(ds)] + ' ' + (parseD(ds).getMonth()+1) + '/' + parseD(ds).getDate() +
+    (ds === TODAY ? ' <span class="badge b-brand">今日</span>' : '') +
+    (cd ? ' <span class="badge b-closed">🚫</span>' : '') + '</div>' +
+    daySummaryHtml(ds) + '</div>';
+}
+function weekGridHtml(){
+  var heads = '', cols = '';
+  for (var i = 0; i < 7; i++) {
+    var ds = addDaysStr(weekStart, i);
+    heads += tgHeadHtml(ds);
+    cols += tgColHtml(ds, false);
+  }
+  return '<div class="tg-wrap"><div class="tg" style="--n:7">' +
+    '<div class="tg-corner"></div>' + heads + tgAxisHtml() + cols + '</div></div>' +
+    '<p class="tiny muted" style="margin-top:8px">色の付いた帯＝レッスン枠、白い格子＝空いている時間（クリックで枠を作成）</p>';
+}
+function dayGridHtml(){
+  return '<div class="tg-wrap"><div class="tg" style="--n:1">' +
+    '<div class="tg-corner"></div>' + tgHeadHtml(dayDate) + tgAxisHtml() + tgColHtml(dayDate, true) + '</div></div>' +
+    '<p class="tiny muted" style="margin-top:8px">色の付いた帯＝レッスン枠、白い格子＝空いている時間（クリックで枠を作成）</p>';
+}
+
+/* ---------------- リスト表示（v3 の縦積みカード） ---------------- */
+function weekListHtml(){
+  var cols = '';
+  for (var i = 0; i < 7; i++) {
+    var ds = addDaysStr(weekStart, i);
+    var ls = lessonsShown(ds);
+    var cd = isClosed(ds);
+    cols += '<div class="daycol' + (ds === TODAY ? ' today' : '') + '">' +
+      '<div class="dayhead">' + DOW_JA[dowOf(ds)] + '<br><span class="dnum">' + (parseD(ds).getMonth()+1) + '/' + parseD(ds).getDate() + '</span>' +
+      (ds === TODAY ? ' <span class="badge b-brand">今日</span>' : '') +
+      (cd ? ' <span class="badge b-closed">🚫</span>' : '') + '</div>' +
+      daySummaryHtml(ds) +
+      (ls.map(lessonCardHtml).join('') || emptyCellHtml('tiny muted')) +
+      '</div>';
+  }
+  return weekSumHtml() + '<div class="cal-wrap"><div class="week">' + cols + '</div></div>';
+}
+function dayListHtml(){
+  var ls = lessonsShown(dayDate);
+  var cd = isClosed(dayDate);
+  return '<div class="card"><h3>' + jaFull(dayDate) + (cd ? ' ' + chip('b-closed', '🚫 休校') : '') + '</h3>' +
+    daySummaryHtml(dayDate) +
+    (ls.map(lessonCardHtml).join('') || emptyCellHtml('muted small')) + '</div>';
+}
+function monthHtml(){
+  var d = parseD(monthAnchor);
+  var first = new Date(d.getFullYear(), d.getMonth(), 1);
+  var offset = (first.getDay() + 6) % 7; // 月曜始まり
+  var start = new Date(first.getFullYear(), first.getMonth(), 1 - offset);
+  var cells = '<div class="month">' + ['月','火','水','木','金','土','日'].map(function(w){ return '<div class="tiny muted strong" style="text-align:center">' + w + '</div>'; }).join('');
+  for (var i = 0; i < 42; i++) {
+    var cur = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    var ds = fmtD(cur);
+    var out = cur.getMonth() !== d.getMonth();
+    var t = tally(lessonsShown(ds));
+    var dot = t.open
+      ? '<span class="mdot" style="background:' + (t.hasFree ? 'var(--success)' : '#9A9A9A') + '"></span>'
+      : '';
+    cells += '<div class="mcell' + (out ? ' out' : '') + (ds === TODAY ? ' today' : '') + '" data-daypick="' + ds + '">' +
+      '<div class="d">' + cur.getDate() + ' ' + dot + (isClosed(ds) ? ' <span class="tiny muted">🚫</span>' : '') + '</div>' +
+      (t.open
+        ? '<span class="mc-line mc-b' + (t.booked ? '' : ' zero') + '">👥 ' + t.booked + '</span>' +
+          '<span class="mc-line mc-f' + (t.hasFree ? '' : ' zero') + '">空き ' + t.freeText + '</span>'
+        : '') +
+      '</div>';
+  }
+  cells += '</div>';
+  return '<div class="card">' + cells +
+    '<p class="tiny muted" style="margin-top:8px">' +
+    '<span class="mdot" style="background:var(--success)"></span> 空きあり　' +
+    '<span class="mdot" style="background:#9A9A9A"></span> 満席のみ　' +
+    '👥 予約人数　空き 受け入れ人数（∞ = 定員なしの定期のみ）</p></div>';
+}
+
+/* ---------------- 空き時間セルから枠を作成 ---------------- */
+function newSlotModal(ds, hm){
+  var endHm = min2hm(Math.min(TG_TO, hm2min(hm) + 50));
+  var body =
+    '<p class="small muted">' + jaFull(ds) + ' ' + hm + ' の空き時間に枠を作成します</p>' +
+    '<div class="field"><label for="nsType">種別</label><select id="nsType">' +
+      '<option value="oneoff">🏫 対面単発グループ</option>' +
+      '<option value="mono">👤 マンツーマン</option>' +
+      '<option value="regular">💻 定期オンライン（毎週' + DOW_JA[dowOf(ds)] + '曜）</option>' +
+    '</select></div>' +
+    '<div class="grid grid-2">' +
+      '<div class="field"><label for="nsDate">日付</label><input id="nsDate" type="date" value="' + ds + '"></div>' +
+      '<div class="field"><label for="nsStart">開始</label><input id="nsStart" value="' + hm + '"></div>' +
+      '<div class="field"><label for="nsEnd">終了</label><input id="nsEnd" value="' + endHm + '"></div>' +
+    '</div>' +
+    '<div class="ns-oneoff"><div class="grid grid-2">' +
+      '<div class="field"><label for="nsPlace">場所</label><input id="nsPlace" value="VOICE ホビークラブ 教室"></div>' +
+      '<div class="field"><label for="nsCap">定員</label><input id="nsCap" type="number" min="1" value="6"></div>' +
+      '<div class="field"><label for="nsNote">メモ</label><input id="nsNote" placeholder="例：全級合同・過去問演習"></div>' +
+    '</div></div>' +
+    '<div class="ns-mono" style="display:none"><div class="field"><label for="nsKind">種別</label>' +
+      '<select id="nsKind"><option value="W">ライティング</option><option value="S">スピーキング</option></select></div></div>' +
+    '<div class="ns-reg" style="display:none"><div class="grid grid-2">' +
+      '<div class="field"><label for="nsName">クラス名</label><input id="nsName" placeholder="例：3級クラス"></div>' +
+      '<div class="field"><label for="nsGrade">級</label><select id="nsGrade">' + GRADES.map(function(g){ return '<option>' + g + '</option>'; }).join('') + '</select></div>' +
+    '</div></div>';
+  openModal('この時間に枠を作成', body, [
+    { label:'やめる', fn: closeModal },
+    { label:'作成する', cls:'btn-primary', fn: createSlot }
+  ]);
+}
+function updateNewSlotFields(){
+  var t = $('#nsType') ? $('#nsType').value : 'oneoff';
+  var map = { oneoff:'.ns-oneoff', mono:'.ns-mono', regular:'.ns-reg' };
+  ['.ns-oneoff', '.ns-mono', '.ns-reg'].forEach(function(sel){
+    var el = $(sel); if (el) el.style.display = (map[t] === sel) ? '' : 'none';
+  });
+}
+function createSlot(){
+  var t = $('#nsType').value, d = $('#nsDate').value, s = $('#nsStart').value, e = $('#nsEnd').value;
+  if (!d || !s || !e) { toast('日付と時刻を入力してください', 'warn'); return; }
+  if (hm2min(e) <= hm2min(s)) { toast('終了は開始より後にしてください', 'warn'); return; }
+  if (t === 'oneoff') {
+    state.oneoff.push({ id:'o' + Date.now(), date:d, start:s, end:e, place:$('#nsPlace').value, cap:+$('#nsCap').value || 1, note:$('#nsNote').value, book:[], wait:[] });
+    state.oneoff.sort(function(a, b){ return a.date < b.date ? -1 : 1; });
+  } else if (t === 'mono') {
+    state.mono.push({ id:'m' + Date.now(), date:d, start:s, end:e, kind:$('#nsKind').value, sid:null });
+    state.mono.sort(function(a, b){ return (a.date + a.start) < (b.date + b.start) ? -1 : 1; });
+  } else {
+    var nm = ($('#nsName').value || '').trim() || ($('#nsGrade').value + 'クラス');
+    var nid = 'r' + Date.now();
+    state.recurring.push({ id:nid, name:nm, grade:$('#nsGrade').value, dow:dowOf(d), start:s, end:e, url:'https://zoom.example.com/j/new' });
+    state.defaultRoster[nid] = [];
+  }
+  closeModal();
+  if (calView === 'day') dayDate = d;
+  renderCalendar();
+  toast(jaDate(d) + ' ' + s + ' に枠を作成しました', 'ok');
+}
+
+/* レッスン詳細モーダル */
+function openLessonModal(key){
+  var l = getLesson(key);
+  if (!l) { toast('レッスンが見つかりません', 'err'); return; }
+  var s = state.settings[l.type];
+  var over = isOverdue(l.date, l.type);
+  var dl = deadlineOf(l.date, l.type);
+
+  var rows = l.book.map(function(id){
+    var st = studentById(id);
+    return '<tr><td class="wrap">' + esc(st.name) + '</td><td class="wrap">' + esc(st.parent) + '</td>' +
+      '<td>' + (st.active ? chip('b-ok', '受講中') : chip('b-muted', '休会')) + '</td>' +
+      '<td>' + miniPunch(st) + '</td>' +
+      '<td><button class="btn btn-sm btn-danger" data-cancel="' + key + '::' + id + '">キャンセル</button></td></tr>';
+  }).join('') || '<tr><td colspan="5" class="muted">なし</td></tr>';
+
+  var waitHtml = '';
+  if (l.type === 'oneoff') {
+    waitHtml = '<h4 style="margin-top:14px">⏳ キャンセル待ち ' + l.wait.length + '</h4>' +
+      (l.wait.length ? '<div class="table-wrap"><table><thead><tr><th>順</th><th class="wrap">生徒</th><th>登録</th><th>操作</th></tr></thead><tbody>' +
+        l.wait.map(function(w, i){
+          return '<tr><td>' + (i+1) + '</td><td class="wrap">' + esc(nameOf(w.sid)) + '</td><td>' + esc(w.at) + '</td>' +
+            '<td><button class="btn btn-sm" data-waitnotify="1">空席通知</button></td></tr>';
+        }).join('') + '</tbody></table></div>'
+        : '<p class="muted small">なし</p>');
+  }
+
+  var cnt = lessonCounts(l);
+  var hasFree = cnt.unlimited || cnt.free > 0;
+  /* v3: 予約 / 定員 / 空き / 待ち の4数字タイル */
+  var tiles = '<div class="tiles ltiles">' +
+    '<div class="tile"><div class="n">' + cnt.booked + '</div><div class="l">予約</div></div>' +
+    '<div class="tile"><div class="n">' + (cnt.unlimited ? '—' : cnt.cap) + '</div><div class="l">定員</div></div>' +
+    '<div class="tile' + (hasFree ? ' ok' : '') + '"><div class="n">' + (cnt.unlimited ? '∞' : cnt.free) + '</div><div class="l">空き</div></div>' +
+    '<div class="tile' + (cnt.wait ? ' warn' : '') + '"><div class="n">' + (l.type === 'oneoff' ? cnt.wait : '—') + '</div><div class="l">待ち</div></div>' +
+    '</div>' +
+    '<div style="margin:-4px 0 12px">' +
+      (l.type === 'mono'
+        ? (cnt.booked ? chip('b-mono', '✅ 予約済（' + esc(nameOf(l.book[0])) + '）') : chip('b-ok', '空き枠'))
+        : (hasFree ? chip('b-ok', '空きあり') : chip('b-muted', '満席'))) +
+    '</div>';
+
+  var candidates = state.students.filter(function(st){ return st.active && l.book.indexOf(st.id) < 0; });
+  var addBlock = '';
+  if (l.type === 'mono' && l.book.length) {
+    addBlock = '<p class="muted small">定員1名（先にキャンセルが必要）</p>';
+  } else if (l.type === 'oneoff' && l.book.length >= l.cap) {
+    addBlock = '<p class="muted small">満席（先にキャンセルが必要）</p>';
+  } else {
+    addBlock = '<div class="field"><label for="proxySel">生徒</label><select id="proxySel">' +
+      candidates.map(function(st){
+        var avail = availableTickets(st);
+        var lack = avail < s.ticketCost;
+        return '<option value="' + st.id + '"' + (lack ? ' disabled' : '') + '>' + esc(st.name) + '（🎟 ' + st.tickets + ' → 使える ' + avail + '）' + (lack ? ' 不足' : '') + '</option>';
+      }).join('') + '</select></div>' +
+      '<button class="btn btn-primary btn-sm" data-proxyadd="' + key + '">代理予約する</button>';
+  }
+
+  var info =
+    '<div class="kv">' +
+      '<div><div class="k">日時</div><div class="v">' + jaFull(l.date) + ' ' + l.start + '–' + l.end + '</div></div>' +
+      '<div><div class="k">種別</div><div class="v">' + typeBadge(l.type) + (l.type === 'mono' ? ' ' + chip('b-mono', l.kind) : '') + '</div></div>' +
+      '<div><div class="k">🎟 消費</div><div class="v">−' + s.ticketCost + '</div></div>' +
+      '<div><div class="k">期限</div><div class="v">' + dl.text + ' ' + (over ? chip('b-danger', '超過') : chip('b-ok', '期限内')) + '</div></div>' +
+      (l.type === 'regular' ? '<div><div class="k">URL</div><div class="v" style="word-break:break-all">' + esc(l.url) + '</div></div>' : '') +
+      (l.type === 'oneoff' ? '<div><div class="k">場所</div><div class="v">' + esc(l.place) + ' ' + seatChip(l.book.length, l.cap) + '</div></div>' : '') +
+    '</div>';
+
+  /* 空き枠は「代理予約」を前面に、満席はキャンセル待ちを前面に */
+  var proxyBlock = '<div class="divider"></div><h4>代理予約' +
+    (hasFree ? ' ' + chip('b-ok', cnt.unlimited ? '空き ∞' : '空き ' + cnt.free) : '') + '</h4>' + addBlock;
+  var bookedBlock =
+    '<h4 style="margin-top:14px">予約者 ' + l.book.length + '</h4>' +
+    '<div class="table-wrap"><table><thead><tr><th class="wrap">生徒</th><th class="wrap">保護者</th><th>状態</th><th>🎟</th><th>操作</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+
+  var body = tiles + info +
+    (hasFree
+      ? proxyBlock + bookedBlock + waitHtml
+      : bookedBlock + waitHtml + proxyBlock) +
+    '<div class="divider"></div><div class="btn-row">' +
+      '<button class="btn btn-sm" data-editlesson="' + key + '">編集する</button>' +
+      '<button class="btn btn-sm btn-danger" data-dellesson="' + key + '">削除する</button>' +
+    '</div>';
+
+  openModal(typeIcon(l.type) + ' ' + l.title + '（' + jaDate(l.date) + ' ' + l.start + '）', body, [{ label:'閉じる', fn: closeModal }]);
+}
+
+function proxyAdd(key){
+  var sel = $('#proxySel');
+  if (!sel || !sel.value) { toast('生徒を選択してください', 'warn'); return; }
+  var l = getLesson(key), sid = sel.value, st = studentById(sid), s = state.settings[l.type];
+  if (availableTickets(st) < s.ticketCost) { toast('🎟 不足（使える ' + availableTickets(st) + '）', 'err'); return; }
+  if (l.type === 'regular') { regBook(l.rid, l.date).push(sid); }
+  if (l.type === 'oneoff') { state.oneoff.forEach(function(o){ if (o.id === l.oid) o.book.push(sid); }); }
+  if (l.type === 'mono') { state.mono.forEach(function(m){ if (m.id === l.mid) m.sid = sid; }); }
+  st.upcoming.push({ uid: 'p' + Date.now(), date:l.date, start:l.start, title:l.title, type:l.type, ref: l.oid || l.mid || null });
+  st.upcoming.sort(function(a,b){ return (a.date+a.start) < (b.date+b.start) ? -1 : 1; });
+  toast(st.name + ' を代理予約しました（予約完了メール送信）', 'ok');
+  openLessonModal(key);
+  renderCalendar();
+}
+function proxyCancel(payload){
+  var p = payload.split('::'), key = p[0], sid = p[1];
+  var l = getLesson(key), st = studentById(sid), s = state.settings[l.type];
+  var over = isOverdue(l.date, l.type);
+  var msg = '<p><span class="strong">' + esc(st.name) + '</span>　' + typeIcon(l.type) + ' ' + jaDate(l.date) + ' ' + l.start + ' ' + esc(l.title) + '</p>' +
+    (over
+      ? '<p>' + chip('b-danger', '⚠ 期限超過（' + deadlineOf(l.date, l.type).text + '）') + ' ' + chip('b-danger', '🎟 −' + s.ticketCost) + '</p>'
+      : '<p>' + chip('b-ok', '✓ 🎟 消費なし') + '</p>');
+  confirmModal('予約をキャンセル', msg, 'キャンセルする', function(){
+    if (l.type === 'regular') { var arr = regBook(l.rid, l.date); var i = arr.indexOf(sid); if (i >= 0) arr.splice(i, 1); }
+    if (l.type === 'oneoff') { state.oneoff.forEach(function(o){ if (o.id === l.oid) { var j = o.book.indexOf(sid); if (j >= 0) o.book.splice(j, 1); } }); }
+    if (l.type === 'mono') { state.mono.forEach(function(m){ if (m.id === l.mid) m.sid = null; }); }
+    st.upcoming = st.upcoming.filter(function(u){ return !(u.date === l.date && u.start === l.start); });
+    if (over) {
+      addTicketHistory(st, -s.ticketCost, 'キャンセル期限超過によるキャンセル');
+      st.stats.lateCancel++;
+      st.past.unshift({ date:l.date, title:l.title, type:l.type, status:'cancel_over', at: TODAY + ' 21:05', comment:'管理者による代理キャンセル', score:'' });
+      toast(st.name + ' をキャンセル（🎟 −' + s.ticketCost + '）', 'warn');
+    } else {
+      st.past.unshift({ date:l.date, title:l.title, type:l.type, status:'cancel_in', at: TODAY + ' 21:05', comment:'管理者による代理キャンセル', score:'' });
+      toast(st.name + ' をキャンセル（🎟 消費なし）', 'ok');
+    }
+    if (l.type === 'oneoff') {
+      var o2 = null; state.oneoff.forEach(function(x){ if (x.id === l.oid) o2 = x; });
+      if (o2 && o2.wait.length) toast('空席通知メールを ' + o2.wait.length + ' 名へ送信', 'ok');
+    }
+    renderCalendar();
+    if (currentScreen === 'screen-student-detail') renderStudentDetail(currentStudentId);
+  }, over);
+}
+function editLessonModal(key){
+  var l = getLesson(key);
+  var body = '';
+  if (l.type === 'regular') {
+    body = '<div class="field"><label>クラス名</label><input id="edName" value="' + esc(l.title) + '"></div>' +
+      '<div class="field"><label>開始時刻</label><input id="edStart" value="' + l.start + '"></div>' +
+      '<div class="field"><label>終了時刻</label><input id="edEnd" value="' + l.end + '"></div>' +
+      '<div class="field"><label>オンラインURL</label><input id="edUrl" value="' + esc(l.url) + '"></div>';
+  } else if (l.type === 'oneoff') {
+    var o = null; state.oneoff.forEach(function(x){ if (x.id === l.oid) o = x; });
+    body = '<div class="field"><label>日付</label><input id="edDate" type="date" value="' + o.date + '"></div>' +
+      '<div class="field"><label>開始</label><input id="edStart" value="' + o.start + '"></div>' +
+      '<div class="field"><label>終了</label><input id="edEnd" value="' + o.end + '"></div>' +
+      '<div class="field"><label>場所</label><input id="edPlace" value="' + esc(o.place) + '"></div>' +
+      '<div class="field"><label>定員</label><input id="edCap" type="number" min="1" value="' + o.cap + '"></div>' +
+      '<div class="field"><label>メモ</label><input id="edNote" value="' + esc(o.note) + '"></div>';
+  } else {
+    var m = null; state.mono.forEach(function(x){ if (x.id === l.mid) m = x; });
+    body = '<div class="field"><label>日付</label><input id="edDate" type="date" value="' + m.date + '"></div>' +
+      '<div class="field"><label>開始</label><input id="edStart" value="' + m.start + '"></div>' +
+      '<div class="field"><label>終了</label><input id="edEnd" value="' + m.end + '"></div>' +
+      '<div class="field"><label>種別</label><select id="edKind"><option value="W"' + (m.kind==='W'?' selected':'') + '>ライティング</option><option value="S"' + (m.kind==='S'?' selected':'') + '>スピーキング</option></select></div>';
+  }
+  openModal('レッスン枠を編集', body, [
+    { label:'やめる', fn: function(){ openLessonModal(key); } },
+    { label:'保存する', cls:'btn-primary', fn: function(){
+      if (l.type === 'regular') {
+        var r = recurringById(l.rid);
+        r.name = $('#edName').value; r.start = $('#edStart').value; r.end = $('#edEnd').value; r.url = $('#edUrl').value;
+      } else if (l.type === 'oneoff') {
+        state.oneoff.forEach(function(o){ if (o.id === l.oid) {
+          o.date = $('#edDate').value; o.start = $('#edStart').value; o.end = $('#edEnd').value;
+          o.place = $('#edPlace').value; o.cap = +$('#edCap').value; o.note = $('#edNote').value;
+        } });
+      } else {
+        state.mono.forEach(function(m2){ if (m2.id === l.mid) {
+          m2.date = $('#edDate').value; m2.start = $('#edStart').value; m2.end = $('#edEnd').value; m2.kind = $('#edKind').value;
+        } });
+      }
+      closeModal(); renderCalendar(); toast('レッスン枠を更新しました', 'ok');
+    } }
+  ]);
+}
+function deleteLesson(key){
+  var l = getLesson(key);
+  var msg = l.type === 'regular'
+    ? '<p>' + typeIcon(l.type) + ' ' + esc(l.title) + '（毎週）</p><p>' + chip('b-danger', '今後の開催がすべてなくなります') + '</p>'
+    : '<p>' + typeIcon(l.type) + ' ' + jaDate(l.date) + ' ' + l.start + ' ' + esc(l.title) + '</p><p>' + chip('b-warn', '予約者 ' + l.book.length + ' 名へ通知メール') + '</p>';
+  confirmModal('レッスン枠を削除', msg, '削除する', function(){
+    if (l.type === 'regular') state.recurring = state.recurring.filter(function(r){ return r.id !== l.rid; });
+    if (l.type === 'oneoff') state.oneoff = state.oneoff.filter(function(o){ return o.id !== l.oid; });
+    if (l.type === 'mono') state.mono = state.mono.filter(function(m){ return m.id !== l.mid; });
+    renderCalendar(); toast('レッスン枠を削除しました', 'warn');
+  }, true);
+}
+
+/* =========================================================
+   生徒一覧
+   ========================================================= */
+var listFilter = { q:'', grade:'', status:'' };
+var listSort = { col:'name', dir:1 };
+function renderStudents(){
+  var rows = state.students.filter(function(s){
+    if (listFilter.q && (s.name + s.kana + s.romaji + s.parent).toLowerCase().indexOf(listFilter.q.toLowerCase()) < 0) return false;
+    if (listFilter.grade && s.grade !== listFilter.grade) return false;
+    if (listFilter.status === 'active' && !s.active) return false;
+    if (listFilter.status === 'inactive' && s.active) return false;
+    return true;
+  });
+  rows.sort(function(a, b){
+    var av, bv;
+    switch (listSort.col) {
+      case 'tickets': av = a.tickets; bv = b.tickets; break;
+      case 'term': av = a.stats.term; bv = b.stats.term; break;
+      case 'total': av = a.stats.total; bv = b.stats.total; break;
+      case 'last': av = a.lastAttended; bv = b.lastAttended; break;
+      case 'grade': av = GRADES.indexOf(a.grade); bv = GRADES.indexOf(b.grade); break;
+      default: av = a.kana; bv = b.kana;
+    }
+    if (av < bv) return -1 * listSort.dir;
+    if (av > bv) return 1 * listSort.dir;
+    return 0;
+  });
+  function arrow(col){ return listSort.col === col ? (listSort.dir === 1 ? ' ▲' : ' ▼') : ''; }
+
+  var tbody = rows.map(function(s){
+    return '<tr class="clickable" data-goto-student="' + s.id + '">' +
+      '<td class="wrap"><span class="strong">' + esc(s.name) + '</span><div class="tiny muted">' + esc(s.romaji) + '</div></td>' +
+      '<td>' + miniPunch(s) + (s.notice ? ' 🔔' : '') + '</td>' +
+      '<td><span class="strong">' + s.stats.term + '</span> <span class="tiny muted">/ ' + s.stats.total + '</span></td>' +
+      '<td class="wrap">' + esc(s.grade) + '<div class="tiny muted">' + typeIcon('regular') + ' ' + esc(className(s.classId)) + '</div></td>' +
+      '<td>' + (s.active ? chip('b-ok', '受講中') : chip('b-muted', '休会')) + '</td>' +
+      '<td class="wrap">' + esc(s.parent) + '<div class="tiny muted">' + esc(s.phone) + '</div></td>' +
+      '<td>' + esc(s.lastAttended) + '</td></tr>';
+  }).join('') || '<tr><td colspan="7" class="muted">該当なし</td></tr>';
+
+  $('#screen-students').innerHTML =
+    headHtml('生徒一覧', state.students.length + ' 名中 ' + rows.length + ' 名', 'students') +
+    '<div class="card">' +
+      '<div class="filters">' +
+        '<div><label for="fq">検索</label><input id="fq" placeholder="生徒・保護者・ローマ字" value="' + esc(listFilter.q) + '"></div>' +
+        '<div><label for="fg">級</label><select id="fg"><option value="">すべて</option>' +
+          GRADES.map(function(g){ return '<option value="' + g + '"' + (listFilter.grade === g ? ' selected' : '') + '>' + g + '</option>'; }).join('') + '</select></div>' +
+        '<div><label for="fs">状態</label><select id="fs">' +
+          '<option value="">すべて</option>' +
+          '<option value="active"' + (listFilter.status==='active'?' selected':'') + '>受講中</option>' +
+          '<option value="inactive"' + (listFilter.status==='inactive'?' selected':'') + '>休会</option></select></div>' +
+      '</div>' +
+      '<div class="btn-row" style="margin-bottom:10px">' +
+        '<button class="btn btn-sm" data-export="CSV">CSV出力</button>' +
+        '<button class="btn btn-sm" data-export="Excel">Excel出力</button>' +
+        '<button class="btn btn-sm" data-import="1">CSV取込</button>' +
+      '</div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th class="sortable wrap" data-sort="name">生徒' + arrow('name') + '</th>' +
+        '<th class="sortable" data-sort="tickets">🎟' + arrow('tickets') + '</th>' +
+        '<th>受講 <span class="sortlink" data-sort="term">今期' + arrow('term') + '</span> / <span class="sortlink" data-sort="total">累計' + arrow('total') + '</span></th>' +
+        '<th class="sortable wrap" data-sort="grade">級' + arrow('grade') + '</th>' +
+        '<th>状態</th>' +
+        '<th class="wrap">保護者</th>' +
+        '<th class="sortable" data-sort="last">最終受講' + arrow('last') + '</th>' +
+      '</tr></thead><tbody>' + tbody + '</tbody></table></div>' +
+    '</div>';
+}
+
+/* =========================================================
+   生徒詳細
+   ========================================================= */
+var currentStudentId = 's1';
+var detailExpand = { hist:false, past:false };
+/* 表示用にタイトルの括弧書き（種別）を落とす。種別はアイコンで示す */
+function shortTitle(t){ return String(t).replace(/（[^）]*）/g, '').trim(); }
+function statusLabel(st){
+  if (st === 'attended') return chip('b-ok', '✅ 受講');
+  if (st === 'absent') return chip('b-danger', '✗ 欠席');
+  if (st === 'cancel_in') return chip('b-muted', '↩ キャンセル');
+  return chip('b-warn', '↩ 期限超過');
+}
+function renderStudentDetail(id){
+  currentStudentId = id;
+  var s = studentById(id);
+  if (!s) { toast('生徒が見つかりません', 'err'); return; }
+
+  var bal = 0;
+  var histAll = s.ticketHistory.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; }).map(function(h){
+    bal += h.delta;
+    return { date:h.date, delta:h.delta, reason:h.reason, bal:bal };
+  }).reverse();
+  var histShown = detailExpand.hist ? histAll : histAll.slice(0, 5);
+  var histRows = histShown.map(function(h){
+    return '<tr><td>' + esc(h.date) + '</td>' +
+      '<td>' + chip(h.delta > 0 ? 'b-ok' : 'b-danger', (h.delta > 0 ? '+' : '') + h.delta) + '</td>' +
+      '<td class="wrap">' + esc(shortTitle(h.reason)) + '</td><td>' + h.bal + '</td></tr>';
+  }).join('');
+
+  var upRows = s.upcoming.map(function(u){
+    var over = isOverdue(u.date, u.type);
+    return '<tr><td>' + esc(u.date) + '</td><td>' + u.start + '</td>' +
+      '<td class="wrap">' + typeIcon(u.type) + ' ' + esc(shortTitle(u.title)) + '</td>' +
+      '<td>' + (over ? chip('b-warn', '⚠ 期限超過') : chip('b-ok', '期限内')) + '<div class="tiny muted">〜' + deadlineOf(u.date, u.type).text + '</div></td>' +
+      '<td><button class="btn btn-sm btn-danger" data-detcancel="' + u.uid + '">キャンセル</button></td></tr>';
+  }).join('') || '<tr><td colspan="5" class="muted">なし</td></tr>';
+
+  var waitingIn = state.oneoff.filter(function(o){ return o.wait.some(function(w){ return w.sid === s.id; }); }).map(function(o){
+    var pos = o.wait.findIndex(function(w){ return w.sid === s.id; }) + 1;
+    return '<div class="lrow" data-open-lesson="one|' + o.id + '"><span class="t">' + jaDate(o.date) + '</span>' +
+      '<span class="ticon">🏫</span><span class="nm">' + o.start + ' 対面グループ</span>' +
+      chip('b-wait', '⏳ ' + pos + '番目') + '</div>';
+  }).join('');
+
+  var pastShown = detailExpand.past ? s.past : s.past.slice(0, 5);
+  var pastRows = pastShown.map(function(p){
+    return '<tr><td>' + esc(p.date) + '</td><td class="wrap">' + typeIcon(p.type) + ' ' + esc(shortTitle(p.title)) + '</td>' +
+      '<td>' + statusLabel(p.status) + '</td>' +
+      '<td class="wrap">' + esc(p.comment || '—') + '</td><td>' + esc(p.score || '—') + '</td></tr>';
+  }).join('') || '<tr><td colspan="5" class="muted">なし</td></tr>';
+
+  var resultRows = s.past.filter(function(p){ return p.comment || p.score; }).map(function(p){
+    return '<div class="rowitem"><div class="grow"><span class="strong">' + esc(p.date) + ' ' + typeIcon(p.type) + ' ' + esc(shortTitle(p.title)) + '</span>' +
+      '<div class="small">' + esc(p.comment || '—') + '</div></div>' +
+      '<div class="strong">' + esc(p.score || '') + '</div></div>';
+  }).join('') || '<p class="muted small">なし</p>';
+
+  var eikenRows = s.eiken.map(function(e){
+    return '<tr><td>' + esc(e.date) + '</td><td>' + esc(e.grade) + '</td>' +
+      '<td>' + (e.pass === '合格' ? chip('b-ok', '✅ 合格') : chip('b-danger', esc(e.pass))) + '</td>' +
+      '<td>' + esc(e.r) + '</td><td>' + esc(e.l) + '</td><td>' + esc(e.w) + '</td><td>' + esc(e.s) + '</td><td>' + esc(e.cse) + '</td>' +
+      '<td class="wrap">' + esc(e.memo || '—') + '</td></tr>';
+  }).join('') || '<tr><td colspan="9" class="muted">なし</td></tr>';
+
+  var sibHtml = s.siblings.length
+    ? s.siblings.map(function(sid){ return '<span class="pchip" data-goto-student="' + sid + '">' + esc(nameOf(sid)) + ' ›</span>'; }).join(' ')
+    : '<span class="muted">なし</span>';
+
+  $('#screen-student-detail').innerHTML =
+    headHtml(esc(s.name), esc(s.grade) + ' ・ ' + (s.active ? '受講中' : '休会'), 'detail',
+      '<button class="btn btn-sm" data-screen="screen-students">←</button>') +
+
+    /* 主役: 10回券パンチカード */
+    '<div class="card">' + punchCard(s) +
+      '<div class="btn-row" style="margin-top:12px">' +
+        '<button class="btn btn-primary" data-add10="' + s.id + '">10回追加</button>' +
+        '<button class="btn" data-manualfix="' + s.id + '">手動修正</button>' +
+      '</div></div>' +
+
+    '<div class="card">' +
+      '<div class="tiles">' +
+        '<div class="tile ok"><div class="n">' + s.stats.term + '</div><div class="l">今期受講</div></div>' +
+        '<div class="tile"><div class="n">' + s.stats.total + '</div><div class="l">累計</div></div>' +
+        '<div class="tile danger"><div class="n">' + s.stats.absent + '</div><div class="l">欠席</div></div>' +
+        '<div class="tile warn"><div class="n">' + s.stats.lateCancel + '</div><div class="l">期限超過</div></div>' +
+      '</div></div>' +
+
+    '<div class="card"><h3>👤 基本情報 <button class="btn btn-sm" data-editbasic="1" style="margin-left:auto">編集する</button></h3>' +
+      '<div class="kv" id="basicView">' +
+        kv('氏名', s.name) + kv('かな', s.kana) + kv('ローマ字', s.romaji) +
+        kv('生年月日', s.birth) + kv('学校', s.school + ' ' + s.schoolGrade) +
+        kv('保護者', s.parent) + kv('メール', s.email) + kv('電話', s.phone) +
+        kv('メンバーNo.', s.memberNo || '—') +
+        kv('級', s.grade) + kv('クラス', className(s.classId)) +
+        kv('受験回', s.examTerm) + kv('状態', s.active ? '受講中' : '休会') +
+      '</div>' +
+      '<div class="divider"></div>' +
+      '<div class="kv">' +
+        '<div><div class="k">👤 W</div><div class="v">' + s.monoW + ' / ' + state.settings.mono.limitW + '</div></div>' +
+        '<div><div class="k">👤 S</div><div class="v">' + s.monoS + ' / ' + state.settings.mono.limitS + '</div></div>' +
+      '</div>' +
+      '<div class="divider"></div>' +
+      '<div class="k tiny strong muted">兄弟</div><div class="pchips">' + sibHtml + '</div>' +
+    '</div>' +
+
+    '<div class="card"><h3>📅 今後の予約 <span class="badge b-muted">' + s.upcoming.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>日付</th><th>時間</th><th class="wrap">レッスン</th><th>期限</th><th>操作</th></tr></thead><tbody>' + upRows + '</tbody></table></div>' +
+      (waitingIn ? '<div class="divider"></div>' + waitingIn : '') + '</div>' +
+
+    '<div class="card"><h3>🎟 チケット履歴 <span class="badge b-muted">' + histAll.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>日付</th><th>増減</th><th class="wrap">内容</th><th>残</th></tr></thead><tbody>' + histRows + '</tbody></table></div>' +
+      (histAll.length > 5 ? '<div class="btn-row" style="margin-top:8px"><button class="btn btn-sm" data-expand="hist">' + (detailExpand.hist ? '折りたたむ' : 'すべて表示 ' + histAll.length) + '</button></div>' : '') + '</div>' +
+
+    '<div class="card"><h3>🕘 受講履歴 <span class="badge b-muted">' + s.past.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>日付</th><th class="wrap">レッスン</th><th>状態</th><th class="wrap">コメント</th><th>点数</th></tr></thead><tbody>' + pastRows + '</tbody></table></div>' +
+      (s.past.length > 5 ? '<div class="btn-row" style="margin-top:8px"><button class="btn btn-sm" data-expand="past">' + (detailExpand.past ? '折りたたむ' : 'すべて表示 ' + s.past.length) + '</button></div>' : '') + '</div>' +
+
+    '<div class="card"><h3>📝 レッスン結果</h3>' + resultRows +
+      '<div class="btn-row" style="margin-top:10px"><button class="btn btn-sm" data-screen="screen-results">結果を入力</button></div></div>' +
+
+    '<div class="card"><h3>🏅 英検結果 <button class="btn btn-sm btn-primary" data-addeiken="' + s.id + '" style="margin-left:auto">結果を追加</button></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>受験日</th><th>級</th><th>合否</th><th>R</th><th>L</th><th>W</th><th>S</th><th>CSE</th><th class="wrap">メモ</th></tr></thead><tbody>' + eikenRows + '</tbody></table></div></div>' +
+
+    '<div class="card"><h3>🗒 管理者メモ</h3>' +
+      '<textarea id="adminMemo" placeholder="社内メモ（生徒側には表示されません）">' + esc(s.memo) + '</textarea>' +
+      '<div class="btn-row" style="margin-top:8px"><button class="btn btn-primary btn-sm" data-savememo="' + s.id + '">保存する</button></div></div>';
+}
+function kv(k, v){ return '<div><div class="k">' + esc(k) + '</div><div class="v">' + esc(v) + '</div></div>'; }
+
+function add10Modal(id){
+  var s = studentById(id);
+  var body = '<p><span class="strong">' + esc(s.name) + '</span>　🎟 ' + s.tickets + ' → <span class="strong ok-c">' + (s.tickets + 10) + '</span></p>' +
+    '<div class="field"><label for="payM">支払方法</label><select id="payM">' +
+      '<option value="バーツ振込">バーツ振込 8,000</option>' +
+      '<option value="日本円振込">日本円振込 42,000</option>' +
+      '<option value="ボイス受付払い">ボイス受付払い</option>' +
+    '</select></div>' +
+    '<div class="field"><label for="payD">入金日</label><input id="payD" type="date" value="' + TODAY + '"></div>';
+  openModal('10回チケットを追加', body, [
+    { label:'やめる', fn: closeModal },
+    { label:'10回追加', cls:'btn-primary', fn: function(){
+      var m = $('#payM').value, d = $('#payD').value || TODAY;
+      addTicketHistory(s, 10, '入金確認（' + m + '）', d);
+      closeModal();
+      toast(s.name + ' に10回追加（' + m + '・🎟 ' + s.tickets + '）', 'ok');
+      if (currentScreen === 'screen-student-detail') renderStudentDetail(s.id);
+      if (currentScreen === 'screen-dashboard') renderDashboard();
+      if (currentScreen === 'screen-students') renderStudents();
+    } }
+  ]);
+}
+function manualFixModal(id){
+  var s = studentById(id);
+  openModal('チケットを手動修正',
+    '<p><span class="strong">' + esc(s.name) + '</span>　🎟 ' + s.tickets + '</p>' +
+    '<div class="field"><label for="fixN">増減（マイナス可）</label><input id="fixN" type="number" value="1"></div>' +
+    '<div class="field"><label for="fixR">理由</label><input id="fixR" placeholder="例：英検かけ込み寺からの振替"></div>',
+    [
+      { label:'やめる', fn: closeModal },
+      { label:'修正する', cls:'btn-primary', fn: function(){
+        var n = parseInt($('#fixN').value, 10), r = $('#fixR').value.trim();
+        if (!n) { toast('増減を入力してください', 'warn'); return; }
+        if (!r) { toast('理由は必須です', 'warn'); return; }
+        addTicketHistory(s, n, '手動修正（' + r + '）');
+        closeModal();
+        toast('🎟 ' + s.tickets + ' に修正しました', 'ok');
+        renderStudentDetail(s.id);
+      } }
+    ]);
+}
+function detailCancel(uid){
+  var s = studentById(currentStudentId);
+  var u = null; s.upcoming.forEach(function(x){ if (x.uid === uid) u = x; });
+  if (!u) return;
+  var over = isOverdue(u.date, u.type), c = cost(u.type);
+  var msg = '<p><span class="strong">' + esc(s.name) + '</span>　' + typeIcon(u.type) + ' ' + jaDate(u.date) + ' ' + u.start + ' ' + esc(u.title) + '</p>' +
+    (over ? '<p>' + chip('b-danger', '⚠ 期限超過（' + deadlineOf(u.date, u.type).text + '）') + ' ' + chip('b-danger', '🎟 −' + c) + '</p>'
+          : '<p>' + chip('b-ok', '✓ 🎟 消費なし') + '</p>');
+  confirmModal('代理キャンセル', msg, 'キャンセルする', function(){
+    s.upcoming = s.upcoming.filter(function(x){ return x.uid !== uid; });
+    if (u.type === 'oneoff' && u.ref) state.oneoff.forEach(function(o){ if (o.id === u.ref) { var i = o.book.indexOf(s.id); if (i >= 0) o.book.splice(i, 1); } });
+    if (u.type === 'mono' && u.ref) state.mono.forEach(function(m){ if (m.id === u.ref) m.sid = null; });
+    if (u.type === 'regular') { var r = null; state.recurring.forEach(function(x){ if (x.dow === dowOf(u.date) && x.start === u.start) r = x; }); if (r) { var arr = regBook(r.id, u.date); var j = arr.indexOf(s.id); if (j >= 0) arr.splice(j, 1); } }
+    if (over) { addTicketHistory(s, -c, 'キャンセル期限超過によるキャンセル'); s.stats.lateCancel++; }
+    s.past.unshift({ date:u.date, title:u.title, type:u.type, status: over ? 'cancel_over' : 'cancel_in', at: TODAY + ' 21:10', comment:'管理者による代理キャンセル', score:'' });
+    toast(over ? 'キャンセルしました（🎟 −' + c + '）' : 'キャンセルしました（🎟 消費なし）', over ? 'warn' : 'ok');
+    renderStudentDetail(s.id);
+  }, over);
+}
+function editBasicModal(){
+  var s = studentById(currentStudentId);
+  var body =
+    '<div class="field"><label>氏名</label><input id="bName" value="' + esc(s.name) + '"></div>' +
+    '<div class="field"><label>かな</label><input id="bKana" value="' + esc(s.kana) + '"></div>' +
+    '<div class="field"><label>ローマ字</label><input id="bRoma" value="' + esc(s.romaji) + '"></div>' +
+    '<div class="field"><label>生年月日</label><input id="bBirth" type="date" value="' + esc(s.birth) + '"></div>' +
+    '<div class="field"><label>学校</label><input id="bSchool" value="' + esc(s.school) + '"></div>' +
+    '<div class="field"><label>学年</label><input id="bSG" value="' + esc(s.schoolGrade) + '"></div>' +
+    '<div class="field"><label>保護者</label><input id="bParent" value="' + esc(s.parent) + '"></div>' +
+    '<div class="field"><label>メール</label><input id="bMail" value="' + esc(s.email) + '"></div>' +
+    '<div class="field"><label>電話</label><input id="bPhone" value="' + esc(s.phone) + '"></div>' +
+    '<div class="field"><label>メンバーNo.</label><input id="bMember" value="' + esc(s.memberNo) + '"></div>' +
+    '<div class="field"><label>級</label><select id="bGrade">' + GRADES.map(function(g){ return '<option' + (g === s.grade ? ' selected' : '') + '>' + g + '</option>'; }).join('') + '</select></div>' +
+    '<div class="field"><label>クラス</label><select id="bClass">' + state.recurring.map(function(r){ return '<option value="' + r.id + '"' + (r.id === s.classId ? ' selected' : '') + '>' + esc(r.name) + '（' + DOW_JA[r.dow] + ' ' + r.start + '）</option>'; }).join('') + '</select></div>' +
+    '<div class="field"><label>受験回</label><input id="bTerm" value="' + esc(s.examTerm) + '"></div>' +
+    '<div class="field"><label>状態</label><select id="bActive"><option value="1"' + (s.active ? ' selected' : '') + '>受講中</option><option value="0"' + (!s.active ? ' selected' : '') + '>休会</option></select></div>';
+  openModal('基本情報を編集', body, [
+    { label:'やめる', fn: closeModal },
+    { label:'保存する', cls:'btn-primary', fn: function(){
+      s.name = $('#bName').value; s.kana = $('#bKana').value; s.romaji = $('#bRoma').value;
+      s.birth = $('#bBirth').value; s.school = $('#bSchool').value; s.schoolGrade = $('#bSG').value;
+      s.parent = $('#bParent').value; s.email = $('#bMail').value; s.phone = $('#bPhone').value;
+      s.memberNo = $('#bMember').value; s.grade = $('#bGrade').value; s.classId = $('#bClass').value;
+      s.examTerm = $('#bTerm').value; s.active = $('#bActive').value === '1';
+      closeModal(); renderStudentDetail(s.id); toast('基本情報を保存しました', 'ok');
+    } }
+  ]);
+}
+
+/* =========================================================
+   レッスン枠管理
+   ========================================================= */
+var lessonTab = 'regular';
+function renderLessons(){
+  var tabs = [
+    ['regular', '💻 定期'], ['closed', '🚫 休校日'], ['oneoff', '🏫 単発'], ['mono', '👤 個別']
+  ].map(function(t){ return '<button data-ltab="' + t[0] + '" class="' + (lessonTab === t[0] ? 'active' : '') + '">' + t[1] + '</button>'; }).join('');
+
+  var body = '';
+  if (lessonTab === 'regular') {
+    body = '<div class="card"><h3>💻 定期クラス <span class="badge b-muted">' + state.recurring.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th class="wrap">クラス</th><th>級</th><th>曜日</th><th>時間</th><th class="wrap">URL</th><th>操作</th></tr></thead><tbody>' +
+      state.recurring.map(function(r){
+        return '<tr><td class="wrap">' + esc(r.name) + '</td><td>' + esc(r.grade) + '</td><td>' + DOW_JA[r.dow] + '</td>' +
+          '<td>' + r.start + '–' + r.end + '</td><td class="wrap" style="word-break:break-all">' + esc(r.url) + '</td>' +
+          '<td><button class="btn btn-sm" data-editreg="' + r.id + '">編集</button> <button class="btn btn-sm btn-danger" data-delreg="' + r.id + '">削除</button></td></tr>';
+      }).join('') + '</tbody></table></div></div>' +
+      '<div class="card"><h3>クラスを追加</h3>' +
+        '<div class="grid grid-2">' +
+          '<div class="field"><label>クラス名</label><input id="nrName" placeholder="例：準2級プラスクラス"></div>' +
+          '<div class="field"><label>級</label><select id="nrGrade">' + GRADES.map(function(g){ return '<option>' + g + '</option>'; }).join('') + '</select></div>' +
+          '<div class="field"><label>曜日</label><select id="nrDow">' + [1,2,3,4,5,6,0].map(function(d){ return '<option value="' + d + '">' + DOW_JA[d] + '曜</option>'; }).join('') + '</select></div>' +
+          '<div class="field"><label>開始</label><input id="nrStart" value="17:00"></div>' +
+          '<div class="field"><label>終了</label><input id="nrEnd" value="17:50"></div>' +
+          '<div class="field"><label>URL</label><input id="nrUrl" placeholder="https://zoom.example.com/j/..."></div>' +
+        '</div><button class="btn btn-primary" data-addreg="1">登録する</button></div>';
+  }
+  if (lessonTab === 'closed') {
+    body = '<div class="card"><h3>🚫 休校日 <span class="badge b-muted">' + state.closedDays.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>日付</th><th class="wrap">理由</th><th class="wrap">対象クラス</th><th>操作</th></tr></thead><tbody>' +
+      (state.closedDays.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; }).map(function(c){
+        var affected = state.recurring.filter(function(r){ return r.dow === dowOf(c.date); }).map(function(r){ return r.name; }).join('、') || '（定期レッスンなし）';
+        return '<tr><td>' + jaFull(c.date) + '</td><td class="wrap">' + esc(c.reason) + '</td><td class="wrap">' + esc(affected) + '</td>' +
+          '<td><button class="btn btn-sm btn-danger" data-delclosed="' + c.date + '">削除</button></td></tr>';
+      }).join('') || '<tr><td colspan="4" class="muted">なし</td></tr>') + '</tbody></table></div></div>' +
+      '<div class="card"><h3>休校日を追加</h3>' +
+        '<div class="grid grid-2">' +
+          '<div class="field"><label>日付</label><input id="ncDate" type="date" value="2026-10-20"></div>' +
+          '<div class="field"><label>理由</label><input id="ncReason" placeholder="例：祝日のため休校"></div>' +
+        '</div><button class="btn btn-primary" data-addclosed="1">追加する</button></div>';
+  }
+  if (lessonTab === 'oneoff') {
+    body = '<div class="card"><h3>🏫 対面単発 <span class="badge b-muted">' + state.oneoff.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>日付</th><th>時間</th><th class="wrap">場所</th><th>予約</th><th>空き</th><th>待ち</th><th>操作</th></tr></thead><tbody>' +
+      state.oneoff.map(function(o){
+        return '<tr><td>' + jaFull(o.date) + '</td><td>' + o.start + '–' + o.end + '</td><td class="wrap">' + esc(o.place) + '</td>' +
+          '<td>' + o.book.length + ' / ' + o.cap + '</td>' +
+          '<td>' + seatChip(o.book.length, o.cap) + '</td>' +
+          '<td>' + (o.wait.length ? chip('b-wait', '⏳ ' + o.wait.length) : '—') + '</td>' +
+          '<td><button class="btn btn-sm" data-togglewait="' + o.id + '">⏳ 一覧</button> ' +
+          '<button class="btn btn-sm" data-open-lesson="one|' + o.id + '">詳細</button> ' +
+          '<button class="btn btn-sm btn-danger" data-deloneoff="' + o.id + '">削除</button></td></tr>' +
+          '<tr id="wait-' + o.id + '" style="display:none"><td colspan="7" class="wrap">' +
+            (o.wait.length
+              ? o.wait.map(function(w, i){
+                  return '<div class="rowitem"><div class="grow"><span class="rank">' + (i+1) + '</span> ' + esc(nameOf(w.sid)) +
+                    '<div class="tiny muted">' + esc(w.at) + '</div></div><button class="btn btn-sm" data-waitnotify="1">空席通知</button></div>';
+                }).join('')
+              : '<span class="muted small">なし</span>') +
+          '</td></tr>';
+      }).join('') + '</tbody></table></div></div>' +
+      '<div class="card"><h3>単発レッスンを追加</h3>' +
+        '<div class="grid grid-2">' +
+          '<div class="field"><label>日付</label><input id="noDate" type="date" value="2026-10-04"></div>' +
+          '<div class="field"><label>開始</label><input id="noStart" value="10:00"></div>' +
+          '<div class="field"><label>終了</label><input id="noEnd" value="11:30"></div>' +
+          '<div class="field"><label>場所</label><input id="noPlace" value="VOICE ホビークラブ 教室"></div>' +
+          '<div class="field"><label>定員</label><input id="noCap" type="number" min="1" value="6"></div>' +
+          '<div class="field"><label>メモ</label><input id="noNote" placeholder="例：全級合同・過去問演習"></div>' +
+        '</div><button class="btn btn-primary" data-addoneoff="1">作成する</button></div>';
+  }
+  if (lessonTab === 'mono') {
+    body = '<div class="card"><h3>👤 マンツーマン枠 <span class="badge b-mono">🎟 ×' + state.settings.mono.ticketCost + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th>日付</th><th>時間</th><th>種別</th><th>状態</th><th class="wrap">予約者</th><th>操作</th></tr></thead><tbody>' +
+      state.mono.map(function(m){
+        return '<tr><td>' + jaFull(m.date) + '</td><td>' + m.start + '–' + m.end + '</td>' +
+          '<td>' + chip('b-mono', m.kind) + '</td>' +
+          '<td>' + (m.sid ? chip('b-muted', '✅ 予約済') : chip('b-ok', '空き 1')) + '</td>' +
+          '<td class="wrap">' + (m.sid ? esc(nameOf(m.sid)) : '—') + '</td>' +
+          '<td><button class="btn btn-sm" data-open-lesson="mono|' + m.id + '">詳細</button> ' +
+          '<button class="btn btn-sm btn-danger" data-delmono="' + m.id + '">削除</button></td></tr>';
+      }).join('') + '</tbody></table></div></div>' +
+      '<div class="card"><h3>枠を追加</h3>' +
+        '<div class="grid grid-2">' +
+          '<div class="field"><label>日付</label><input id="nmDate" type="date" value="2026-09-26"></div>' +
+          '<div class="field"><label>開始</label><input id="nmStart" value="13:00"></div>' +
+          '<div class="field"><label>終了</label><input id="nmEnd" value="13:30"></div>' +
+          '<div class="field"><label>種別</label><select id="nmKind"><option value="W">ライティング</option><option value="S">スピーキング</option></select></div>' +
+        '</div><button class="btn btn-primary" data-addmono="1">作成する</button></div>';
+  }
+
+  $('#screen-lessons').innerHTML =
+    headHtml('レッスン枠管理', '', 'lessons') +
+    '<div class="tabs">' + tabs + '</div>' + body;
+}
+
+/* =========================================================
+   講座設定
+   ========================================================= */
+function renderSettings(){
+  var keys = ['regular', 'oneoff', 'mono'];
+  var cards = keys.map(function(k){
+    var s = state.settings[k];
+    return '<div class="card"><h3>' + typeBadge(k) + ' ' + esc(s.label) + '</h3>' +
+      '<div class="grid grid-2">' +
+        '<div class="field"><label>期限（日前）</label><input type="number" min="0" id="set-' + k + '-days" value="' + s.deadlineDays + '"></div>' +
+        '<div class="field"><label>期限（時刻）</label><input id="set-' + k + '-time" value="' + s.deadlineTime + '"></div>' +
+        '<div class="field"><label>🎟 消費</label><input type="number" min="0" id="set-' + k + '-cost" value="' + s.ticketCost + '"></div>' +
+        '<div class="field"><label>キャンセル待ち</label><select id="set-' + k + '-wait">' +
+          '<option value="1"' + (s.waitlist ? ' selected' : '') + '>ON</option>' +
+          '<option value="0"' + (!s.waitlist ? ' selected' : '') + '>OFF</option></select></div>' +
+        (k === 'mono' ?
+          '<div class="field"><label>上限 W</label><input type="number" min="0" id="set-mono-w" value="' + s.limitW + '"></div>' +
+          '<div class="field"><label>上限 S</label><input type="number" min="0" id="set-mono-s" value="' + s.limitS + '"></div>'
+          : '') +
+      '</div></div>';
+  }).join('');
+
+  $('#screen-settings').innerHTML =
+    headHtml('講座設定', '', 'settings') +
+    cards +
+    '<div class="card"><div class="btn-row"><button class="btn btn-primary" data-savesettings="1">保存する</button>' +
+    '<button class="btn" data-screen="screen-calendar">カレンダー</button></div></div>';
+}
+function saveSettings(){
+  ['regular','oneoff','mono'].forEach(function(k){
+    var s = state.settings[k];
+    s.deadlineDays = +$('#set-' + k + '-days').value;
+    s.deadlineTime = $('#set-' + k + '-time').value;
+    s.ticketCost = +$('#set-' + k + '-cost').value;
+    s.waitlist = $('#set-' + k + '-wait').value === '1';
+  });
+  state.settings.mono.limitW = +$('#set-mono-w').value;
+  state.settings.mono.limitS = +$('#set-mono-s').value;
+  renderSettings();
+  toast('講座設定を保存しました', 'ok');
+}
+
+/* =========================================================
+   レッスン結果入力
+   ========================================================= */
+var resultLessonKey = '';
+var resultDraft = {};
+function resultCandidates(){
+  var out = [];
+  for (var i = 7; i >= 0; i--) {
+    var ds = addDaysStr(TODAY, -i);
+    lessonsOn(ds).forEach(function(l){ if (l.type !== 'closed' && l.book.length) out.push(l); });
+  }
+  return out.reverse();
+}
+function renderResults(){
+  var list = resultCandidates();
+  if (!resultLessonKey && list.length) resultLessonKey = list[0].key;
+  var l = resultLessonKey ? getLesson(resultLessonKey) : null;
+
+  var options = list.map(function(x){
+    return '<option value="' + x.key + '"' + (x.key === resultLessonKey ? ' selected' : '') + '>' +
+      jaFull(x.date) + ' ' + x.start + ' ' + x.title + '（' + x.book.length + '名）</option>';
+  }).join('');
+
+  var rows = '';
+  if (l) {
+    rows = l.book.map(function(id){
+      var st = studentById(id);
+      var d = resultDraft[resultLessonKey + '::' + id] || { status:'attended', comment:'', score:'', saved:false };
+      return '<tr><td class="wrap"><span class="strong">' + esc(st.name) + '</span><div class="tiny">' + miniPunch(st) + '</div></td>' +
+        '<td><div class="seg">' +
+          '<button data-rst="' + id + '::attended" class="' + (d.status === 'attended' ? 'active' : '') + '">✅ 受講</button>' +
+          '<button data-rst="' + id + '::absent" class="' + (d.status === 'absent' ? 'active' : '') + '">✗ 欠席</button>' +
+        '</div><div style="margin-top:4px">' + chip(d.status === 'absent' ? 'b-danger' : 'b-muted', '🎟 −' + cost(l.type)) +
+          (d.saved ? ' ' + chip('b-ok', '保存済') : '') + '</div></td>' +
+        '<td class="wrap"><input data-rcm="' + id + '" value="' + esc(d.comment) + '" placeholder="コメント"></td>' +
+        '<td><input data-rsc="' + id + '" value="' + esc(d.score) + '" placeholder="点数"></td></tr>';
+    }).join('');
+  }
+
+  $('#screen-results').innerHTML =
+    headHtml('レッスン結果入力', '', 'results') +
+    '<div class="card">' +
+      '<div class="field"><label for="resSel">レッスン（今日〜過去1週間）</label><select id="resSel">' + (options || '<option>対象なし</option>') + '</select></div>' +
+      (l ? '<div class="kv">' + kv('日時', jaFull(l.date) + ' ' + l.start + '–' + l.end) +
+        '<div><div class="k">種別</div><div class="v">' + typeBadge(l.type) + '</div></div>' +
+        '<div><div class="k">🎟 消費</div><div class="v">−' + cost(l.type) + '</div></div></div>' : '') +
+    '</div>' +
+    (l ? '<div class="card"><h3>出席簿 <span class="badge b-muted">' + l.book.length + '</span></h3>' +
+      '<div class="table-wrap"><table><thead><tr><th class="wrap">生徒</th><th>出欠</th><th class="wrap">コメント</th><th>点数</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" data-saveresults="1">保存する</button></div></div>' : '');
+}
+function saveResults(){
+  var l = getLesson(resultLessonKey);
+  if (!l) return;
+  var absent = 0, attended = 0;
+  l.book.forEach(function(id){
+    var st = studentById(id);
+    var key = resultLessonKey + '::' + id;
+    var d = resultDraft[key] || { status:'attended', comment:'', score:'', saved:false };
+    var cm = $('[data-rcm="' + id + '"]'), sc = $('[data-rsc="' + id + '"]');
+    d.comment = cm ? cm.value : d.comment;
+    d.score = sc ? sc.value : d.score;
+    resultDraft[key] = d;
+    st.past = st.past.filter(function(p){ return !(p.date === l.date && p.title === l.title); });
+    st.past.unshift({ date:l.date, title:l.title, type:l.type, status:d.status, comment:d.comment, score:d.score });
+    st.past.sort(function(a,b){ return a.date < b.date ? 1 : -1; });
+    if (!d.saved) {
+      if (d.status === 'absent') {
+        absent++;
+        addTicketHistory(st, -cost(l.type), '欠席', l.date);
+        st.stats.absent++;
+      } else {
+        attended++;
+        addTicketHistory(st, -cost(l.type), 'レッスン受講（' + l.title + '）', l.date);
+        st.stats.term++; st.stats.total++;
+        st.lastAttended = l.date;
+      }
+      // 確定した回は「今後の予約」から外す
+      st.upcoming = st.upcoming.filter(function(u){ return !(u.date === l.date && u.start === l.start); });
+      d.saved = true;
+    }
+  });
+  renderResults();
+  toast('保存しました（✅ ' + attended + ' ・ ✗ ' + absent + '）', absent ? 'warn' : 'ok');
+}
+
+/* =========================================================
+   英検結果入力
+   ========================================================= */
+function renderEiken(preselect){
+  var sid = preselect || currentStudentId;
+  $('#screen-eiken').innerHTML =
+    headHtml('英検結果入力', '', 'eiken') +
+    '<div class="card">' +
+      '<div class="grid grid-2">' +
+        '<div class="field"><label for="ekS">生徒</label><select id="ekS">' +
+          state.students.map(function(s){ return '<option value="' + s.id + '"' + (s.id === sid ? ' selected' : '') + '>' + esc(s.name) + '（' + esc(s.grade) + '）</option>'; }).join('') + '</select></div>' +
+        '<div class="field"><label for="ekD">受験日</label><input id="ekD" type="date" value="2026-10-11"></div>' +
+        '<div class="field"><label for="ekG">受験級</label><select id="ekG">' + GRADES.map(function(g){ return '<option>' + g + '</option>'; }).join('') + '</select></div>' +
+        '<div class="field"><label for="ekP">合否</label><select id="ekP"><option>合格</option><option>不合格</option><option>一次合格</option><option>結果待ち</option></select></div>' +
+        '<div class="field"><label for="ekR">Reading</label><input id="ekR" placeholder="例：22/30"></div>' +
+        '<div class="field"><label for="ekL">Listening</label><input id="ekL" placeholder="例：24/30"></div>' +
+        '<div class="field"><label for="ekW">Writing</label><input id="ekW" placeholder="例：12/16"></div>' +
+        '<div class="field"><label for="ekSp">Speaking</label><input id="ekSp" placeholder="例：25/33"></div>' +
+        '<div class="field"><label for="ekC">CSE</label><input id="ekC" placeholder="例：1610"></div>' +
+      '</div>' +
+      '<div class="field"><label for="ekM">メモ</label><textarea id="ekM" placeholder="所感・次回の課題"></textarea></div>' +
+      '<div class="btn-row"><button class="btn btn-primary" data-saveeiken="1">保存する</button>' +
+      '<button class="btn" data-goto-student="' + sid + '">生徒詳細</button></div>' +
+    '</div>';
+}
+function saveEiken(){
+  var sid = $('#ekS').value, s = studentById(sid);
+  var rec = {
+    date: $('#ekD').value || TODAY, grade: $('#ekG').value, pass: $('#ekP').value,
+    r: $('#ekR').value || '—', l: $('#ekL').value || '—', w: $('#ekW').value || '—',
+    s: $('#ekSp').value || '—', cse: $('#ekC').value || '—', memo: $('#ekM').value
+  };
+  s.eiken.unshift(rec);
+  toast(s.name + ' の英検結果を保存しました', 'ok');
+  showScreen('screen-student-detail', sid);
+}
+
+/* =========================================================
+   イベント委譲
+   ========================================================= */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  var el;
+
+  if ((el = t.closest('[data-help]'))) { openHelp(el.getAttribute('data-help')); return; }
+  if ((el = t.closest('[data-expand]'))) { var ek = el.getAttribute('data-expand'); detailExpand[ek] = !detailExpand[ek]; renderStudentDetail(currentStudentId); return; }
+  if ((el = t.closest('[data-quick-add]'))) { e.stopPropagation(); add10Modal(el.getAttribute('data-quick-add')); return; }
+  if ((el = t.closest('[data-screen]'))) { showScreen(el.getAttribute('data-screen')); return; }
+  if ((el = t.closest('[data-goto-student]'))) { showScreen('screen-student-detail', el.getAttribute('data-goto-student')); return; }
+  if ((el = t.closest('[data-open-lesson]'))) { openLessonModal(el.getAttribute('data-open-lesson')); return; }
+  if ((el = t.closest('[data-add10]'))) { add10Modal(el.getAttribute('data-add10')); return; }
+  if ((el = t.closest('[data-manualfix]'))) { manualFixModal(el.getAttribute('data-manualfix')); return; }
+  if ((el = t.closest('[data-detcancel]'))) { detailCancel(el.getAttribute('data-detcancel')); return; }
+  if ((el = t.closest('[data-editbasic]'))) { editBasicModal(); return; }
+  if ((el = t.closest('[data-savememo]'))) {
+    var st = studentById(el.getAttribute('data-savememo')); st.memo = $('#adminMemo').value; toast('管理者メモを保存しました', 'ok'); return;
+  }
+  if ((el = t.closest('[data-addeiken]'))) { showScreen('screen-eiken', el.getAttribute('data-addeiken')); return; }
+  if ((el = t.closest('[data-saveeiken]'))) { saveEiken(); return; }
+  if ((el = t.closest('[data-cancel]'))) { proxyCancel(el.getAttribute('data-cancel')); return; }
+  if ((el = t.closest('[data-proxyadd]'))) { proxyAdd(el.getAttribute('data-proxyadd')); return; }
+  if ((el = t.closest('[data-editlesson]'))) { editLessonModal(el.getAttribute('data-editlesson')); return; }
+  if ((el = t.closest('[data-dellesson]'))) { closeModal(); deleteLesson(el.getAttribute('data-dellesson')); return; }
+  if ((el = t.closest('[data-waitnotify]'))) { toast('空席通知メールを再送しました', 'ok'); return; }
+  if ((el = t.closest('[data-export]'))) { toast('モックのため出力しません', 'warn'); return; }
+  if ((el = t.closest('[data-import]'))) { toast('モックのため取り込みません', 'warn'); return; }
+
+  if ((el = t.closest('[data-cal]'))) { calView = el.getAttribute('data-cal'); renderCalendar(); return; }
+  if ((el = t.closest('[data-calmode]'))) { calMode = el.getAttribute('data-calmode'); renderCalendar(); return; }
+  if ((el = t.closest('[data-newslot]'))) {
+    var ns = el.getAttribute('data-newslot').split('|');
+    newSlotModal(ns[0], ns[1]); return;
+  }
+  if ((el = t.closest('[data-calfilter]'))) { calFilter = el.getAttribute('data-calfilter'); renderCalendar(); return; }
+  if ((el = t.closest('[data-week]'))) { weekStart = addDaysStr(weekStart, 7 * +el.getAttribute('data-week')); renderCalendar(); return; }
+  if ((el = t.closest('[data-day]'))) { dayDate = addDaysStr(dayDate, +el.getAttribute('data-day')); renderCalendar(); return; }
+  if ((el = t.closest('[data-month]'))) {
+    var d = parseD(monthAnchor); d.setMonth(d.getMonth() + (+el.getAttribute('data-month'))); monthAnchor = fmtD(new Date(d.getFullYear(), d.getMonth(), 1)); renderCalendar(); return;
+  }
+  if ((el = t.closest('[data-daypick]'))) { dayDate = el.getAttribute('data-daypick'); calView = 'day'; renderCalendar(); return; }
+
+  if ((el = t.closest('[data-sort]'))) {
+    var col = el.getAttribute('data-sort');
+    if (listSort.col === col) listSort.dir *= -1; else { listSort.col = col; listSort.dir = 1; }
+    renderStudents(); return;
+  }
+  if ((el = t.closest('[data-ltab]'))) { lessonTab = el.getAttribute('data-ltab'); renderLessons(); return; }
+  if ((el = t.closest('[data-togglewait]'))) {
+    var row = $('#wait-' + el.getAttribute('data-togglewait'));
+    if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+    return;
+  }
+  if ((el = t.closest('[data-addreg]'))) {
+    var nm = $('#nrName').value.trim();
+    if (!nm) { toast('クラス名を入力してください', 'warn'); return; }
+    var nid = 'r' + Date.now();
+    state.recurring.push({ id:nid, name:nm, grade:$('#nrGrade').value, dow:+$('#nrDow').value, start:$('#nrStart').value, end:$('#nrEnd').value, url:$('#nrUrl').value || 'https://zoom.example.com/j/new' });
+    state.defaultRoster[nid] = [];
+    renderLessons(); toast('定期クラスを登録しました', 'ok'); return;
+  }
+  if ((el = t.closest('[data-editreg]'))) { openLessonModalForRecurring(el.getAttribute('data-editreg')); return; }
+  if ((el = t.closest('[data-delreg]'))) {
+    var rid = el.getAttribute('data-delreg'), r0 = recurringById(rid);
+    confirmModal('定期クラスを削除', '<p>💻 ' + esc(r0.name) + '</p><p>' + chip('b-danger', '今後の開催がすべてなくなります') + '</p>', '削除する', function(){
+      state.recurring = state.recurring.filter(function(x){ return x.id !== rid; });
+      renderLessons(); toast('定期クラスを削除しました', 'warn');
+    }, true); return;
+  }
+  if ((el = t.closest('[data-addclosed]'))) {
+    var cd = $('#ncDate').value;
+    if (!cd) { toast('日付を選んでください', 'warn'); return; }
+    if (isClosed(cd)) { toast('すでに休校日として登録されています', 'warn'); return; }
+    state.closedDays.push({ date: cd, reason: $('#ncReason').value.trim() || '休校' });
+    renderLessons(); toast(jaFull(cd) + ' を休校日に設定しました', 'ok'); return;
+  }
+  if ((el = t.closest('[data-delclosed]'))) {
+    var dd = el.getAttribute('data-delclosed');
+    state.closedDays = state.closedDays.filter(function(c){ return c.date !== dd; });
+    renderLessons(); toast('休校日を削除しました', 'ok'); return;
+  }
+  if ((el = t.closest('[data-addoneoff]'))) {
+    var od = $('#noDate').value;
+    if (!od) { toast('日付を選んでください', 'warn'); return; }
+    state.oneoff.push({ id:'o' + Date.now(), date:od, start:$('#noStart').value, end:$('#noEnd').value, place:$('#noPlace').value, cap:+$('#noCap').value || 1, note:$('#noNote').value, book:[], wait:[] });
+    state.oneoff.sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+    renderLessons(); toast('単発レッスンを作成しました', 'ok'); return;
+  }
+  if ((el = t.closest('[data-deloneoff]'))) {
+    var oid = el.getAttribute('data-deloneoff');
+    confirmModal('単発レッスンを削除', '<p>🏫 この単発レッスンを削除</p><p>' + chip('b-warn', '予約者へ通知メール') + '</p>', '削除する', function(){
+      state.oneoff = state.oneoff.filter(function(o){ return o.id !== oid; });
+      renderLessons(); toast('単発レッスンを削除しました', 'warn');
+    }, true); return;
+  }
+  if ((el = t.closest('[data-addmono]'))) {
+    var md = $('#nmDate').value;
+    if (!md) { toast('日付を選んでください', 'warn'); return; }
+    state.mono.push({ id:'m' + Date.now(), date:md, start:$('#nmStart').value, end:$('#nmEnd').value, kind:$('#nmKind').value, sid:null });
+    state.mono.sort(function(a,b){ return (a.date + a.start) < (b.date + b.start) ? -1 : 1; });
+    renderLessons(); toast('マンツーマン枠を作成しました', 'ok'); return;
+  }
+  if ((el = t.closest('[data-delmono]'))) {
+    var mid = el.getAttribute('data-delmono');
+    confirmModal('マンツーマン枠を削除', '<p>👤 この枠を削除</p>', '削除する', function(){
+      state.mono = state.mono.filter(function(m){ return m.id !== mid; });
+      renderLessons(); toast('マンツーマン枠を削除しました', 'warn');
+    }, true); return;
+  }
+  if ((el = t.closest('[data-savesettings]'))) { saveSettings(); return; }
+  if ((el = t.closest('[data-rst]'))) {
+    var pp = el.getAttribute('data-rst').split('::');
+    var k2 = resultLessonKey + '::' + pp[0];
+    var cm2 = $('[data-rcm="' + pp[0] + '"]'), sc2 = $('[data-rsc="' + pp[0] + '"]');
+    var prev = resultDraft[k2] || {};
+    resultDraft[k2] = { status: pp[1], comment: cm2 ? cm2.value : '', score: sc2 ? sc2.value : '', saved: !!prev.saved };
+    renderResults(); return;
+  }
+  if ((el = t.closest('[data-saveresults]'))) { saveResults(); return; }
+});
+
+/* 定期クラスの編集（レッスン枠管理タブから） */
+function openLessonModalForRecurring(rid){
+  var r = recurringById(rid);
+  openModal('定期クラスを編集',
+    '<div class="field"><label>クラス名</label><input id="erName" value="' + esc(r.name) + '"></div>' +
+    '<div class="field"><label>級</label><select id="erGrade">' + GRADES.map(function(g){ return '<option' + (g === r.grade ? ' selected' : '') + '>' + g + '</option>'; }).join('') + '</select></div>' +
+    '<div class="field"><label>曜日</label><select id="erDow">' + [1,2,3,4,5,6,0].map(function(d){ return '<option value="' + d + '"' + (d === r.dow ? ' selected' : '') + '>' + DOW_JA[d] + '曜</option>'; }).join('') + '</select></div>' +
+    '<div class="field"><label>開始時刻</label><input id="erStart" value="' + r.start + '"></div>' +
+    '<div class="field"><label>終了時刻</label><input id="erEnd" value="' + r.end + '"></div>' +
+    '<div class="field"><label>オンラインURL</label><input id="erUrl" value="' + esc(r.url) + '"></div>',
+    [
+      { label:'やめる', fn: closeModal },
+      { label:'保存', cls:'btn-primary', fn: function(){
+        r.name = $('#erName').value; r.grade = $('#erGrade').value; r.dow = +$('#erDow').value;
+        r.start = $('#erStart').value; r.end = $('#erEnd').value; r.url = $('#erUrl').value;
+        closeModal(); renderLessons(); toast('定期クラスを更新しました', 'ok');
+      } }
+    ]);
+}
+
+/* input / select 変更 */
+document.addEventListener('input', function(e){
+  if (e.target.id === 'fq') { listFilter.q = e.target.value; var pos = e.target.selectionStart; renderStudents(); var f = $('#fq'); if (f) { f.focus(); f.setSelectionRange(pos, pos); } }
+});
+document.addEventListener('change', function(e){
+  if (e.target.id === 'fg') { listFilter.grade = e.target.value; renderStudents(); }
+  if (e.target.id === 'fs') { listFilter.status = e.target.value; renderStudents(); }
+  if (e.target.id === 'resSel') { resultLessonKey = e.target.value; renderResults(); }
+  if (e.target.id === 'nsType') { updateNewSlotFields(); }
+});
+
+/* ログイン / ログアウト / メニュー */
+$('#btnLogin').addEventListener('click', function(){
+  $('#screen-login').classList.remove('on');
+  $('#app').classList.add('on');
+  showScreen('screen-dashboard');
+});
+$('#btnLogout').addEventListener('click', function(){
+  confirmModal('ログアウト', '<p>管理画面からログアウトします</p>', 'ログアウト', function(){
+    $('#app').classList.remove('on');
+    $('#screen-login').classList.add('on');
+    toast('ログアウトしました');
+  });
+});
+$('#btnMenu').addEventListener('click', function(){ $('#sidebar').classList.toggle('open'); });
+
+buildNav();
+</script>
+</body>
+</html>

@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Achieve English Gym 予約システム（生徒・保護者側モック v4）</title>
+<style>
+:root{
+  /* ===== v4 テーマトークン（既存サイト voicehobbyclub の黄色トーンに準拠） ===== */
+  --brand:#FBF36A;        /* ヒーロー黄 */
+  --brand-deep:#F5C400;   /* 黄の濃い側 */
+  --brand-soft:#FDEFC9;   /* セクション背景 */
+  --bg:#FFFBEA; --card:#FFFFFF;
+  --ink:#222222; --text:#222222; --muted:#6B6B6B; --border:#EADFB0;
+  --pink:#F78DA7; --pink-soft:#FFE0E8; --pink-ink:#B03A5B;
+  --orange:#FF6A00; --orange-soft:#FFF1E0; --orange-ink:#A83E00;
+  --danger:#CF2D2D; --danger-soft:#FBC9C9;
+  --success:#3C8A2E; --success-soft:#E9FBC4;
+  --sky:#5B8DD6; --sky-soft:#BCD5F3; --sky-ink:#2F5FA8;
+  --type-online:#5B8DD6; --type-onsite:#3C8A2E; --type-private:#9B51E0;
+  --purple:#9B51E0; --purple-soft:#F0E4FB; --purple-ink:#6E2FA8;
+  --neutral-soft:#EEEEEE; --neutral-ink:#666666;
+  --line:#E7E0C6;
+  --radius:14px;
+  /* 旧トークン互換（インライン参照用） */
+  --primary:#222222; --primary-soft:#FDEFC9; --accent:#FF6A00;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+  font-size:15px; line-height:1.55; -webkit-text-size-adjust:100%;
+  word-break:break-word; overflow-wrap:anywhere;
+}
+img,svg{max-width:100%;height:auto;}
+button{font-family:inherit;font-size:inherit;cursor:pointer;}
+input,select{font-family:inherit;font-size:16px;}
+
+.app{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;padding-bottom:84px;position:relative;}
+
+/* ---------- header ---------- */
+.hd{position:sticky;top:0;z-index:20;background:var(--brand);color:var(--ink);padding:9px 12px;display:flex;align-items:center;gap:8px;border-bottom:3px solid var(--brand-deep);}
+.hd .brand{flex:1;min-width:0;}
+.hd .brand b{display:block;font-size:16px;font-weight:900;line-height:1.15;letter-spacing:-.02em;color:var(--ink);}
+.hd .mock{display:inline-block;margin-top:3px;background:rgba(34,34,34,.10);border:1px solid var(--ink);border-radius:999px;padding:0 7px;font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--ink);}
+.hd .who{background:#fff;border:2px solid var(--ink);color:var(--ink);border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800;white-space:nowrap;min-height:36px;}
+.hd .out{background:#fff;border:2px solid var(--ink);color:var(--ink);border-radius:999px;width:36px;height:36px;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;}
+.hd .out[hidden]{display:none;}
+
+main{padding:12px 12px 8px;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ---------- typography ---------- */
+.hrow{display:flex;align-items:center;gap:8px;margin:2px 0 12px;}
+h2.title{font-size:21px;font-weight:900;letter-spacing:-.01em;margin:0;flex:1;color:var(--ink);}
+h3.sub{font-size:13px;margin:16px 0 8px;color:var(--ink);font-weight:800;letter-spacing:.01em;}
+.subrow{display:flex;align-items:baseline;gap:8px;margin:16px 0 8px;}
+.subrow h3.sub{margin:0;flex:1;}
+.muted{color:var(--muted);}
+.tiny{font-size:11.5px;}
+.small{font-size:12.5px;}
+.mt6{margin-top:6px;} .mt10{margin-top:10px;} .mt14{margin-top:14px;}
+.help{width:32px;height:32px;flex:none;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-weight:900;font-size:14px;line-height:1;}
+.more{background:none;border:0;color:var(--ink);font-weight:800;font-size:12.5px;padding:4px 2px;white-space:nowrap;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px;text-decoration-color:var(--brand-deep);}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.card.tight{padding:11px 12px;}
+.card.tkt{background:var(--brand-soft);border-color:var(--brand-deep);}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.hr{height:1px;background:var(--border);margin:12px 0;}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink);font-weight:800;}
+.btn.pri{background:var(--brand);border-color:var(--ink);color:var(--ink);font-weight:900;}
+.btn.pri:hover,.btn.pri:active{background:var(--brand-deep);}
+.btn.warn{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:900;}
+.btn.dgr{background:#fff;border-color:var(--danger);color:var(--danger);}
+.btn.dgrf{background:var(--danger);border-color:var(--danger);color:#fff;}
+.btn.block{display:flex;width:100%;}
+.btn.sm{min-height:36px;padding:5px 11px;font-size:12.5px;}
+.btn.xs{min-height:32px;padding:4px 10px;font-size:12px;}
+.btn[disabled]{opacity:.4;cursor:not-allowed;}
+.linkbtn{background:none;border:0;color:var(--ink);font-weight:800;padding:8px 4px;font-size:13px;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px;text-decoration-color:var(--brand-deep);}
+
+/* ---------- segmented ---------- */
+.seg{display:flex;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:3px;gap:3px;}
+.seg button{flex:1;min-height:40px;border:0;background:transparent;border-radius:999px;color:var(--muted);font-weight:700;font-size:13px;padding:6px 2px;white-space:nowrap;}
+.seg button.on{background:var(--brand);color:var(--ink);font-weight:900;box-shadow:inset 0 0 0 1.5px var(--ink);}
+.seg.sm button{min-height:32px;font-size:12px;}
+
+/* ---------- child avatar chips ---------- */
+.avrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.av{display:inline-flex;align-items:center;gap:7px;border:2px solid var(--border);background:#fff;border-radius:999px;padding:6px 14px 6px 4px;min-height:40px;color:var(--muted);font-weight:700;font-size:13.5px;}
+.av .ini{width:11px;height:11px;border-radius:999px;background:#D9D2B4;flex:none;margin-left:7px;}
+.av .lv{font-size:11px;font-weight:700;opacity:.75;}
+.av.on{border-color:var(--ink);background:var(--brand);color:var(--ink);font-weight:900;}
+.av.on .ini{background:var(--ink);}
+
+/* ---------- chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:3px;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;white-space:nowrap;}
+.c-ok{background:var(--neutral-soft);color:var(--neutral-ink);}
+.c-wait{background:var(--pink-soft);color:var(--pink-ink);}
+.c-off{background:var(--neutral-soft);color:var(--neutral-ink);}
+.c-free{background:var(--success-soft);color:#2E6B23;}
+.c-dgr{background:var(--danger-soft);color:var(--danger);}
+.c-w{background:var(--purple-soft);color:var(--purple-ink);}
+.c-s{background:var(--pink-soft);color:var(--pink-ink);}
+
+/* ---------- punch card ---------- */
+.pcard{display:flex;align-items:center;gap:8px;}
+.punch{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;flex:1;min-width:0;--pc:var(--ink);}
+.punch[data-s="mid"]{--pc:var(--orange);}
+.punch[data-s="low"]{--pc:var(--danger);}
+.pu{height:26px;border-radius:7px;border:1.5px dashed var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:9.5px;line-height:1;}
+.pu.on{border:1.5px solid var(--pc);background:var(--brand);}
+.pu.on::after{content:'\1F39F';opacity:.8;}
+.pu.hold{border:1.5px solid var(--pc);background:repeating-linear-gradient(45deg,var(--brand),var(--brand) 3px,#fff 3px,#fff 6px);}
+.pnum{font-size:34px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink);}
+.pnum[data-s="mid"]{color:var(--orange);} .pnum[data-s="low"]{color:var(--danger);}
+.punit{font-size:12px;font-weight:800;color:var(--muted);margin-left:2px;}
+.plus{background:var(--brand);color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:1px 7px;font-size:11px;font-weight:900;}
+
+/* ---------- banner ---------- */
+.banner{display:flex;align-items:center;gap:8px;background:var(--orange-soft);border:2px solid var(--orange);border-radius:12px;padding:9px 10px;margin-bottom:12px;}
+.banner .bt{flex:1;min-width:0;font-size:13px;font-weight:800;color:var(--orange-ink);}
+.banner.warn{background:var(--brand-soft);border-color:var(--brand-deep);}
+.banner.warn .bt{color:var(--ink);}
+
+/* ---------- date block + rows ---------- */
+.dbk{width:40px;flex:none;text-align:center;border-radius:9px;background:var(--brand-soft);padding:3px 0 4px;}
+.dbk .wd{font-size:10px;font-weight:800;color:#5A5A5A;line-height:1.2;}
+.dbk .dd{font-size:19px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--ink);}
+.dbk.sat .wd{color:var(--sky-ink);} .dbk.sun .wd{color:var(--danger);}
+.dbk.lg{width:48px;} .dbk.lg .dd{font-size:24px;}
+
+.lrow{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:9px 10px;margin-bottom:8px;min-height:56px;width:100%;text-align:left;color:inherit;font-size:15px;}
+.lrow.off{background:#F7F4E8;color:#9C9584;}
+.lrow.off .dbk{background:#EFEADA;}
+.lrow.off .dbk .dd{color:#9C9584;}
+.lrow .mid{flex:1;min-width:0;}
+.lrow .t{font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lrow .m{font-size:11.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lrow .m.dgr{color:var(--danger);font-weight:800;}
+.lrow .rt{display:flex;align-items:center;gap:6px;flex:none;}
+.lrow.tap::after{content:'\203A';color:#C9BF95;font-size:18px;flex:none;line-height:1;}
+.hero{border:2px solid var(--ink);background:#fff;box-shadow:0 3px 0 var(--brand-deep);}
+.hero .dbk{background:var(--brand);}
+.hero .t{font-size:16px;}
+
+/* ---------- mono gauge ---------- */
+.gauge{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12.5px;font-weight:700;}
+.gauge .g{display:inline-flex;align-items:center;gap:5px;}
+.gauge .dots{display:inline-flex;gap:3px;}
+.gd{width:9px;height:9px;border-radius:99px;background:var(--line);display:inline-block;}
+.gd.on{background:var(--purple);}
+.gauge .n{color:var(--muted);font-variant-numeric:tabular-nums;}
+
+/* ---------- calendar ---------- */
+.cal{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:10px;}
+.cal .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal .dw{text-align:center;font-size:11px;color:var(--muted);padding:2px 0;font-weight:800;}
+.cal .dw.sun{color:var(--danger);} .cal .dw.sat{color:var(--sky-ink);}
+.cell{border:1px solid transparent;border-radius:8px;min-height:44px;padding:3px 2px 2px;background:#fff;text-align:center;font-size:12px;font-variant-numeric:tabular-nums;}
+.cell.has{border-color:var(--border);}
+.cell.tap{cursor:pointer;}
+.cell.on{background:var(--brand);border-color:var(--ink);font-weight:900;}
+.cell.today{outline:2px solid var(--ink);outline-offset:-2px;}
+.cell .dots{display:flex;gap:2px;justify-content:center;margin-top:3px;flex-wrap:wrap;}
+.dot{width:6px;height:6px;border-radius:99px;display:inline-block;}
+.dot.reg{background:var(--type-online);} .dot.sgl{background:var(--type-onsite);} .dot.mono{background:var(--type-private);}
+.cell .xx{font-size:9.5px;color:var(--muted);display:block;line-height:1.2;}
+.cell.empty{background:transparent;border-color:transparent;}
+
+/* ---------- forms ---------- */
+label.f{display:block;margin-bottom:10px;}
+label.f span{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px;font-weight:800;}
+label.f input,label.f select{width:100%;min-height:44px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--ink);}
+label.f input:focus,label.f select:focus{outline:2px solid var(--brand-deep);outline-offset:1px;}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13.5px;}
+.kv:last-child{border-bottom:0;}
+.kv b{font-weight:800;text-align:right;font-variant-numeric:tabular-nums;}
+.kv span{color:var(--muted);font-size:12.5px;white-space:nowrap;}
+
+/* ---------- bottom nav ---------- */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:2px solid var(--ink);display:flex;z-index:30;padding-bottom:env(safe-area-inset-bottom);}
+.bnav button{flex:1;border:0;background:none;padding:7px 2px 9px;color:var(--muted);font-size:10.5px;font-weight:800;min-height:56px;}
+.bnav button .ic{display:block;font-size:19px;line-height:1.25;}
+.bnav button.on{color:var(--ink);box-shadow:inset 0 -4px 0 var(--brand-deep);}
+body.nonav .bnav{display:none;}
+body.nonav .app{padding-bottom:12px;}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:60;width:calc(100% - 32px);max-width:440px;pointer-events:none;}
+.toast{background:var(--ink);color:#fff;border-radius:10px;padding:11px 14px;font-size:13px;margin-top:8px;box-shadow:0 6px 18px rgba(0,0,0,.22);}
+
+/* ---------- bottom sheet ---------- */
+#modal{position:fixed;inset:0;z-index:70;background:rgba(34,34,34,.45);display:none;align-items:flex-end;justify-content:center;}
+#modal.on{display:flex;}
+.mbox{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:8px 16px 18px;max-height:88vh;overflow-y:auto;border-top:3px solid var(--brand-deep);}
+.grab{width:38px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 10px;}
+.mbox h4{margin:0 0 10px;font-size:17px;font-weight:900;color:var(--ink);}
+.mbox .mbody{font-size:13.5px;}
+.mbox .macts{display:flex;gap:8px;margin-top:16px;}
+.mbox .macts .btn{flex:1;}
+.mbox ul{margin:0;padding-left:18px;}
+.mbox ul li{margin-bottom:6px;}
+.line{display:flex;align-items:center;gap:7px;border-radius:10px;padding:9px 11px;font-size:13px;font-weight:700;}
+.line.ok{background:var(--success-soft);color:#2E6B23;}
+.line.bad{background:var(--danger-soft);color:var(--danger);}
+.line.info{background:var(--brand-soft);color:var(--ink);font-weight:700;}
+details{font-size:12.5px;}
+details summary{color:var(--ink);font-weight:800;cursor:pointer;padding:4px 0;list-style:none;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px;text-decoration-color:var(--brand-deep);}
+details summary::-webkit-details-marker{display:none;}
+details .cm{color:var(--muted);padding:2px 0 4px;}
+.bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;}
+.bar i{display:block;height:100%;background:var(--brand-deep);}
+.sk{display:grid;grid-template-columns:22px 1fr 56px;gap:8px;align-items:center;font-size:12px;margin-bottom:7px;}
+.sk .lb{font-weight:900;color:var(--ink);}
+.sk .vv{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="hd">
+    <div class="brand"><b>Achieve English Gym</b><span class="mock">モック画面</span></div>
+    <button class="who" id="hdWho" onclick="go('screen-account')" hidden>保護者名</button>
+    <button class="out" id="hdOut" onclick="logout()" hidden aria-label="ログアウト">⏻</button>
+  </header>
+
+  <main>
+
+  <!-- ============ LOGIN ============ -->
+  <section id="screen-login" class="screen active">
+    <div class="hrow"><h2 class="title">ログイン</h2></div>
+    <div class="card">
+      <label class="f"><span>メールアドレス</span><input id="inEmail" type="email" value="sato.misaki@example.com" autocomplete="username"></label>
+      <label class="f"><span>パスワード</span><input id="inPw" type="password" value="mockpassword" autocomplete="current-password"></label>
+      <button class="btn pri block" onclick="login()">ログイン</button>
+      <div style="text-align:center"><button class="linkbtn" onclick="toast('モック画面のため、メールは送信されません')">パスワードを忘れた方</button></div>
+    </div>
+    <div class="tiny muted" style="text-align:center">保護者アカウント1つで兄弟・姉妹をまとめて管理</div>
+  </section>
+
+  <!-- ============ HOME ============ -->
+  <section id="screen-home" class="screen">
+    <div class="hrow"><h2 class="title">ホーム</h2><button class="help" onclick="helpSheet('home')">?</button></div>
+    <div class="avrow" id="childSeg"></div>
+    <div id="homeBody"></div>
+  </section>
+
+  <!-- ============ ACCOUNT ============ -->
+  <section id="screen-account" class="screen">
+    <div class="hrow"><h2 class="title">アカウント</h2><button class="help" onclick="helpSheet('account')">?</button></div>
+    <div id="accountBody"></div>
+  </section>
+
+  <!-- ============ LESSONS ============ -->
+  <section id="screen-lessons" class="screen">
+    <div class="hrow"><h2 class="title">予約する</h2><button class="help" onclick="helpSheet('lessons')">?</button></div>
+    <div class="avrow" id="childSeg4"></div>
+    <div class="seg" id="typeSeg">
+      <button data-t="regular" onclick="setType('regular')">💻 オンライン</button>
+      <button data-t="single" onclick="setType('single')">🏫 対面</button>
+      <button data-t="mono" onclick="setType('mono')">👤 個別</button>
+    </div>
+    <div class="seg sm mt10" id="viewSeg" style="max-width:200px">
+      <button data-v="list" onclick="setView('list')">一覧</button>
+      <button data-v="cal" onclick="setView('cal')">カレンダー</button>
+    </div>
+    <div id="lessonBody" class="mt10"></div>
+  </section>
+
+  <!-- ============ CONFIRM ============ -->
+  <section id="screen-confirm" class="screen">
+    <div class="hrow"><h2 class="title">予約内容</h2></div>
+    <div id="confirmBody"></div>
+  </section>
+
+  <!-- ============ RESERVATIONS ============ -->
+  <section id="screen-reservations" class="screen">
+    <div class="hrow"><h2 class="title">予約一覧</h2><button class="help" onclick="helpSheet('res')">?</button></div>
+    <div class="avrow" id="childSeg2"></div>
+    <div id="resBody"></div>
+  </section>
+
+  <!-- ============ HISTORY ============ -->
+  <section id="screen-history" class="screen">
+    <div class="hrow"><h2 class="title">履歴</h2><button class="help" onclick="helpSheet('hist')">?</button></div>
+    <div class="avrow" id="childSeg3"></div>
+    <div class="seg sm" id="histSeg">
+      <button data-h="lessons" onclick="setHist('lessons')">受講</button>
+      <button data-h="tickets" onclick="setHist('tickets')">チケット</button>
+      <button data-h="eiken" onclick="setHist('eiken')">英検</button>
+    </div>
+    <div id="histBody" class="mt10"></div>
+  </section>
+
+  </main>
+
+  <nav class="bnav" id="bnav">
+    <button data-nav="screen-home" onclick="go('screen-home')"><span class="ic">🏠</span>ホーム</button>
+    <button data-nav="screen-lessons" onclick="go('screen-lessons')"><span class="ic">📅</span>予約する</button>
+    <button data-nav="screen-reservations" onclick="go('screen-reservations')"><span class="ic">📝</span>予約一覧</button>
+    <button data-nav="screen-history" onclick="go('screen-history')"><span class="ic">📚</span>履歴</button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+<div id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="mbox">
+    <div class="grab"></div>
+    <h4 id="mTitle"></h4>
+    <div class="mbody" id="mBody"></div>
+    <div class="macts" id="mActs"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   モック用ダミーデータ（実データではありません）
+   モック内の「今日」= 2026-09-01（火）21:00（バンコク時間 ICT）
+   ========================================================= */
+var NOW = new Date(2026, 8, 1, 21, 0, 0);
+var WDJ = ['日','月','火','水','木','金','土'];
+
+var TYPE = {
+  regular:{label:'オンライン', icon:'💻', cls:'b-reg', cost:1, dlDays:1, dlText:'前日 20:00 まで'},
+  single :{label:'対面',       icon:'🏫', cls:'b-sgl', cost:1, dlDays:3, dlText:'3日前 20:00 まで'},
+  mono   :{label:'個別',       icon:'👤', cls:'b-mono',cost:2, dlDays:1, dlText:'前日 20:00 まで'}
+};
+
+var LEVELS = ['5級','4級','3級','準2級','準2級プラス','2級','準1級'];
+
+var parent = {
+  name:'佐藤 美咲', kana:'さとう みさき', email:'sato.misaki@example.com',
+  tel:'080-xxxx-1234', memberNo:'V-01234'
+};
+
+var children = [
+  { id:'c1', name:'佐藤 陽菜', short:'陽菜', kana:'さとう ひな', roman:'SATO Hina',
+    birth:'2013-04-12', school:'バンコク日本人学校', grade:'中学1年',
+    level:'準2級', classId:'clj2', tickets:7,
+    exam:'2026年度 第2回', mono:{W:1, S:0} },
+  { id:'c2', name:'佐藤 蓮', short:'蓮', kana:'さとう れん', roman:'SATO Ren',
+    birth:'2016-09-03', school:'バンコク日本人学校', grade:'小学4年',
+    level:'4級', classId:'cl4', tickets:1,
+    exam:'2026年度 第2回', mono:{W:0, S:0} }
+];
+var MONO_LIMIT = {W:4, S:2};
+var MONO_NAME  = {W:'ライティング', S:'スピーキング'};
+
+/* 定期オンライングループレッスン（級別・毎週固定・定員なし） */
+var CLASSES = [
+  {id:'cl5',  level:'5級',       wd:'月', time:'17:00–17:50', start:'17:00', dates:['2026-09-07','2026-09-14','2026-09-21','2026-09-28']},
+  {id:'cl3',  level:'3級',       wd:'火', time:'18:00–18:50', start:'18:00', dates:['2026-09-08','2026-09-15','2026-09-22','2026-09-29']},
+  {id:'cl4',  level:'4級',       wd:'水', time:'17:00–17:50', start:'17:00', dates:['2026-09-02','2026-09-09','2026-09-16','2026-09-23']},
+  {id:'clj2', level:'準2級',     wd:'金', time:'18:00–18:50', start:'18:00', dates:['2026-09-04','2026-09-11','2026-09-18','2026-09-25']},
+  {id:'cl2',  level:'2級',       wd:'金', time:'19:00–19:50', start:'19:00', dates:['2026-09-04','2026-09-11','2026-09-18','2026-09-25']},
+  {id:'clp1', level:'準1級',     wd:'土', time:'10:00–10:50', start:'10:00', dates:['2026-09-05','2026-09-12','2026-09-19','2026-09-26']},
+  {id:'clj2p',level:'準2級プラス',wd:'土', time:'11:00–11:50', start:'11:00', dates:['2026-09-05','2026-09-12','2026-09-19','2026-09-26']}
+];
+var CLOSED_DAYS = ['2026-09-15','2026-09-23','2026-10-13'];
+var ZOOM_URL = 'https://zoom.example.com/j/000-000-000（モック）';
+
+/* レッスンマスタ */
+var LESSONS = {};
+CLASSES.forEach(function(c){
+  c.dates.forEach(function(d){
+    var id = 'reg-' + c.id + '-' + d;
+    LESSONS[id] = {id:id, type:'regular', classId:c.id, level:c.level,
+      title:c.level+'クラス', date:d, wd:c.wd, start:c.start, time:c.time,
+      place:'オンライン（Zoom）', url:ZOOM_URL, closed:CLOSED_DAYS.indexOf(d)>=0};
+  });
+});
+[ {id:'sgl-0906', date:'2026-09-06', time:'10:00–11:30', start:'10:00', cap:6, booked:5, wait:0},
+  {id:'sgl-0913', date:'2026-09-13', time:'10:00–11:30', start:'10:00', cap:6, booked:6, wait:2},
+  {id:'sgl-0920', date:'2026-09-20', time:'14:00–15:30', start:'14:00', cap:8, booked:3, wait:0},
+  {id:'sgl-0927', date:'2026-09-27', time:'10:00–11:30', start:'10:00', cap:6, booked:2, wait:0}
+].forEach(function(s){
+  LESSONS[s.id] = {id:s.id, type:'single', title:'対面グループ',
+    date:s.date, wd:'日', start:s.start, time:s.time, place:'VOICE ホビークラブ 教室',
+    cap:s.cap, booked:s.booked, wait:s.wait, closed:false};
+});
+[ {id:'m-0905-1300', date:'2026-09-05', start:'13:00', kind:'W', other:false},
+  {id:'m-0905-1330', date:'2026-09-05', start:'13:30', kind:'W', other:false},
+  {id:'m-0905-1400', date:'2026-09-05', start:'14:00', kind:'S', other:false},
+  {id:'m-0912-1300', date:'2026-09-12', start:'13:00', kind:'W', other:true},
+  {id:'m-0912-1330', date:'2026-09-12', start:'13:30', kind:'S', other:false},
+  {id:'m-0919-1300', date:'2026-09-19', start:'13:00', kind:'W', other:false},
+  {id:'m-0919-1330', date:'2026-09-19', start:'13:30', kind:'S', other:false}
+].forEach(function(m){
+  var end = m.start === '13:00' ? '13:30' : (m.start === '13:30' ? '14:00' : '14:30');
+  LESSONS[m.id] = {id:m.id, type:'mono', title:MONO_NAME[m.kind],
+    date:m.date, wd:'土', start:m.start, time:m.start+'–'+end, kind:m.kind,
+    place:'オンライン（Zoom）', url:ZOOM_URL, other:m.other, closed:false};
+});
+
+/* 予約（今後） */
+var reservations = [
+  {id:'rv1', childId:'c1', lessonId:'reg-clj2-2026-09-04', status:'booked'},
+  {id:'rv2', childId:'c1', lessonId:'sgl-0906',            status:'booked'},
+  {id:'rv3', childId:'c1', lessonId:'m-0905-1300',         status:'booked'},
+  {id:'rv4', childId:'c1', lessonId:'sgl-0913',            status:'waiting', waitPos:2},
+  {id:'rv5', childId:'c2', lessonId:'reg-cl4-2026-09-02',  status:'booked'},
+  {id:'rv6', childId:'c2', lessonId:'reg-cl4-2026-09-09',  status:'booked'}
+];
+
+/* 受講履歴（新しい順） */
+var lessonHistory = {
+  c1:[
+    {dt:'2026/08/30 10:00', type:'single',  title:'対面グループ',  status:'キャンセル（期限超過）', sc:'b-cx',  note:'キャンセル日時: 2026/08/30 08:12', score:''},
+    {dt:'2026/08/28 18:00', type:'regular', title:'準2級クラス',   status:'受講済',                sc:'b-done', note:'長文読解◎ 語彙の取りこぼしに注意', score:''},
+    {dt:'2026/08/21 18:00', type:'regular', title:'準2級クラス',   status:'受講済',                sc:'b-done', note:'過去問 大問2 復習を', score:''},
+    {dt:'2026/08/14 18:00', type:'regular', title:'準2級クラス',   status:'欠席',                  sc:'b-abs',  note:'欠席のためチケット1回分を消費', score:''},
+    {dt:'2026/08/09 10:00', type:'single',  title:'対面グループ',  status:'受講済',                sc:'b-done', note:'リスニング集中回', score:''},
+    {dt:'2026/08/01 13:00', type:'mono',    title:'ライティング',      status:'受講済',            sc:'b-done', note:'構成は◎ つづりミス減らそう', score:'12 / 16'}
+  ],
+  c2:[
+    {dt:'2026/08/26 17:00', type:'regular', title:'4級クラス', status:'欠席',   sc:'b-abs',  note:'欠席のためチケット1回分を消費', score:''},
+    {dt:'2026/08/19 17:00', type:'regular', title:'4級クラス', status:'受講済', sc:'b-done', note:'リスニング安定', score:''},
+    {dt:'2026/08/12 17:00', type:'regular', title:'4級クラス', status:'受講済', sc:'b-done', note:'単語◎', score:''}
+  ]
+};
+
+/* チケット履歴（新しい順・残高は下から積み上げて整合） */
+var ticketHistory = {
+  c1:[
+    {dt:'2026/08/30', text:'期限超過キャンセル（対面グループ 8/30）', d:-1,  bal:7},
+    {dt:'2026/08/28', text:'受講（準2級クラス）',                    d:-1,  bal:8},
+    {dt:'2026/08/21', text:'受講（準2級クラス）',                    d:-1,  bal:9},
+    {dt:'2026/08/14', text:'欠席（準2級クラス）',                    d:-1,  bal:10},
+    {dt:'2026/08/09', text:'受講（対面グループ）',                    d:-1,  bal:11},
+    {dt:'2026/08/01', text:'受講（個別 ライティング）',                d:-2,  bal:12},
+    {dt:'2026/07/31', text:'チケット追加 入金確認（日本円振込）',      d:+10, bal:14},
+    {dt:'2026/07/24', text:'受講（準2級クラス）',                    d:-1,  bal:4},
+    {dt:'2026/07/17', text:'受講（準2級クラス）',                    d:-1,  bal:5},
+    {dt:'2026/07/10', text:'受講（準2級クラス）',                    d:-1,  bal:6},
+    {dt:'2026/07/03', text:'受講（準2級クラス）',                    d:-1,  bal:7},
+    {dt:'2026/06/26', text:'受講（準2級クラス）',                    d:-1,  bal:8},
+    {dt:'2026/06/19', text:'受講（準2級クラス）',                    d:-1,  bal:9},
+    {dt:'2026/06/15', text:'チケット追加 入金確認（バーツ振込）',      d:+10, bal:10}
+  ],
+  c2:[
+    {dt:'2026/08/26', text:'欠席（4級クラス）',                 d:-1,  bal:1},
+    {dt:'2026/08/19', text:'受講（4級クラス）',                 d:-1,  bal:2},
+    {dt:'2026/08/12', text:'受講（4級クラス）',                 d:-1,  bal:3},
+    {dt:'2026/08/05', text:'受講（4級クラス）',                 d:-1,  bal:4},
+    {dt:'2026/07/29', text:'受講（4級クラス）',                 d:-1,  bal:5},
+    {dt:'2026/07/22', text:'受講（4級クラス）',                 d:-1,  bal:6},
+    {dt:'2026/07/15', text:'受講（4級クラス）',                 d:-1,  bal:7},
+    {dt:'2026/07/08', text:'受講（4級クラス）',                 d:-1,  bal:8},
+    {dt:'2026/07/01', text:'受講（4級クラス）',                 d:-1,  bal:9},
+    {dt:'2026/06/30', text:'チケット追加 入金確認（バーツ振込）', d:+10, bal:10}
+  ]
+};
+
+var eikenResults = {
+  c1:[{date:'2026-06-07', level:'3級', pass:'合格', r:'22 / 30', l:'24 / 30', w:'12 / 16', s:'25 / 33', cse:'1610'}],
+  c2:[]
+};
+
+/* =========================================================
+   State
+   ========================================================= */
+var state = {
+  screen:'screen-login', childId:'c1',
+  lessonType:'regular', lessonView:'list', calDate:null,
+  monoFilter:'all', histTab:'lessons', showOther:false,
+  pending:null, addSibling:false
+};
+var seq = 100;
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+function ymd(s){var p=s.split('-');return new Date(+p[0], +p[1]-1, +p[2]);}
+function realWd(s){return WDJ[ymd(s).getDay()];}
+function md(s){var d=ymd(s);return (d.getMonth()+1)+'月'+d.getDate()+'日';}
+function shortMd(s){var d=ymd(s);return (d.getMonth()+1)+'/'+d.getDate();}
+function lessonDate(l){return md(l.date)+'('+realWd(l.date)+')';}
+function pad2(n){return (n<10?'0':'')+n;}
+function deadlineOf(l){
+  var d = ymd(l.date); d.setDate(d.getDate() - TYPE[l.type].dlDays); d.setHours(20,0,0,0); return d;
+}
+function fmtDlS(d){return (d.getMonth()+1)+'/'+d.getDate()+' '+pad2(d.getHours())+':'+pad2(d.getMinutes());}
+function fmtDl(d){return (d.getMonth()+1)+'/'+d.getDate()+'('+WDJ[d.getDay()]+') '+pad2(d.getHours())+':'+pad2(d.getMinutes());}
+function expired(l){return deadlineOf(l).getTime() <= NOW.getTime();}
+function nowStamp(){return NOW.getFullYear()+'/'+pad2(NOW.getMonth()+1)+'/'+pad2(NOW.getDate())+' '+pad2(NOW.getHours())+':'+pad2(NOW.getMinutes());}
+function child(id){for(var i=0;i<children.length;i++){if(children[i].id===id)return children[i];} return children[0];}
+function cur(){return child(state.childId);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function classOf(id){for(var i=0;i<CLASSES.length;i++){if(CLASSES[i].id===id)return CLASSES[i];} return null;}
+function resFor(childId, lessonId){
+  for(var i=0;i<reservations.length;i++){
+    if(reservations[i].childId===childId && reservations[i].lessonId===lessonId) return reservations[i];
+  }
+  return null;
+}
+function resById(rid){
+  for(var i=0;i<reservations.length;i++){ if(reservations[i].id===rid) return reservations[i]; }
+  return null;
+}
+function plannedCost(childId){
+  var t = 0;
+  reservations.forEach(function(r){
+    if(r.childId === childId && r.status === 'booked') t += TYPE[LESSONS[r.lessonId].type].cost;
+  });
+  return t;
+}
+function anyChildRes(lessonId){
+  for(var i=0;i<reservations.length;i++){
+    if(reservations[i].lessonId===lessonId && reservations[i].status==='booked') return reservations[i];
+  }
+  return null;
+}
+function sortKey(l){return l.date + ' ' + l.start;}
+function icon(t){return TYPE[t].icon;}
+function ticketState(n){return n>=4 ? 'ok' : (n>=2 ? 'mid' : 'low');}
+
+/* 日付ブロック（曜日小 + 日大） */
+function dbk(dateStr, big){
+  var d = ymd(dateStr), w = d.getDay();
+  return '<div class="dbk'+(w===6?' sat':(w===0?' sun':''))+(big?' lg':'')+'">'
+    + '<div class="wd">'+WDJ[w]+'</div><div class="dd">'+d.getDate()+'</div></div>';
+}
+function dbkFromDt(dt){
+  var d = ymd(dt.slice(0,10).replace(/\//g,'-'));
+  return '<div class="dbk"><div class="wd">'+(d.getMonth()+1)+'月</div><div class="dd">'+d.getDate()+'</div></div>';
+}
+
+/* 10回券パンチカード */
+function punchCard(tickets, planned){
+  var s = ticketState(tickets);
+  var shown = Math.min(10, tickets);
+  var hold = Math.min(shown, planned);
+  var cells = '';
+  for(var i=0;i<10;i++){
+    if(i < shown - hold) cells += '<span class="pu on"></span>';
+    else if(i < shown)   cells += '<span class="pu hold"></span>';
+    else                 cells += '<span class="pu"></span>';
+  }
+  return '<div class="pcard"><div class="punch" data-s="'+s+'">'+cells+'</div>'
+    + (tickets>10 ? '<span class="plus">+'+(tickets-10)+'</span>' : '') + '</div>';
+}
+
+/* =========================================================
+   Toast / Sheet
+   ========================================================= */
+function toast(msg){
+  var w = document.getElementById('toast');
+  var el = document.createElement('div');
+  el.className='toast'; el.textContent = msg;
+  w.appendChild(el);
+  setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 3600);
+}
+var modalOk = null;
+function openModal(o){
+  document.getElementById('mTitle').textContent = o.title;
+  document.getElementById('mBody').innerHTML = o.body;
+  var acts = document.getElementById('mActs');
+  acts.innerHTML = '';
+  if(o.cancelText !== null){
+    var b1 = document.createElement('button');
+    b1.className='btn'; b1.textContent = o.cancelText || '閉じる';
+    b1.onclick = closeModal; acts.appendChild(b1);
+  }
+  if(o.okText){
+    var b2 = document.createElement('button');
+    b2.className='btn ' + (o.okClass || 'pri'); b2.textContent = o.okText;
+    b2.onclick = function(){ var f = modalOk; closeModal(); if(f) f(); };
+    acts.appendChild(b2);
+  }
+  modalOk = o.onOk || null;
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('on'); modalOk = null; }
+
+var HELP = {
+  home:{t:'チケットについて', b:['受講・欠席・期限超過キャンセルで消費','予約した時点では減りません','オンライン／対面 共通・有効期限なし']},
+  lessons:{t:'予約のヒント', b:['休校日は予約できません','満席の対面レッスンはキャンセル待ちに入れます（空席が出たらメール）','個別レッスンは1コマでチケット2回分']},
+  res:{t:'キャンセルについて', b:['期限内のキャンセルはチケット消費なし','期限を過ぎるとチケットを消費します','キャンセル待ちの取消はいつでも可能']},
+  hist:{t:'履歴について', b:['受講・欠席・キャンセルの記録','チケットの増減と残数','英検の結果は管理者が登録']},
+  account:{t:'登録内容について', b:['兄弟・姉妹は1つのアカウントで管理','級の変更は管理者が確認します']}
+};
+function helpSheet(k){
+  var h = HELP[k];
+  openModal({title:h.t, body:'<ul>'+h.b.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>', cancelText:'閉じる'});
+}
+function paySheet(){
+  openModal({title:'振込方法',
+    body:'<div class="line info">10回チケット ／ 8,000 バーツ ・ 42,000 円</div>'
+      + '<ul class="mt10"><li>銀行振込（タイバーツ）</li><li>銀行振込（日本円）</li><li>ボイス受付にてお支払</li></ul>'
+      + '<div class="tiny muted mt10">日本円はレート・手数料により変動。有効期限なし・級の制限なし。</div>',
+    okText:'振込を連絡する', cancelText:'閉じる',
+    onOk:function(){ toast('モック画面です。実際には連絡フォームが開きます'); }});
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+function go(id){
+  state.screen = id;
+  var ss = document.querySelectorAll('.screen');
+  for(var i=0;i<ss.length;i++) ss[i].classList.toggle('active', ss[i].id === id);
+  var nb = document.querySelectorAll('.bnav button');
+  for(var j=0;j<nb.length;j++) nb[j].classList.toggle('on', nb[j].getAttribute('data-nav') === id);
+  document.body.classList.toggle('nonav', id === 'screen-login');
+  document.getElementById('hdWho').hidden = (id === 'screen-login');
+  document.getElementById('hdOut').hidden = (id === 'screen-login');
+  window.scrollTo(0,0);
+  render();
+}
+function login(){
+  document.getElementById('hdWho').textContent = parent.name;
+  go('screen-home');
+  toast('ログインしました（モック）');
+}
+function logout(){
+  openModal({title:'ログアウト', body:'<div class="line info">ログアウトします</div>', okText:'ログアウト', cancelText:'やめる',
+    onOk:function(){ go('screen-login'); toast('ログアウトしました'); }});
+}
+function setChild(id){ state.childId = id; state.calDate = null; render(); }
+function setType(t){ state.lessonType = t; state.calDate = null; render(); }
+function setView(v){ state.lessonView = v; render(); }
+function setHist(h){ state.histTab = h; render(); }
+function setMonoFilter(f){ state.monoFilter = f; render(); }
+function toggleOther(){ state.showOther = !state.showOther; render(); }
+
+/* =========================================================
+   Render: 共通
+   ========================================================= */
+function renderChildSegs(){
+  var html = children.map(function(c){
+    return '<button class="av'+(c.id===state.childId?' on':'')+'" onclick="setChild(\''+c.id+'\')">'
+      + '<span class="ini"></span>'+esc(c.short)
+      + ' <span class="lv">'+esc(c.level)+'</span></button>';
+  }).join('');
+  ['childSeg','childSeg2','childSeg3','childSeg4'].forEach(function(id){
+    document.getElementById(id).innerHTML = html;
+  });
+}
+function render(){
+  renderChildSegs();
+  if(state.screen==='screen-home') renderHome();
+  if(state.screen==='screen-account') renderAccount();
+  if(state.screen==='screen-lessons') renderLessons();
+  if(state.screen==='screen-confirm') renderConfirm();
+  if(state.screen==='screen-reservations') renderReservations();
+  if(state.screen==='screen-history') renderHistory();
+}
+
+/* =========================================================
+   Render: ホーム
+   ========================================================= */
+function transferBanner(){
+  return '<div class="banner"><span>⚠️</span><div class="bt">チケットの更新をお願いします</div>'
+    + '<button class="btn xs" onclick="paySheet()">振込方法 ›</button></div>';
+}
+function statusChip(r){
+  if(r.status === 'waiting') return '<span class="chip c-wait">⏳ '+r.waitPos+'番目</span>';
+  return '<span class="chip c-ok">✅</span>';
+}
+function renderHome(){
+  var c = cur();
+  var mine = reservations.filter(function(r){return r.childId===c.id;})
+    .map(function(r){return {r:r, l:LESSONS[r.lessonId]};})
+    .sort(function(a,b){return sortKey(a.l) < sortKey(b.l) ? -1 : 1;});
+
+  var planned = plannedCost(c.id);
+  var usable = c.tickets - planned;
+  var s = ticketState(c.tickets);
+
+  var h = '';
+  if(c.tickets <= 1) h += transferBanner();
+
+  h += '<div class="card tkt">'
+    + '<div class="spread" style="margin-bottom:10px">'
+    + '<div class="small" style="font-weight:800">🎟 チケット</div>'
+    + '<div><span class="pnum" data-s="'+s+'">'+c.tickets+'</span><span class="punit">回</span></div></div>'
+    + punchCard(c.tickets, planned)
+    + '<div class="tiny muted mt10">予約済み '+planned+' ・ 使える '+(usable<0?0:usable)
+    + (usable<0 ? ' ・ <b style="color:var(--danger)">不足 '+(-usable)+'</b>' : '')+'</div>'
+    + '</div>';
+
+  if(mine.length){
+    var n0 = mine[0];
+    var meta = n0.r.status==='waiting'
+      ? '空席が出たらメール通知'
+      : (expired(n0.l) ? '期限 '+fmtDlS(deadlineOf(n0.l))+' 超過'
+                       : fmtDlS(deadlineOf(n0.l))+' までキャンセル無料');
+    var metaCls = (n0.r.status==='booked' && expired(n0.l)) ? ' dgr' : '';
+    h += '<h3 class="sub">📅 次のレッスン</h3>'
+      + '<button class="lrow hero tap" onclick="resSheet(\''+n0.r.id+'\')">'
+      + dbk(n0.l.date, true)
+      + '<div class="mid"><div class="t">'+n0.l.start+' '+esc(n0.l.title)+' '+icon(n0.l.type)+'</div>'
+      + '<div class="m'+metaCls+'">'+esc(meta)+'</div></div>'
+      + statusChip(n0.r) + '</button>';
+  } else {
+    h += '<h3 class="sub">📅 次のレッスン</h3><div class="card tight"><div class="small muted">予約なし</div></div>';
+  }
+
+  var rest = mine.slice(1);
+  h += '<div class="subrow"><h3 class="sub">このあと '+rest.length+'</h3>'
+    + '<button class="more" onclick="go(\'screen-reservations\')">すべて ›</button></div>';
+  if(!rest.length){
+    h += '<div class="card tight"><div class="small muted">なし</div></div>';
+  } else {
+    h += rest.slice(0,3).map(function(x){
+      return '<button class="lrow tap" onclick="resSheet(\''+x.r.id+'\')">'+dbk(x.l.date)
+        + '<div class="mid"><div class="t">'+x.l.start+' '+esc(x.l.title)+' '+icon(x.l.type)+'</div></div>'
+        + statusChip(x.r) + '</button>';
+    }).join('');
+  }
+
+  h += '<h3 class="sub">👤 個別レッスン</h3>'
+    + '<div class="card tight">' + monoGauge(c) + '</div>';
+
+  h += '<button class="btn pri block mt10" onclick="go(\'screen-lessons\')">＋ レッスンを予約する</button>';
+
+  document.getElementById('homeBody').innerHTML = h;
+}
+function dots(u, lim){
+  var s = '';
+  for(var i=0;i<lim;i++) s += '<span class="gd'+(i<u?' on':'')+'"></span>';
+  return '<span class="dots">'+s+'</span>';
+}
+function monoGauge(c, unit){
+  return '<div class="gauge">'
+    + '<span class="g"><span class="chip c-w">W</span>'+dots(c.mono.W, MONO_LIMIT.W)+'<span class="n">'+c.mono.W+'/'+MONO_LIMIT.W+'</span></span>'
+    + '<span class="g"><span class="chip c-s">S</span>'+dots(c.mono.S, MONO_LIMIT.S)+'<span class="n">'+c.mono.S+'/'+MONO_LIMIT.S+'</span></span>'
+    + (unit ? '<span class="n" style="font-weight:600">1コマ 🎟×2</span>' : '') + '</div>';
+}
+
+/* =========================================================
+   Render: アカウント
+   ========================================================= */
+function renderAccount(){
+  var h = '<div class="card"><h3 class="sub" style="margin-top:0">保護者</h3>'
+    + '<label class="f"><span>氏名</span><input value="'+esc(parent.name)+'"></label>'
+    + '<label class="f"><span>ふりがな</span><input value="'+esc(parent.kana)+'"></label>'
+    + '<label class="f"><span>メール（ログインID）</span><input value="'+esc(parent.email)+'"></label>'
+    + '<label class="f"><span>電話番号</span><input value="'+esc(parent.tel)+'"></label>'
+    + '<label class="f"><span>ボイスメンバーNo.（任意）</span><input value="'+esc(parent.memberNo)+'"></label>'
+    + '<button class="btn pri block" onclick="toast(\'保存しました（モック）\')">保存</button></div>';
+
+  children.forEach(function(c){
+    h += '<div class="card"><h3 class="sub" style="margin-top:0">'+esc(c.short)+'</h3>'
+      + '<label class="f"><span>氏名</span><input value="'+esc(c.name)+'"></label>'
+      + '<label class="f"><span>ふりがな</span><input value="'+esc(c.kana)+'"></label>'
+      + '<label class="f"><span>ローマ字</span><input value="'+esc(c.roman)+'"></label>'
+      + '<label class="f"><span>生年月日</span><input type="date" value="'+esc(c.birth)+'"></label>'
+      + '<label class="f"><span>学校</span><input value="'+esc(c.school)+'"></label>'
+      + '<label class="f"><span>学年</span><input value="'+esc(c.grade)+'"></label>'
+      + '<label class="f"><span>受験級</span><select>'
+      + LEVELS.map(function(lv){return '<option'+(lv===c.level?' selected':'')+'>'+esc(lv)+'</option>';}).join('')
+      + '</select></label>'
+      + '<button class="btn pri block" onclick="toast(\''+esc(c.short)+' さんの情報を保存しました（モック）\')">保存</button></div>';
+  });
+
+  if(state.addSibling){
+    h += '<div class="card" style="border-color:var(--ink);border-width:2px"><h3 class="sub" style="margin-top:0">兄弟・姉妹を追加</h3>'
+      + '<label class="f"><span>氏名</span><input placeholder="例: 佐藤 葵"></label>'
+      + '<label class="f"><span>ふりがな</span><input placeholder="例: さとう あおい"></label>'
+      + '<label class="f"><span>ローマ字</span><input placeholder="例: SATO Aoi"></label>'
+      + '<label class="f"><span>生年月日</span><input type="date"></label>'
+      + '<label class="f"><span>学校</span><input placeholder="例: バンコク日本人学校"></label>'
+      + '<label class="f"><span>学年</span><input placeholder="例: 小学2年"></label>'
+      + '<label class="f"><span>受験級</span><select>'+LEVELS.map(function(lv){return '<option>'+esc(lv)+'</option>';}).join('')+'</select></label>'
+      + '<div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="state.addSibling=false;render()">やめる</button>'
+      + '<button class="btn pri" style="flex:1" onclick="state.addSibling=false;render();toast(\'モック画面のため登録されません\')">追加する</button></div></div>';
+  } else {
+    h += '<button class="btn block" onclick="state.addSibling=true;render()">＋ 兄弟・姉妹を追加</button>';
+  }
+  h += '<button class="btn block mt10" onclick="go(\'screen-home\')">ホームに戻る</button>';
+  document.getElementById('accountBody').innerHTML = h;
+}
+
+/* =========================================================
+   Render: レッスン一覧
+   ========================================================= */
+function renderLessons(){
+  var ts = document.querySelectorAll('#typeSeg button');
+  for(var i=0;i<ts.length;i++) ts[i].classList.toggle('on', ts[i].getAttribute('data-t')===state.lessonType);
+  var vs = document.querySelectorAll('#viewSeg button');
+  for(var j=0;j<vs.length;j++) vs[j].classList.toggle('on', vs[j].getAttribute('data-v')===state.lessonView);
+
+  var body = document.getElementById('lessonBody');
+  if(state.lessonView === 'cal'){ body.innerHTML = renderCalendar(); return; }
+  if(state.lessonType === 'regular') body.innerHTML = renderRegular();
+  else if(state.lessonType === 'single') body.innerHTML = renderSingle();
+  else body.innerHTML = renderMono();
+}
+
+function lessonsOfType(t){
+  var out = [];
+  for(var k in LESSONS){ if(LESSONS[k].type === t) out.push(LESSONS[k]); }
+  out.sort(function(a,b){return sortKey(a) < sortKey(b) ? -1 : 1;});
+  return out;
+}
+function bookBtn(id, label, cls){
+  return '<button class="btn '+(cls||'pri')+' sm" onclick="startBook(\''+id+'\')">'+(label||'予約')+'</button>';
+}
+
+/* --- 定期オンライン --- */
+function regularRow(l, c){
+  if(l.closed){
+    return '<div class="lrow off">'+dbk(l.date)
+      + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' 💻</div></div>'
+      + '<span class="chip c-off">🚫 休校</span></div>';
+  }
+  var r = resFor(c.id, l.id);
+  var rt = r ? '<span class="chip c-ok">✅</span>' : bookBtn(l.id);
+  return '<div class="lrow">'+dbk(l.date)
+    + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' 💻</div></div>'
+    + '<div class="rt">'+rt+'</div></div>';
+}
+function renderRegular(){
+  var c = cur();
+  var myClass = classOf(c.classId);
+  var h = '<h3 class="sub">'+esc(myClass.level)+'クラス ／ '+myClass.wd+' '+myClass.time+'</h3>';
+  h += myClass.dates.map(function(d){ return regularRow(LESSONS['reg-'+myClass.id+'-'+d], c); }).join('');
+  h += '<button class="more mt6" onclick="toggleOther()">'+(state.showOther?'他の級を閉じる ›':'他の級も見る ›')+'</button>';
+  if(state.showOther){
+    CLASSES.forEach(function(cl){
+      if(cl.id === myClass.id) return;
+      h += '<h3 class="sub">'+esc(cl.level)+'クラス ／ '+cl.wd+' '+cl.time+'</h3>';
+      h += cl.dates.map(function(d){ return regularRow(LESSONS['reg-'+cl.id+'-'+d], c); }).join('');
+    });
+  }
+  return h;
+}
+
+/* --- 対面単発 --- */
+function singleRow(l, c){
+  var r = resFor(c.id, l.id);
+  var free = l.cap - l.booked;
+  var rt;
+  if(r && r.status === 'booked') rt = '<span class="chip c-ok">✅</span>';
+  else if(r && r.status === 'waiting') rt = '<span class="chip c-wait">⏳ '+r.waitPos+'番目</span>';
+  else if(free <= 0) rt = '<span class="chip c-off">満席</span><button class="btn sm" onclick="startWait(\''+l.id+'\')">待つ</button>';
+  else rt = '<span class="chip c-free">空き '+free+'</span>'+bookBtn(l.id);
+  return '<div class="lrow">'+dbk(l.date)
+    + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' 🏫</div></div>'
+    + '<div class="rt">'+rt+'</div></div>';
+}
+function renderSingle(){
+  var c = cur();
+  return lessonsOfType('single').map(function(l){ return singleRow(l, c); }).join('');
+}
+
+/* --- 個別（マンツーマン） --- */
+function monoRow(l, c){
+  var r = resFor(c.id, l.id);
+  var otherRes = anyChildRes(l.id);
+  var limitReached = c.mono[l.kind] >= MONO_LIMIT[l.kind];
+  var rt, off = false;
+  if(r){ rt = '<span class="chip c-ok">✅</span>'; }
+  else if(l.other || (otherRes && otherRes.childId !== c.id)){ rt = '<span class="chip c-off">満席</span>'; off = true; }
+  else if(limitReached){ rt = '<span class="chip c-off">上限</span>'; off = true; }
+  else { rt = bookBtn(l.id); }
+  return '<div class="lrow'+(off?' off':'')+'">'+dbk(l.date)
+    + '<div class="mid"><div class="t">'+l.start+' '+esc(MONO_NAME[l.kind])+' 👤</div></div>'
+    + '<div class="rt">'+rt+'</div></div>';
+}
+function renderMono(){
+  var c = cur();
+  var h = '<div class="card tight">'+monoGauge(c, true)+'</div>';
+  h += '<div class="seg sm" style="margin-bottom:10px">'
+    + '<button class="'+(state.monoFilter==='all'?'on':'')+'" onclick="setMonoFilter(\'all\')">すべて</button>'
+    + '<button class="'+(state.monoFilter==='W'?'on':'')+'" onclick="setMonoFilter(\'W\')">W 書く</button>'
+    + '<button class="'+(state.monoFilter==='S'?'on':'')+'" onclick="setMonoFilter(\'S\')">S 話す</button></div>';
+  var list = lessonsOfType('mono').filter(function(l){ return state.monoFilter==='all' || l.kind===state.monoFilter; });
+  h += list.length ? list.map(function(l){return monoRow(l, c);}).join('')
+                   : '<div class="card tight"><div class="small muted">該当なし</div></div>';
+  return h;
+}
+
+/* --- カレンダー --- */
+function renderCalendar(){
+  var c = cur();
+  var byDate = {};
+  lessonsOfType(state.lessonType).forEach(function(l){
+    if(l.date.indexOf('2026-09-') !== 0) return;
+    if(state.lessonType === 'regular'){
+      var isMine = (l.classId === c.classId);
+      if(!state.showOther && !isMine) return;
+    }
+    (byDate[l.date] = byDate[l.date] || []).push(l);
+  });
+
+  var first = new Date(2026, 8, 1).getDay(); /* 2026-09-01 = 火 */
+  var days = 30;
+  var h = '<div class="cal"><div class="spread" style="margin-bottom:6px"><b>2026年 9月</b>'
+    + '<span class="tiny muted">'+icon(state.lessonType)+' '+TYPE[state.lessonType].label+'</span></div><div class="cg">';
+  WDJ.forEach(function(w,i){ h += '<div class="dw'+(i===0?' sun':(i===6?' sat':''))+'">'+w+'</div>'; });
+  for(var i=0;i<first;i++) h += '<div class="cell empty"></div>';
+  for(var d=1; d<=days; d++){
+    var ds = '2026-09-' + pad2(d);
+    var ls = byDate[ds] || [];
+    var closed = CLOSED_DAYS.indexOf(ds) >= 0;
+    var cls = 'cell' + (ls.length?' has tap':'') + (state.calDate===ds?' on':'') + (ds==='2026-09-01'?' today':'');
+    h += '<div class="'+cls+'"'+(ls.length?(' onclick="pickDay(\''+ds+'\')"'):'')+'>'
+      + '<div>'+d+'</div>'
+      + (closed ? '<span class="xx">休校</span>' : '')
+      + (ls.length ? ('<div class="dots">'+ls.map(function(l){return '<span class="dot '+(l.type==='regular'?'reg':(l.type==='single'?'sgl':'mono'))+'"></span>';}).join('')+'</div>') : '')
+      + '</div>';
+  }
+  h += '</div>';
+  if(state.lessonType==='regular'){
+    h += '<button class="more mt6" onclick="toggleOther()">'+(state.showOther?esc(c.level)+'クラスのみ ›':'他の級も表示 ›')+'</button>';
+  }
+  h += '</div>';
+
+  if(state.calDate){
+    var ls2 = byDate[state.calDate] || [];
+    h += '<div class="subrow"><h3 class="sub">'+shortMd(state.calDate)+'（'+realWd(state.calDate)+'）</h3>'
+      + '<button class="more" onclick="state.calDate=null;render()">解除 ×</button></div>';
+    h += ls2.map(function(l){
+      if(l.type==='regular') return regularRow(l, c);
+      if(l.type==='single') return singleRow(l, c);
+      return monoRow(l, c);
+    }).join('') || '<div class="card tight"><div class="small muted">レッスンなし</div></div>';
+  }
+  return h;
+}
+function pickDay(ds){ state.calDate = ds; render(); }
+
+/* =========================================================
+   Render: 予約確認
+   ========================================================= */
+function startBook(lessonId){
+  state.pending = {lessonId:lessonId, mode:'book', childId:state.childId};
+  go('screen-confirm');
+}
+function startWait(lessonId){
+  state.pending = {lessonId:lessonId, mode:'wait', childId:state.childId};
+  go('screen-confirm');
+}
+function setPendingChild(id){ state.pending.childId = id; render(); }
+
+function renderConfirm(){
+  var box = document.getElementById('confirmBody');
+  if(!state.pending){
+    box.innerHTML = '<div class="card tight"><div class="small muted">レッスンが選ばれていません</div></div>'
+      + '<button class="btn pri block" onclick="go(\'screen-lessons\')">レッスン一覧へ</button>';
+    return;
+  }
+  var l = LESSONS[state.pending.lessonId];
+  var c = child(state.pending.childId);
+  var isWait = state.pending.mode === 'wait';
+  var cost = TYPE[l.type].cost;
+  var planned = plannedCost(c.id);
+  var avail = c.tickets - planned;
+  var shortage = !isWait && (avail < cost);
+  var limitReached = (l.type==='mono') && (c.mono[l.kind] >= MONO_LIMIT[l.kind]);
+  var dup = resFor(c.id, l.id);
+
+  /* 誰の予約か（チップ選択） */
+  var h = '<div class="avrow">'
+    + children.map(function(ch){
+        return '<button class="av'+(ch.id===c.id?' on':'')+'" onclick="setPendingChild(\''+ch.id+'\')">'
+          + '<span class="ini"></span>'+esc(ch.short)+'</button>';
+      }).join('')
+    + '</div>';
+
+  h += '<div class="card"><div class="lrow" style="border:0;padding:0;margin:0;min-height:0">'
+    + dbk(l.date, true)
+    + '<div class="mid"><div class="t" style="font-size:16px">'+l.start+' '+esc(l.title)+' '+icon(l.type)+'</div>'
+    + '<div class="m">'+esc(l.place)+'</div></div>'
+    + (isWait ? '<span class="chip c-wait">⏳ 待ち</span>' : '')+'</div>';
+
+  if(isWait){
+    h += '<div class="line info mt10">🎟 消費なし ・ 現在 '+l.wait+'人待ち</div>'
+      + '<div class="line ok mt6">✉️ 空席が出たらメール通知</div>';
+  } else if(shortage){
+    h += '<div class="line bad mt10">🎟 チケットが足りません（使える '+(avail<0?0:avail)+' ／ 必要 '+cost+'）</div>';
+  } else {
+    h += '<div class="line info mt10">🎟 −'+cost+'  →  残り '+c.tickets+'（使える '+(avail-cost)+'）</div>'
+      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' までキャンセル無料</div>';
+  }
+  if(dup){
+    h += '<div class="line bad mt6">⚠️ '+esc(c.short)+' さんは登録済み</div>';
+  } else if(limitReached){
+    h += '<div class="line bad mt6">⚠️ '+MONO_NAME[l.kind]+'は上限 '+MONO_LIMIT[l.kind]+' 回</div>';
+  }
+  h += '</div>';
+
+  var disabled = (dup || shortage || limitReached) ? ' disabled' : '';
+  h += '<button class="btn '+(isWait?'warn':'pri')+' block"'+disabled+' onclick="doConfirm()">'
+    + (isWait ? 'キャンセル待ちに入る' : '予約を確定する') + '</button>'
+    + '<button class="btn block mt10" onclick="go(\'screen-lessons\')">戻る</button>';
+
+  box.innerHTML = h;
+}
+
+function doConfirm(){
+  var l = LESSONS[state.pending.lessonId];
+  var c = child(state.pending.childId);
+  var isWait = state.pending.mode === 'wait';
+  state.childId = c.id;
+
+  if(isWait){
+    l.wait += 1;
+    reservations.push({id:'rv'+(seq++), childId:c.id, lessonId:l.id, status:'waiting', waitPos:l.wait});
+    state.pending = null;
+    openModal({title:'キャンセル待ちに入りました',
+      body:'<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+' '+l.start+' ／ '+l.wait+'番目</div>'
+        + '<div class="line ok mt6">✉️ 空席が出たらメール通知</div>',
+      okText:'予約一覧', cancelText:null,
+      onOk:function(){ go('screen-reservations'); }});
+    toast('キャンセル待ちに登録しました');
+    return;
+  }
+
+  if(l.type === 'single') l.booked += 1;
+  if(l.type === 'mono') c.mono[l.kind] += 1;
+  reservations.push({id:'rv'+(seq++), childId:c.id, lessonId:l.id, status:'booked'});
+  state.pending = null;
+  openModal({title:'予約しました',
+    body:'<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+'（'+realWd(l.date)+'） '+l.start+' ／ '+esc(l.title)+'</div>'
+      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' までキャンセル無料</div>'
+      + '<div class="tiny muted mt6">確認メールを送信しました（モック）</div>',
+    okText:'予約一覧', cancelText:null,
+    onOk:function(){ go('screen-reservations'); }});
+  toast('予約が完了しました');
+}
+
+/* =========================================================
+   Render: 予約一覧
+   ========================================================= */
+function renderReservations(){
+  var c = cur();
+  var mine = reservations.filter(function(r){return r.childId===c.id;})
+    .map(function(r){return {r:r, l:LESSONS[r.lessonId]};})
+    .sort(function(a,b){return sortKey(a.l) < sortKey(b.l) ? -1 : 1;});
+
+  var h = '';
+  if(!mine.length){
+    h = '<div class="card tight"><div class="small muted">今後の予約なし</div></div>'
+      + '<button class="btn pri block" onclick="go(\'screen-lessons\')">＋ レッスンを予約する</button>';
+    document.getElementById('resBody').innerHTML = h; return;
+  }
+  h += mine.map(function(x){
+    var l = x.l, r = x.r;
+    var ex = (r.status==='booked') && expired(l);
+    return '<button class="lrow tap" onclick="resSheet(\''+r.id+'\')">'+dbk(l.date)
+      + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' '+icon(l.type)+'</div>'
+      + (ex ? '<div class="m dgr">キャンセル期限 超過</div>' : '')+'</div>'
+      + statusChip(r) + '</button>';
+  }).join('');
+  h += '<button class="btn pri block mt10" onclick="go(\'screen-lessons\')">＋ レッスンを予約する</button>';
+  document.getElementById('resBody').innerHTML = h;
+}
+
+/* 予約詳細シート */
+function resSheet(rid){
+  var r = resById(rid); if(!r) return;
+  var l = LESSONS[r.lessonId], c = child(r.childId);
+  var body = '<div class="line info">'+esc(c.short)+' ／ '+md(l.date)+'（'+realWd(l.date)+'） '+l.time+'</div>';
+  body += '<div class="kv mt10"><span>レッスン</span><b>'+icon(l.type)+' '+esc(l.title)+'</b></div>'
+    + '<div class="kv"><span>場所</span><b>'+esc(l.place)+'</b></div>'
+    + (l.url ? '<div class="kv"><span>参加URL</span><b class="tiny">'+esc(l.url)+'</b></div>' : '')
+    + '<div class="kv"><span>キャンセル期限</span><b'+((r.status==='booked'&&expired(l))?' style="color:var(--danger)"':'')+'>'+fmtDl(deadlineOf(l))+'</b></div>'
+    + (r.status==='waiting' ? '<div class="kv"><span>順番</span><b>'+r.waitPos+'番目</b></div>' : '');
+  openModal({title: r.status==='waiting' ? 'キャンセル待ち' : '予約の詳細',
+    body: body,
+    okText: r.status==='waiting' ? '待ちを取消' : 'キャンセルする', okClass:'dgr', cancelText:'閉じる',
+    onOk:function(){ askCancel(rid); }});
+}
+
+function askCancel(rid){
+  var r = resById(rid); if(!r) return;
+  var l = LESSONS[r.lessonId], c = child(r.childId), cost = TYPE[l.type].cost;
+
+  if(r.status === 'waiting'){
+    openModal({title:'キャンセル待ちを取消',
+      body:'<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+' '+l.start+'</div>'
+        + '<div class="line ok mt6">✓ チケット消費なし</div>',
+      okText:'取り消す', okClass:'dgrf', cancelText:'やめる',
+      onOk:function(){ doCancel(rid); }});
+    return;
+  }
+  var ex = expired(l);
+  var body = '<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+' '+l.start+' ／ '+esc(l.title)+'</div>'
+    + (ex ? '<div class="line bad mt6">⚠️ 期限（'+fmtDl(deadlineOf(l))+'）超過 ・ 🎟 −'+cost+'</div>'
+          : '<div class="line ok mt6">✓ チケット消費なし</div>');
+  openModal({title:'予約をキャンセル', body:body,
+    okText:'キャンセルする', okClass:'dgrf', cancelText:'やめる',
+    onOk:function(){ doCancel(rid); }});
+}
+
+function doCancel(rid){
+  var idx = -1;
+  for(var i=0;i<reservations.length;i++){ if(reservations[i].id===rid) idx = i; }
+  if(idx < 0) return;
+  var r = reservations[idx];
+  var l = LESSONS[r.lessonId], c = child(r.childId), cost = TYPE[l.type].cost;
+  var wasWaiting = (r.status === 'waiting');
+  reservations.splice(idx, 1);
+
+  if(wasWaiting){
+    l.wait = Math.max(0, l.wait - 1);
+    toast('キャンセル待ちを取り消しました');
+    render();
+    return;
+  }
+
+  if(l.type === 'single') l.booked = Math.max(0, l.booked - 1);
+  if(l.type === 'mono') c.mono[l.kind] = Math.max(0, c.mono[l.kind] - 1);
+
+  var ex = expired(l);
+  var hist = lessonHistory[c.id] || (lessonHistory[c.id] = []);
+  if(ex){
+    c.tickets = Math.max(0, c.tickets - cost);
+    ticketHistory[c.id].unshift({dt:nowStamp(), text:'期限超過キャンセル（'+l.title+' '+shortMd(l.date)+'）', d:-cost, bal:c.tickets});
+    hist.unshift({dt:l.date.replace(/-/g,'/')+' '+l.start, type:l.type, title:l.title,
+      status:'キャンセル（期限超過）', sc:'b-cx', note:'キャンセル日時: '+nowStamp()+' ／ チケット'+cost+'回分を消費', score:''});
+    toast('キャンセルしました（🎟 −'+cost+'）');
+  } else {
+    hist.unshift({dt:l.date.replace(/-/g,'/')+' '+l.start, type:l.type, title:l.title,
+      status:'キャンセル（期限内）', sc:'b-cx', note:'キャンセル日時: '+nowStamp()+' ／ チケット消費なし', score:''});
+    toast('キャンセルしました（🎟 消費なし）');
+  }
+  render();
+}
+
+/* =========================================================
+   Render: 履歴
+   ========================================================= */
+function histChip(status){
+  if(status === '受講済') return '<span class="chip c-free">✅ 受講</span>';
+  if(status === '欠席')   return '<span class="chip c-dgr">✗ 欠席</span>';
+  return '<span class="chip c-off">↩ 取消</span>';
+}
+function renderHistory(){
+  var hs = document.querySelectorAll('#histSeg button');
+  for(var i=0;i<hs.length;i++) hs[i].classList.toggle('on', hs[i].getAttribute('data-h')===state.histTab);
+  var c = cur();
+  var box = document.getElementById('histBody');
+
+  if(state.histTab === 'lessons'){
+    var list = lessonHistory[c.id] || [];
+    box.innerHTML = list.length ? list.map(function(e){
+      var t = e.dt.slice(11);
+      return '<div class="lrow" style="align-items:flex-start">'+dbkFromDt(e.dt)
+        + '<div class="mid"><div class="t">'+esc(t)+' '+esc(e.title)+' '+icon(e.type)+'</div>'
+        + (e.score ? '<div class="m" style="color:var(--purple);font-weight:700">'+esc(e.score)+'</div>' : '')
+        + (e.note ? '<details><summary>'+(e.status==='受講済'?'コメント':'詳細')+' ›</summary><div class="cm">'+esc(e.note)+'</div></details>' : '')
+        + '</div>' + histChip(e.status) + '</div>';
+    }).join('') : '<div class="card tight"><div class="small muted">記録なし</div></div>';
+    return;
+  }
+
+  if(state.histTab === 'tickets'){
+    var t2 = ticketHistory[c.id] || [];
+    var s = ticketState(c.tickets);
+    var planned = plannedCost(c.id);
+    var h = '<div class="card tkt">'
+      + '<div class="spread" style="margin-bottom:10px"><div class="small" style="font-weight:800">🎟 チケット</div>'
+      + '<div><span class="pnum" data-s="'+s+'">'+c.tickets+'</span><span class="punit">回</span></div></div>'
+      + punchCard(c.tickets, planned) + '</div>';
+    if(c.tickets <= 1) h += transferBanner();
+    h += t2.map(function(e){
+      return '<div class="lrow" style="min-height:48px">'+dbkFromDt(e.dt)
+        + '<div class="mid"><div class="t" style="font-weight:600;font-size:13px">'+esc(e.text)+'</div></div>'
+        + '<div class="rt"><span class="chip '+(e.d>0?'c-free':'c-dgr')+'">'+(e.d>0?'+':'−')+Math.abs(e.d)+'</span>'
+        + '<span class="tiny muted">残 '+e.bal+'</span></div></div>';
+    }).join('');
+    box.innerHTML = h;
+    return;
+  }
+
+  var er = eikenResults[c.id] || [];
+  box.innerHTML = er.length ? er.map(function(e){
+    return '<div class="card">'
+      + '<div class="spread"><div><div style="font-size:26px;font-weight:800;line-height:1.1">'+esc(e.level)+'</div>'
+      + '<div class="tiny muted">'+md(e.date)+' 受験</div></div>'
+      + '<span class="chip '+(e.pass==='合格'?'c-free':'c-dgr')+'" style="font-size:14px;padding:6px 14px">'+esc(e.pass)+'</span></div>'
+      + '<div class="hr"></div>'
+      + skillBar('R', e.r) + skillBar('L', e.l) + skillBar('W', e.w) + skillBar('S', e.s)
+      + '<div class="kv mt6"><span>CSE</span><b>'+esc(e.cse)+'</b></div>'
+      + '</div>';
+  }).join('') : '<div class="card tight"><div class="small muted">記録なし</div></div>';
+}
+function skillBar(label, val){
+  var p = val.split('/');
+  var a = parseInt(p[0],10) || 0, b = parseInt(p[1],10) || 1;
+  var pct = Math.max(0, Math.min(100, Math.round(a/b*100)));
+  return '<div class="sk"><span class="lb">'+label+'</span>'
+    + '<span class="bar"><i style="width:'+pct+'%"></i></span>'
+    + '<span class="vv">'+esc(val)+'</span></div>';
+}
+
+/* =========================================================
+   init
+   ========================================================= */
+document.getElementById('hdWho').textContent = parent.name;
+go('screen-login');
+</script>
+</body>
+</html>
