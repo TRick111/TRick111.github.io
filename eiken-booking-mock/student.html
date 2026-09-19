@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Achieve English Gym 予約システム（生徒・保護者側モック v5・2026-09-08）</title>
+<title>Achieve English Gym 予約システム（生徒・保護者側モック v6・2026-09-20）</title>
 <style>
 :root{
   /* ===== v4 テーマトークン（既存サイト voicehobbyclub の黄色トーンに準拠） ===== */
@@ -22,6 +22,15 @@
   --purple:#9B51E0; --purple-soft:#F0E4FB; --purple-ink:#6E2FA8;
   --neutral-soft:#EEEEEE; --neutral-ink:#666666;
   --line:#E7E0C6;
+  /* ===== v6 S-05-3 級カラー（8区分） ===== */
+  --lv-5:#3F8FC4;   --lv-5-soft:#DCEEF8;
+  --lv-4:#3C8A2E;   --lv-4-soft:#E3F4DA;
+  --lv-3:#D98A1F;   --lv-3-soft:#FBEDD4;
+  --lv-j2:#E0562B;  --lv-j2-soft:#FBE1D7;
+  --lv-j2p:#BE3A73; --lv-j2p-soft:#FADBE8;
+  --lv-2:#7647BE;   --lv-2-soft:#EADFF8;
+  --lv-p1:#2B569B;  --lv-p1-soft:#DBE5F6;
+  --lv-ot:#6F6F6F;  --lv-ot-soft:#E7E7E7;
   --radius:14px;
   /* 旧トークン互換（インライン参照用） */
   --primary:#222222; --primary-soft:#FDEFC9; --accent:#FF6A00;
@@ -141,8 +150,8 @@ h3.sub{font-size:13px;margin:16px 0 8px;color:var(--ink);font-weight:800;letter-
 .lrow.off .dbk{background:#EFEADA;}
 .lrow.off .dbk .dd{color:#9C9584;}
 .lrow .mid{flex:1;min-width:0;}
-.lrow .t{font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.lrow .m{font-size:11.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lrow .t{font-weight:800;font-size:14.5px;white-space:normal;line-height:1.35;}
+.lrow .m{font-size:11.5px;color:var(--muted);margin-top:2px;white-space:normal;line-height:1.4;}
 .lrow .m.dgr{color:var(--danger);font-weight:800;}
 .lrow .rt{display:flex;align-items:center;gap:6px;flex:none;}
 .lrow.tap::after{content:'\203A';color:#C9BF95;font-size:18px;flex:none;line-height:1;}
@@ -160,10 +169,10 @@ h3.sub{font-size:13px;margin:16px 0 8px;color:var(--ink);font-weight:800;letter-
 
 /* ---------- calendar ---------- */
 .cal{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:10px;}
-.cal .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal .cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;}
 .cal .dw{text-align:center;font-size:11px;color:var(--muted);padding:2px 0;font-weight:800;}
 .cal .dw.sun{color:var(--danger);} .cal .dw.sat{color:var(--sky-ink);}
-.cell{border:1px solid transparent;border-radius:8px;min-height:44px;padding:3px 2px 2px;background:#fff;text-align:center;font-size:12px;font-variant-numeric:tabular-nums;}
+.cell{border:1px solid transparent;border-radius:8px;min-height:44px;min-width:0;padding:3px 2px 2px;background:#fff;text-align:center;font-size:12px;font-variant-numeric:tabular-nums;}
 .cell.has{border-color:var(--border);}
 .cell.tap{cursor:pointer;}
 .cell.on{background:var(--brand);border-color:var(--ink);font-weight:900;}
@@ -217,9 +226,78 @@ details summary::-webkit-details-marker{display:none;}
 details .cm{color:var(--muted);padding:2px 0 4px;}
 .bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;}
 .bar i{display:block;height:100%;background:var(--brand-deep);}
-.sk{display:grid;grid-template-columns:22px 1fr 56px;gap:8px;align-items:center;font-size:12px;margin-bottom:7px;}
+.sk{display:grid;grid-template-columns:78px 1fr 56px;gap:8px;align-items:center;font-size:11.5px;margin-bottom:7px;}
 .sk .lb{font-weight:900;color:var(--ink);}
 .sk .vv{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;}
+
+/* ================= v6 で足したもの ================= */
+/* S-05-1 / S-05-3: 級チップ（先頭・大きめ・級カラーの地色） */
+.lv{display:inline-flex;align-items:center;border-radius:9px;padding:3px 9px;font-size:13px;font-weight:900;line-height:1.25;white-space:nowrap;border:1.5px solid currentColor;}
+.lv.big{font-size:15px;padding:4px 11px;}
+.lv.sm{font-size:11px;padding:2px 7px;font-weight:800;}
+.lv-5{background:var(--lv-5-soft);color:var(--lv-5);}
+.lv-4{background:var(--lv-4-soft);color:var(--lv-4);}
+.lv-3{background:var(--lv-3-soft);color:var(--lv-3);}
+.lv-j2{background:var(--lv-j2-soft);color:var(--lv-j2);}
+.lv-j2p{background:var(--lv-j2p-soft);color:var(--lv-j2p);}
+.lv-2{background:var(--lv-2-soft);color:var(--lv-2);}
+.lv-p1{background:var(--lv-p1-soft);color:var(--lv-p1);}
+.lv-ot{background:var(--lv-ot-soft);color:var(--lv-ot);}
+
+/* S-05-2 / S-01-5: 月カレンダーの枠チップ */
+.cell{min-height:56px;}
+.cchips{display:flex;flex-direction:column;gap:2px;margin-top:2px;min-width:0;}
+.cchip{display:block;border-radius:5px;padding:1px 3px;font-size:9px;font-weight:800;line-height:1.35;
+  white-space:normal;word-break:break-word;overflow-wrap:anywhere;border:1px solid currentColor;text-align:left;}
+.cchip.booked{color:#fff;border-color:transparent;font-weight:900;}
+.cchip.booked.lv-5{background:var(--lv-5);} .cchip.booked.lv-4{background:var(--lv-4);}
+.cchip.booked.lv-3{background:var(--lv-3);} .cchip.booked.lv-j2{background:var(--lv-j2);}
+.cchip.booked.lv-j2p{background:var(--lv-j2p);} .cchip.booked.lv-2{background:var(--lv-2);}
+.cchip.booked.lv-p1{background:var(--lv-p1);} .cchip.booked.lv-ot{background:var(--lv-ot);}
+
+/* 要相談の注記バー（田中さんと玲奈さんの相談中） */
+.talk{display:flex;align-items:flex-start;gap:7px;background:#FFF6CC;border:1px solid var(--brand-deep);
+  border-left:5px solid var(--brand-deep);border-radius:8px;padding:7px 10px;margin:8px 0;
+  font-size:11.5px;font-weight:700;color:#6B5600;line-height:1.5;}
+.talk .tk{flex:none;font-weight:900;}
+
+/* S-07-1 / S-12-1: 月見出しと月送り */
+.mbar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;
+  border:1px solid var(--border);border-radius:12px;padding:6px 8px;margin-bottom:10px;}
+.mbar b{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;}
+.mbar button{min-width:40px;min-height:36px;border-radius:999px;border:2px solid var(--ink);
+  background:#fff;color:var(--ink);font-weight:900;font-size:14px;line-height:1;}
+
+/* S-01-8 / S-12-2: マンツーマン利用状況を縦積みにする */
+.gauge.stack{flex-direction:column;align-items:stretch;gap:8px;}
+.gauge.stack .g{justify-content:flex-start;}
+.gauge.stack .g .nm{min-width:96px;font-weight:800;font-size:12.5px;}
+
+/* S-08-1: コピー付きの行 */
+.cprow{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px dashed var(--border);}
+.cprow .ck{color:var(--muted);font-size:12px;flex:none;min-width:88px;font-weight:800;}
+.cprow .cv{flex:1;min-width:0;font-size:12.5px;font-weight:800;word-break:break-all;}
+.cprow .cb{flex:none;min-height:32px;padding:4px 10px;border-radius:999px;border:2px solid var(--ink);background:#fff;font-size:11.5px;font-weight:800;}
+
+/* S-19-1: 振込先の口座ブロック */
+.bank{border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-top:8px;background:#fff;}
+.bank h5{margin:0 0 5px;font-size:12.5px;font-weight:900;}
+.steps{counter-reset:st;margin:10px 0 0;padding:0;list-style:none;}
+.steps li{counter-increment:st;position:relative;padding-left:26px;margin-bottom:6px;font-size:12.5px;}
+.steps li::before{content:counter(st);position:absolute;left:0;top:0;width:19px;height:19px;border-radius:999px;
+  background:var(--brand);border:1.5px solid var(--ink);font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+
+/* S-11-1: 未入金バナー */
+.banner.dgr{background:var(--danger-soft);border-color:var(--danger);}
+.banner.dgr .bt{color:var(--danger);}
+
+/* 小さい画面でも横に溢れさせない */
+@media (max-width:400px){
+  .lrow{gap:8px;padding:9px 8px;}
+  .lrow .rt{flex-wrap:wrap;justify-content:flex-end;gap:4px;}
+  .cprow{flex-wrap:wrap;}
+  .cprow .cv{flex-basis:100%;}
+}
 </style>
 </head>
 <body>
@@ -243,6 +321,8 @@ details .cm{color:var(--muted);padding:2px 0 4px;}
       <div style="text-align:center"><button class="linkbtn" onclick="toast('モック画面のため、メールは送信されません')">パスワードを忘れた方</button></div>
     </div>
     <div class="tiny muted" style="text-align:center">保護者アカウント1つで兄弟・姉妹をまとめて管理</div>
+    <div class="talk"><span class="tk">ご相談中</span><span>はじめての方がご自分でアカウントを作れるようにするかどうかは、いま田中と相談しています（S-11-2）。</span></div>
+    <div id="signupBox"></div>
   </section>
 
   <!-- ============ HOME ============ -->
@@ -265,7 +345,7 @@ details .cm{color:var(--muted);padding:2px 0 4px;}
     <div class="seg" id="typeSeg">
       <button data-t="regular" onclick="setType('regular')">💻 オンライン</button>
       <button data-t="single" onclick="setType('single')">🏫 対面</button>
-      <button data-t="mono" onclick="setType('mono')">👤 個別</button>
+      <button data-t="mono" onclick="setType('mono')">👤 マンツーマン</button>
     </div>
     <div class="seg sm mt10" id="viewSeg" style="max-width:200px">
       <button data-v="list" onclick="setView('list')">一覧</button>
@@ -284,7 +364,11 @@ details .cm{color:var(--muted);padding:2px 0 4px;}
   <section id="screen-reservations" class="screen">
     <div class="hrow"><h2 class="title">予約一覧</h2><button class="help" onclick="helpSheet('res')">?</button></div>
     <div class="avrow" id="childSeg2"></div>
-    <div id="resBody"></div>
+    <div class="seg sm" id="resViewSeg" style="max-width:200px">
+      <button data-rv="cal" onclick="setResView('cal')">カレンダー</button>
+      <button data-rv="list" onclick="setResView('list')">リスト</button>
+    </div>
+    <div id="resBody" class="mt10"></div>
   </section>
 
   <!-- ============ HISTORY ============ -->
@@ -330,27 +414,52 @@ var WDJ = ['日','月','火','水','木','金','土'];
 var TYPE = {
   regular:{label:'オンライン', icon:'💻', cls:'b-reg', cost:1, dlDays:1, dlText:'前日 20:00 まで'},
   single :{label:'対面',       icon:'🏫', cls:'b-sgl', cost:1, dlDays:3, dlText:'3日前 20:00 まで'},
-  mono   :{label:'個別',       icon:'👤', cls:'b-mono',cost:2, dlDays:1, dlText:'前日 20:00 まで'}
+  mono   :{label:'マンツーマン', icon:'👤', cls:'b-mono',cost:2, dlDays:1, dlText:'前日 20:00 まで'}
 };
 
-var LEVELS = ['5級','4級','3級','準2級','準2級プラス','2級','準1級'];
+var LEVELS = ['5級','4級','3級','準2級','準2級プラス','2級','準1級','その他'];
+/* S-05-3: 級ごとのテーマカラー（8区分）。admin.html と同じ割り当て */
+var LV_CLASS = {'5級':'lv-5','4級':'lv-4','3級':'lv-3','準2級':'lv-j2',
+  '準2級プラス':'lv-j2p','2級':'lv-2','準1級':'lv-p1','その他':'lv-ot'};
+function lvCls(l){return LV_CLASS[l] || 'lv-ot';}
+function lvChip(l, size){
+  return '<span class="lv '+(size||'')+' '+lvCls(l)+'">'+esc(l)+'</span>';
+}
+/* S-06-1 / S-08-2 / S-13-1: 時刻には必ず「タイ時間」を付ける */
+function thai(t){return t+'（タイ時間）';}
 
 var parent = {
-  name:'佐藤 美咲', kana:'さとう みさき', email:'sato.misaki@example.com',
+  lastName:'佐藤', firstName:'美咲',
+  romanLast:'SATO', romanFirst:'MISAKI',
+  email:'sato.misaki@example.com',
   tel:'080-xxxx-1234', memberNo:'V-01234'
 };
+Object.defineProperty(parent, 'name', {get:function(){return this.lastName+' '+this.firstName;}});
 
+/* A-10-2: 学年は「体系」と「数字」に分ける（学校名は自由入力） */
+var GRADE_SYSTEMS = ['◯年生','Grade ◯','Year ◯'];
 var children = [
-  { id:'c1', name:'佐藤 陽菜', short:'陽菜', kana:'さとう ひな', roman:'SATO Hina',
-    birth:'2013-04-12', school:'バンコク日本人学校', grade:'中学1年',
-    level:'準2級', classId:'clj2', tickets:7,
-    exam:'2026年度 第2回', mono:{W:1, S:0} },
-  { id:'c2', name:'佐藤 蓮', short:'蓮', kana:'さとう れん', roman:'SATO Ren',
-    birth:'2016-09-03', school:'バンコク日本人学校', grade:'小学4年',
-    level:'4級', classId:'cl4', tickets:1,
-    exam:'2026年度 第2回', mono:{W:0, S:0} }
+  { id:'c1', no:'AEG-0001', lastName:'佐藤', firstName:'陽菜', short:'陽菜',
+    romanLast:'SATO', romanFirst:'HINA',
+    birth:'2013-04-12', school:'バンコク日本人学校', gradeSystem:'◯年生', gradeNo:7,
+    level:'準2級', classId:'clj2', tickets:7, bundle:10, used:3,
+    exam:'2026年度 第2回', examRound:'2026年度 第2回', mono:{W:1, S:0} },
+  { id:'c2', no:'AEG-0002', lastName:'佐藤', firstName:'蓮', short:'蓮',
+    romanLast:'SATO', romanFirst:'REN',
+    birth:'2016-09-03', school:'バンコク日本人学校', gradeSystem:'◯年生', gradeNo:4,
+    level:'4級', classId:'cl4', tickets:1, bundle:10, used:9,
+    exam:'2026年度 第2回', examRound:'2026年度 第2回', mono:{W:0, S:0} }
 ];
+children.forEach(function(c){
+  Object.defineProperty(c, 'name',  {get:function(){return this.lastName+' '+this.firstName;}});
+  Object.defineProperty(c, 'roman', {get:function(){return this.romanLast+' '+this.romanFirst;}});
+  Object.defineProperty(c, 'grade', {get:function(){
+    return this.gradeSystem.replace('◯', String(this.gradeNo));
+  }});
+});
 var MONO_LIMIT = {W:4, S:2};
+/* S-11-1 案B: チケット残数のマイナスを −10 回まで許す（要相談・推奨案） */
+var MINUS_ALLOW = 10;
 var MONO_NAME  = {W:'ライティング', S:'スピーキング'};
 
 /* 定期オンライングループレッスン（級別・毎週固定・定員なし） */
@@ -364,7 +473,9 @@ var CLASSES = [
   {id:'clj2p',level:'準2級プラス',wd:'土', time:'11:00–11:50', start:'11:00', dates:['2026-09-05','2026-09-12','2026-09-19','2026-09-26']}
 ];
 var CLOSED_DAYS = ['2026-09-15','2026-09-23','2026-10-13'];
-var ZOOM_URL = 'https://zoom.example.com/j/000-000-000（モック）';
+var ZOOM_URL = 'https://zoom.example.com/j/0000000000';
+var ZOOM_ID  = '000 0000 0000';
+var ZOOM_PW  = 'aeg2026';
 
 /* レッスンマスタ */
 var LESSONS = {};
@@ -376,34 +487,38 @@ CLASSES.forEach(function(c){
       place:'オンライン（Zoom）', url:ZOOM_URL, closed:CLOSED_DAYS.indexOf(d)>=0};
   });
 });
-[ {id:'sgl-0906', date:'2026-09-06', time:'10:00–11:30', start:'10:00', cap:6, booked:5, wait:0},
-  {id:'sgl-0913', date:'2026-09-13', time:'10:00–11:30', start:'10:00', cap:6, booked:6, wait:2},
-  {id:'sgl-0920', date:'2026-09-20', time:'14:00–15:30', start:'14:00', cap:8, booked:3, wait:0},
-  {id:'sgl-0927', date:'2026-09-27', time:'10:00–11:30', start:'10:00', cap:6, booked:2, wait:0}
+[ {id:'sgl-0906', date:'2026-09-06', time:'10:00–11:30', start:'10:00', cap:8, booked:5, wait:0, level:'準2級'},
+  {id:'sgl-0913', date:'2026-09-13', time:'10:00–11:30', start:'10:00', cap:8, booked:8, wait:2, level:'準2級'},
+  {id:'sgl-0920', date:'2026-09-20', time:'14:00–15:30', start:'14:00', cap:8, booked:3, wait:0, level:'4級'},
+  {id:'sgl-0927', date:'2026-09-27', time:'10:00–11:30', start:'10:00', cap:8, booked:2, wait:0, level:'準2級',
+   openAt:'2026-10-26 13:00'}
 ].forEach(function(s){
-  LESSONS[s.id] = {id:s.id, type:'single', title:'対面グループ',
-    date:s.date, wd:'日', start:s.start, time:s.time, place:'VOICE ホビークラブ 教室',
-    cap:s.cap, booked:s.booked, wait:s.wait, closed:false};
+  LESSONS[s.id] = {id:s.id, type:'single', title:'対面クラス', level:s.level,
+    date:s.date, wd:'日', start:s.start, time:s.time, place:'ボイスホビークラブ',
+    cap:s.cap, booked:s.booked, wait:s.wait, closed:false, openAt:s.openAt || null};
 });
-[ {id:'m-0905-1300', date:'2026-09-05', start:'13:00', kind:'W', other:false},
-  {id:'m-0905-1330', date:'2026-09-05', start:'13:30', kind:'W', other:false},
-  {id:'m-0905-1400', date:'2026-09-05', start:'14:00', kind:'S', other:false},
-  {id:'m-0912-1300', date:'2026-09-12', start:'13:00', kind:'W', other:true},
-  {id:'m-0912-1330', date:'2026-09-12', start:'13:30', kind:'S', other:false},
-  {id:'m-0919-1300', date:'2026-09-19', start:'13:00', kind:'W', other:false},
-  {id:'m-0919-1330', date:'2026-09-19', start:'13:30', kind:'S', other:false}
+[ {id:'m-0905-1300', date:'2026-09-05', start:'13:00', other:false},
+  {id:'m-0905-1330', date:'2026-09-05', start:'13:30', other:false},
+  {id:'m-0905-1400', date:'2026-09-05', start:'14:00', other:false},
+  {id:'m-0912-1300', date:'2026-09-12', start:'13:00', other:true},
+  {id:'m-0912-1330', date:'2026-09-12', start:'13:30', other:false},
+  {id:'m-0919-1300', date:'2026-09-19', start:'13:00', other:false},
+  {id:'m-0919-1330', date:'2026-09-19', start:'13:30', other:false, eligibleOnly:true}
 ].forEach(function(m){
-  var end = m.start === '13:00' ? '13:30' : (m.start === '13:30' ? '14:00' : '14:30');
-  LESSONS[m.id] = {id:m.id, type:'mono', title:MONO_NAME[m.kind],
-    date:m.date, wd:'土', start:m.start, time:m.start+'–'+end, kind:m.kind,
-    place:'オンライン（Zoom）', url:ZOOM_URL, other:m.other, closed:false};
+  /* A-06-2 / A-13-1: マンツーマンは 40 分 */
+  var p = m.start.split(':'), t = (+p[0])*60 + (+p[1]) + 40;
+  var end = pad2(Math.floor(t/60)) + ':' + pad2(t%60);
+  LESSONS[m.id] = {id:m.id, type:'mono', title:'マンツーマン',
+    date:m.date, wd:'土', start:m.start, time:m.start+'–'+end,
+    place:'オンライン（Zoom）', url:ZOOM_URL, other:m.other, closed:false,
+    eligibleOnly: !!m.eligibleOnly};
 });
 
 /* 予約（今後） */
 var reservations = [
   {id:'rv1', childId:'c1', lessonId:'reg-clj2-2026-09-04', status:'booked'},
   {id:'rv2', childId:'c1', lessonId:'sgl-0906',            status:'booked'},
-  {id:'rv3', childId:'c1', lessonId:'m-0905-1300',         status:'booked'},
+  {id:'rv3', childId:'c1', lessonId:'m-0905-1300',         status:'booked', kind:'W'},
   {id:'rv4', childId:'c1', lessonId:'sgl-0913',            status:'waiting', waitPos:2},
   {id:'rv5', childId:'c2', lessonId:'reg-cl4-2026-09-02',  status:'booked'},
   {id:'rv6', childId:'c2', lessonId:'reg-cl4-2026-09-09',  status:'booked'}
@@ -412,11 +527,11 @@ var reservations = [
 /* 受講履歴（新しい順） */
 var lessonHistory = {
   c1:[
-    {dt:'2026/08/30 10:00', type:'single',  title:'対面グループ',  status:'キャンセル（期限超過）', sc:'b-cx',  note:'キャンセル日時: 2026/08/30 08:12', score:''},
-    {dt:'2026/08/28 18:00', type:'regular', title:'準2級クラス',   status:'受講済',                sc:'b-done', note:'長文読解◎ 語彙の取りこぼしに注意', score:''},
+    {dt:'2026/08/30 10:00', type:'single',  title:'対面クラス',  status:'キャンセル（期限超過）', sc:'b-cx',  note:'キャンセル日時: 2026/08/30 08:12', score:''},
+    {dt:'2026/08/28 18:00', type:'regular', title:'準2級クラス',   status:'受講済',                sc:'b-done', note:'長文読解◎ 語彙の取りこぼしに注意', score:'', did:['リーディング','単語']},
     {dt:'2026/08/21 18:00', type:'regular', title:'準2級クラス',   status:'受講済',                sc:'b-done', note:'過去問 大問2 復習を', score:''},
     {dt:'2026/08/14 18:00', type:'regular', title:'準2級クラス',   status:'欠席',                  sc:'b-abs',  note:'欠席のためチケット1回分を消費', score:''},
-    {dt:'2026/08/09 10:00', type:'single',  title:'対面グループ',  status:'受講済',                sc:'b-done', note:'リスニング集中回', score:''},
+    {dt:'2026/08/09 10:00', type:'single',  title:'対面クラス',  status:'受講済',                sc:'b-done', note:'リスニング集中回', score:'', did:['ライティング（Eメール）','単語']},
     {dt:'2026/08/01 13:00', type:'mono',    title:'ライティング',      status:'受講済',            sc:'b-done', note:'構成は◎ つづりミス減らそう', score:'12 / 16'}
   ],
   c2:[
@@ -429,12 +544,12 @@ var lessonHistory = {
 /* チケット履歴（新しい順・残高は下から積み上げて整合） */
 var ticketHistory = {
   c1:[
-    {dt:'2026/08/30', text:'期限超過キャンセル（対面グループ 8/30）', d:-1,  bal:7},
+    {dt:'2026/08/30', text:'期限超過キャンセル（対面クラス 8/30）', d:-1,  bal:7},
     {dt:'2026/08/28', text:'受講（準2級クラス）',                    d:-1,  bal:8},
     {dt:'2026/08/21', text:'受講（準2級クラス）',                    d:-1,  bal:9},
     {dt:'2026/08/14', text:'欠席（準2級クラス）',                    d:-1,  bal:10},
-    {dt:'2026/08/09', text:'受講（対面グループ）',                    d:-1,  bal:11},
-    {dt:'2026/08/01', text:'受講（個別 ライティング）',                d:-2,  bal:12},
+    {dt:'2026/08/09', text:'受講（対面クラス）',                    d:-1,  bal:11},
+    {dt:'2026/08/01', text:'受講（マンツーマン ライティング）',                d:-2,  bal:12},
     {dt:'2026/07/31', text:'チケット追加 入金確認（日本円振込）',      d:+10, bal:14},
     {dt:'2026/07/24', text:'受講（準2級クラス）',                    d:-1,  bal:4},
     {dt:'2026/07/17', text:'受講（準2級クラス）',                    d:-1,  bal:5},
@@ -459,9 +574,11 @@ var ticketHistory = {
 };
 
 var eikenResults = {
-  c1:[{date:'2026-06-07', level:'3級', pass:'合格', r:'22 / 30', l:'24 / 30', w:'12 / 16', s:'25 / 33', cse:'1610'}],
+  c1:[{date:'2026-06-07', year:'2026年度', round:'第1回', level:'3級', pass:'合格',
+       r:'22 / 30', l:'24 / 30', w:'12 / 16', s:'25 / 33', cse:'1610', by:'管理者入力'}],
   c2:[]
 };
+var EIKEN_ROUNDS = ['第1回','第2回','第3回'];
 
 /* =========================================================
    State
@@ -470,7 +587,12 @@ var state = {
   screen:'screen-login', childId:'c1',
   lessonType:'regular', lessonView:'list', calDate:null,
   monoFilter:'all', histTab:'lessons', showOther:false,
-  pending:null, addSibling:false
+  pending:null, addSibling:false,
+  resView:'cal',        /* S-01-3: 予約一覧の既定はカレンダー */
+  resCalDate:null,
+  singleMonth:'2026-09',/* S-07-1: 対面クラス一覧の表示月 */
+  monoMonth:'2026-09',  /* S-12-1: マンツーマン一覧の表示月 */
+  signup:false          /* S-11-2: 新規登録フォームの開閉 */
 };
 var seq = 100;
 
@@ -487,6 +609,22 @@ function deadlineOf(l){
   var d = ymd(l.date); d.setDate(d.getDate() - TYPE[l.type].dlDays); d.setHours(20,0,0,0); return d;
 }
 function fmtDlS(d){return (d.getMonth()+1)+'/'+d.getDate()+' '+pad2(d.getHours())+':'+pad2(d.getMinutes());}
+/* S-02-1: 期限超過は「キャンセル不可」ではなく「キャンセルすると 🎟 −N」と書く */
+function expiredText(l){
+  return '期限超過（キャンセルすると 🎟 −'+TYPE[l.type].cost+'／期限：'
+    + fmtDlS(deadlineOf(l))+' タイ時間）';
+}
+/* A-06-3: 受付開始前かどうか */
+function notOpenYet(l){
+  if(!l.openAt) return false;
+  var p = l.openAt.split(' '), d = ymd(p[0]), t = p[1].split(':');
+  d.setHours(+t[0], +t[1], 0, 0);
+  return d.getTime() > NOW.getTime();
+}
+function openAtText(l){
+  var p = l.openAt.split(' '), d = ymd(p[0]);
+  return (d.getMonth()+1)+'/'+d.getDate()+'（'+WDJ[d.getDay()]+'）'+p[1]+' から予約できます（タイ時間）';
+}
 function fmtDl(d){return (d.getMonth()+1)+'/'+d.getDate()+'('+WDJ[d.getDay()]+') '+pad2(d.getHours())+':'+pad2(d.getMinutes());}
 function expired(l){return deadlineOf(l).getTime() <= NOW.getTime();}
 function nowStamp(){return NOW.getFullYear()+'/'+pad2(NOW.getMonth()+1)+'/'+pad2(NOW.getDate())+' '+pad2(NOW.getHours())+':'+pad2(NOW.getMinutes());}
@@ -520,6 +658,11 @@ function anyChildRes(lessonId){
 function sortKey(l){return l.date + ' ' + l.start;}
 function icon(t){return TYPE[t].icon;}
 function ticketState(n){return n>=4 ? 'ok' : (n>=2 ? 'mid' : 'low');}
+/* S-12-4: マンツーマンの予約はその子が選んだ種別を持つ */
+function monoKindOf(r){return r && r.kind ? r.kind : 'W';}
+function monoBothFull(c){
+  return c.mono.W >= MONO_LIMIT.W && c.mono.S >= MONO_LIMIT.S;
+}
 
 /* 日付ブロック（曜日小 + 日大） */
 function dbk(dateStr, big){
@@ -531,20 +674,39 @@ function dbkFromDt(dt){
   var d = ymd(dt.slice(0,10).replace(/\//g,'-'));
   return '<div class="dbk"><div class="wd">'+(d.getMonth()+1)+'月</div><div class="dd">'+d.getDate()+'</div></div>';
 }
+/* S-16-1: 履歴の日付に曜日を足す（例「8/30（土）」） */
+function histDate(dt){
+  var d = ymd(dt.slice(0,10).replace(/\//g,'-'));
+  return (d.getMonth()+1)+'/'+d.getDate()+'（'+WDJ[d.getDay()]+'）';
+}
 
-/* 10回券パンチカード */
-function punchCard(tickets, planned){
+/* S-01-1: パンチカードは購入した束（10／20／30回）の枠数で描く */
+function punchCard(tickets, planned, bundle){
   var s = ticketState(tickets);
-  var shown = Math.min(10, tickets);
+  var slots = bundle || 10;
+  var pos = Math.max(0, tickets);
+  var shown = Math.min(slots, pos);
   var hold = Math.min(shown, planned);
   var cells = '';
-  for(var i=0;i<10;i++){
+  for(var i=0;i<slots;i++){
     if(i < shown - hold) cells += '<span class="pu on"></span>';
     else if(i < shown)   cells += '<span class="pu hold"></span>';
     else                 cells += '<span class="pu"></span>';
   }
-  return '<div class="pcard"><div class="punch" data-s="'+s+'">'+cells+'</div>'
-    + (tickets>10 ? '<span class="plus">+'+(tickets-10)+'</span>' : '') + '</div>';
+  var cols = slots > 10 ? 10 : slots;
+  return '<div class="pcard"><div class="punch" data-s="'+s+'" style="grid-template-columns:repeat('+cols+',1fr)">'+cells+'</div>'
+    + (pos>slots ? '<span class="plus">+'+(pos-slots)+'</span>' : '') + '</div>';
+}
+/* S-01-2: 受講済み／予約済み／残り の 3 値 */
+function ticketLine(c, planned){
+  return '<div class="tiny muted mt10">受講済み <b>'+c.used+'</b> ・ 予約済み <b>'+planned+'</b> ・ 残り <b>'+c.tickets+'</b></div>';
+}
+/* S-18-1: 残数がマイナスのときの案内 */
+var MINUS_NOTE = '※10回チケットのお振込がお済みではありません。お振込頂けましたら、お手数ですがお振込スリップを LINE でご送付頂きますようお願いいたします。';
+function minusNote(c){
+  if(c.tickets >= 0) return '';
+  return '<div class="line bad mt6">🎟 マイナス'+(-c.tickets)+'回</div>'
+    + '<div class="tiny mt6" style="color:var(--danger);font-weight:700">'+esc(MINUS_NOTE)+'</div>';
 }
 
 /* =========================================================
@@ -580,23 +742,39 @@ function openModal(o){
 function closeModal(){ document.getElementById('modal').classList.remove('on'); modalOk = null; }
 
 var HELP = {
-  home:{t:'チケットについて', b:['受講・欠席・期限超過キャンセルで消費','予約した時点では減りません','オンライン／対面 共通・有効期限なし']},
-  lessons:{t:'予約のヒント', b:['休校日は予約できません','満席の対面レッスンはキャンセル待ちに入れます（空席が出たらメール）','個別レッスンは1コマでチケット2回分']},
-  res:{t:'キャンセルについて', b:['期限内のキャンセルはチケット消費なし','期限を過ぎるとチケットを消費します','キャンセル待ちの取消はいつでも可能']},
-  hist:{t:'履歴について', b:['受講・欠席・キャンセルの記録','チケットの増減と残数','英検の結果は管理者が登録']},
+  home:{t:'チケットについて', b:['受講・欠席・期限超過キャンセルで消費','予約した時点では減りません','オンライン／対面 共通・有効期限なし','残りがマイナスのときは未入金としてお知らせします']},
+  lessons:{t:'予約のヒント', b:['休校日は予約できません','満席の対面クラスはキャンセル待ちができます（空席が出たら、待っている方 全員にメールし、先着で受け付けます）','マンツーマンレッスンは1コマでチケット2回分']},
+  res:{t:'キャンセルについて', b:['期限内のキャンセルはチケット消費なし','期限を過ぎてもキャンセルはできます（チケットを消費します）','キャンセル待ちの取消はいつでも可能','時刻はすべてタイ時間です']},
+  hist:{t:'履歴について', b:['受講・欠席・キャンセルの記録','チケットの増減と残数','英検の結果は保護者・管理者のどちらでも登録できます']},
   account:{t:'登録内容について', b:['兄弟・姉妹は1つのアカウントで管理','級の変更は管理者が確認します']}
 };
 function helpSheet(k){
   var h = HELP[k];
   openModal({title:h.t, body:'<ul>'+h.b.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>', cancelText:'閉じる'});
 }
+/* S-19-1: 振込先（タイ／日本）と 3 ステップの流れ。口座番号はすべてダミー。
+   S-19-2: 連絡先は LINE 公式アカウント。 */
+var LINE_URL = 'https://lin.ee/mjiYPPH';
 function paySheet(){
   openModal({title:'振込方法',
     body:'<div class="line info">10回チケット ／ 8,000 バーツ ・ 42,000 円</div>'
-      + '<ul class="mt10"><li>銀行振込（タイバーツ）</li><li>銀行振込（日本円）</li><li>ボイス受付にてお支払</li></ul>'
-      + '<div class="tiny muted mt10">日本円はレート・手数料により変動。有効期限なし・級の制限なし。</div>',
-    okText:'振込を連絡する', cancelText:'閉じる',
-    onOk:function(){ toast('モック画面です。実際には連絡フォームが開きます'); }});
+      + '<div class="bank"><h5>タイバーツでお振込の場合</h5>'
+      + '<div class="kv"><span>銀行</span><b>Kasikorn Bank（ダミー）</b></div>'
+      + '<div class="kv"><span>支店</span><b>Thonglor（ダミー）</b></div>'
+      + '<div class="kv"><span>口座番号</span><b>000-0-00000-0（ダミー）</b></div>'
+      + '<div class="kv"><span>口座名義</span><b>ACHIEVE ENGLISH GYM（ダミー）</b></div></div>'
+      + '<div class="bank"><h5>日本円でお振込の場合</h5>'
+      + '<div class="kv"><span>銀行</span><b>〇〇銀行（ダミー）</b></div>'
+      + '<div class="kv"><span>支店</span><b>〇〇支店（ダミー）</b></div>'
+      + '<div class="kv"><span>口座番号</span><b>普通 0000000（ダミー）</b></div>'
+      + '<div class="kv"><span>口座名義</span><b>アチーブイングリッシュジム（ダミー）</b></div></div>'
+      + '<div class="small mt10" style="font-weight:800">お振込から反映までの流れ</div>'
+      + '<ol class="steps"><li>上のどちらかの口座へお振込みください。</li>'
+      + '<li>お振込スリップを LINE でお送りください。</li>'
+      + '<li>確認できしだいチケットを追加し、メールでお知らせします。</li></ol>'
+      + '<div class="tiny muted mt10">口座情報はモック用のダミーです。日本円はレート・手数料により変動。有効期限なし・級の制限なし。</div>',
+    okText:'LINE で振込を連絡する', cancelText:'閉じる',
+    onOk:function(){ window.open(LINE_URL, '_blank', 'noopener'); }});
 }
 
 /* =========================================================
@@ -614,6 +792,31 @@ function go(id){
   window.scrollTo(0,0);
   render();
 }
+function renderSignup(){
+  var box = document.getElementById('signupBox');
+  if(!box) return;
+  if(!state.signup){
+    box.innerHTML = '<button class="btn block" onclick="toggleSignup()">＋ はじめての方（アカウントを作る）</button>';
+    return;
+  }
+  box.innerHTML = '<div class="card" style="border-color:var(--ink);border-width:2px">'
+    + '<h3 class="sub" style="margin-top:0">アカウントを作る</h3>'
+    + '<div style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1"><span>姓</span><input placeholder="例: 佐藤"></label>'
+    + '<label class="f" style="flex:1"><span>名</span><input placeholder="例: 美咲"></label></div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1"><span>ローマ字（LAST NAME (氏)）</span><input placeholder="SATO"></label>'
+    + '<label class="f" style="flex:1"><span>ローマ字（FIRST NAME (名)）</span><input placeholder="MISAKI"></label></div>'
+    + '<label class="f"><span>メール（ログインID）</span><input type="email" placeholder="例: sato.misaki@example.com"></label>'
+    + '<label class="f"><span>パスワード</span><input type="password" placeholder="8文字以上"></label>'
+    + '<label class="f"><span>電話番号</span><input placeholder="例: 080-xxxx-1234"></label>'
+    + '<label class="f"><span>ボイスメンバーNo.（お持ちの方のみ）</span><input placeholder="例: V-01234"></label>'
+    + '<div class="tiny muted mt6">お子さまの登録はアカウントを作ったあとに行います。</div>'
+    + '<div style="display:flex;gap:8px;margin-top:10px">'
+    + '<button class="btn" style="flex:1" onclick="toggleSignup()">やめる</button>'
+    + '<button class="btn pri" style="flex:1" onclick="toggleSignup();toast(\'モック画面のため登録されません\')">作成してはじめる</button></div>'
+    + '</div>';
+}
 function login(){
   document.getElementById('hdWho').textContent = parent.name;
   go('screen-home');
@@ -627,6 +830,21 @@ function setChild(id){ state.childId = id; state.calDate = null; render(); }
 function setType(t){ state.lessonType = t; state.calDate = null; render(); }
 function setView(v){ state.lessonView = v; render(); }
 function setHist(h){ state.histTab = h; render(); }
+function setResView(v){ state.resView = v; state.resCalDate = null; render(); }
+function shiftMonth(key, delta){
+  var p = state[key].split('-'), y = +p[0], m = +p[1] + delta;
+  while(m < 1){ m += 12; y -= 1; } while(m > 12){ m -= 12; y += 1; }
+  state[key] = y + '-' + pad2(m);
+  state.calDate = null; state.resCalDate = null; render();
+}
+function monthBar(key){
+  var p = state[key].split('-');
+  return '<div class="mbar"><button onclick="shiftMonth(\''+key+'\',-1)" aria-label="前の月">◀</button>'
+    + '<b>'+p[0]+'年'+(+p[1])+'月</b>'
+    + '<button onclick="shiftMonth(\''+key+'\',1)" aria-label="次の月">▶</button></div>';
+}
+function inMonth(dateStr, key){ return dateStr.indexOf(state[key]) === 0; }
+function toggleSignup(){ state.signup = !state.signup; renderSignup(); }
 function setMonoFilter(f){ state.monoFilter = f; render(); }
 function toggleOther(){ state.showOther = !state.showOther; render(); }
 
@@ -645,6 +863,7 @@ function renderChildSegs(){
 }
 function render(){
   renderChildSegs();
+  if(state.screen==='screen-login') renderSignup();
   if(state.screen==='screen-home') renderHome();
   if(state.screen==='screen-account') renderAccount();
   if(state.screen==='screen-lessons') renderLessons();
@@ -660,9 +879,16 @@ function transferBanner(){
   return '<div class="banner"><span>⚠️</span><div class="bt">チケットの更新をお願いします</div>'
     + '<button class="btn xs" onclick="paySheet()">振込方法 ›</button></div>';
 }
+/* S-11-1 案B（要相談）: 残数がマイナスのときは赤いバナーで未入金を知らせる */
+function unpaidBanner(c){
+  if(c.tickets >= 0) return '';
+  return '<div class="banner dgr"><span>🎟</span><div class="bt">未入金 '+(-c.tickets)+' 回（マイナス'+(-c.tickets)+'回）</div>'
+    + '<button class="btn xs" onclick="paySheet()">振込方法 ›</button></div>';
+}
+/* S-01-4 / S-01-6: アイコン単独をやめ、必ず文字を添える */
 function statusChip(r){
-  if(r.status === 'waiting') return '<span class="chip c-wait">⏳ '+r.waitPos+'番目</span>';
-  return '<span class="chip c-ok">✅</span>';
+  if(r.status === 'waiting') return '<span class="chip c-wait">⏳ キャンセル待ち '+r.waitPos+'番目</span>';
+  return '<span class="chip c-ok">✅ 予約済み</span>';
 }
 function renderHome(){
   var c = cur();
@@ -671,32 +897,35 @@ function renderHome(){
     .sort(function(a,b){return sortKey(a.l) < sortKey(b.l) ? -1 : 1;});
 
   var planned = plannedCost(c.id);
-  var usable = c.tickets - planned;
   var s = ticketState(c.tickets);
 
   var h = '';
-  if(c.tickets <= 1) h += transferBanner();
+  h += unpaidBanner(c);
+  if(c.tickets >= 0 && c.tickets <= 1) h += transferBanner();
 
   h += '<div class="card tkt">'
     + '<div class="spread" style="margin-bottom:10px">'
     + '<div class="small" style="font-weight:800">🎟 チケット</div>'
     + '<div><span class="pnum" data-s="'+s+'">'+c.tickets+'</span><span class="punit">回</span></div></div>'
-    + punchCard(c.tickets, planned)
-    + '<div class="tiny muted mt10">予約済み '+planned+' ・ 使える '+(usable<0?0:usable)
-    + (usable<0 ? ' ・ <b style="color:var(--danger)">不足 '+(-usable)+'</b>' : '')+'</div>'
+    /* S-01-1: 購入済み枚数も出す */
+    + '<div class="tiny mt6" style="font-weight:800">受講済み '+c.used+' / '+c.bundle+'回（'+c.bundle+'回券）</div>'
+    + punchCard(c.tickets, planned, c.bundle)
+    + ticketLine(c, planned)
+    + minusNote(c)
     + '</div>';
 
   if(mine.length){
     var n0 = mine[0];
     var meta = n0.r.status==='waiting'
       ? '空席が出たらメール通知'
-      : (expired(n0.l) ? '期限 '+fmtDlS(deadlineOf(n0.l))+' 超過'
-                       : fmtDlS(deadlineOf(n0.l))+' までキャンセル無料');
+      : (expired(n0.l) ? expiredText(n0.l)
+                       : fmtDlS(deadlineOf(n0.l))+' タイ時間 までキャンセル無料');
     var metaCls = (n0.r.status==='booked' && expired(n0.l)) ? ' dgr' : '';
     h += '<h3 class="sub">📅 次のレッスン</h3>'
       + '<button class="lrow hero tap" onclick="resSheet(\''+n0.r.id+'\')">'
       + dbk(n0.l.date, true)
-      + '<div class="mid"><div class="t">'+n0.l.start+' '+esc(n0.l.title)+' '+icon(n0.l.type)+'</div>'
+      + '<div class="mid">'+(n0.l.level ? lvChip(n0.l.level,'sm')+' ' : '')
+      + '<span class="t" style="display:inline">'+thai(n0.l.start)+' '+esc(n0.l.title)+' '+icon(n0.l.type)+'</span>'
       + '<div class="m'+metaCls+'">'+esc(meta)+'</div></div>'
       + statusChip(n0.r) + '</button>';
   } else {
@@ -711,12 +940,14 @@ function renderHome(){
   } else {
     h += rest.slice(0,3).map(function(x){
       return '<button class="lrow tap" onclick="resSheet(\''+x.r.id+'\')">'+dbk(x.l.date)
-        + '<div class="mid"><div class="t">'+x.l.start+' '+esc(x.l.title)+' '+icon(x.l.type)+'</div></div>'
+        + '<div class="mid">'+(x.l.level ? lvChip(x.l.level,'sm')+' ' : '')
+        + '<span class="t" style="display:inline">'+thai(x.l.start)+' '+esc(x.l.title)+' '+icon(x.l.type)+'</span></div>'
         + statusChip(x.r) + '</button>';
     }).join('');
   }
 
-  h += '<h3 class="sub">👤 個別レッスン</h3>'
+  /* S-01-7: 生徒側の「個別」はすべて「マンツーマン」 */
+  h += '<h3 class="sub">👤 マンツーマンレッスン</h3>'
     + '<div class="card tight">' + monoGauge(c) + '</div>';
 
   h += '<button class="btn pri block mt10" onclick="go(\'screen-lessons\')">＋ レッスンを予約する</button>';
@@ -728,33 +959,58 @@ function dots(u, lim){
   for(var i=0;i<lim;i++) s += '<span class="gd'+(i<u?' on':'')+'"></span>';
   return '<span class="dots">'+s+'</span>';
 }
+/* S-01-8 / S-12-2: W・S を「ライティング」「スピーキング」に開き、縦積みにする */
 function monoGauge(c, unit){
-  return '<div class="gauge">'
-    + '<span class="g"><span class="chip c-w">W</span>'+dots(c.mono.W, MONO_LIMIT.W)+'<span class="n">'+c.mono.W+'/'+MONO_LIMIT.W+'</span></span>'
-    + '<span class="g"><span class="chip c-s">S</span>'+dots(c.mono.S, MONO_LIMIT.S)+'<span class="n">'+c.mono.S+'/'+MONO_LIMIT.S+'</span></span>'
-    + (unit ? '<span class="n" style="font-weight:600">1コマ 🎟×2</span>' : '') + '</div>';
+  return '<div class="gauge stack">'
+    + '<span class="g"><span class="chip c-w nm">ライティング</span>'+dots(c.mono.W, MONO_LIMIT.W)+'<span class="n">'+c.mono.W+'/'+MONO_LIMIT.W+'</span></span>'
+    + '<span class="g"><span class="chip c-s nm">スピーキング</span>'+dots(c.mono.S, MONO_LIMIT.S)+'<span class="n">'+c.mono.S+'/'+MONO_LIMIT.S+'</span></span>'
+    /* S-12-6 案A（要相談）: 今どの受験回を数えているかを出す */
+    + '<span class="n" style="font-weight:700">今の受験回: '+esc(c.examRound)+'</span>'
+    + (unit ? '<span class="n" style="font-weight:600">1コマ 🎟×2</span>' : '') + '</div>'
+    + '<div class="talk"><span class="tk">ご相談中</span><span>回数のリセットを「管理者のボタンで行う」形にするか、受験回の登録で自動にするかは相談中です（S-12-6）。</span></div>';
 }
 
 /* =========================================================
    Render: アカウント
    ========================================================= */
+/* S-03-1 / S-03-4: 姓・名を 2 欄に分ける */
+function nameFields(last, first, phLast, phFirst){
+  return '<div style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1"><span>姓</span><input value="'+esc(last||'')+'" placeholder="'+esc(phLast||'')+'"></label>'
+    + '<label class="f" style="flex:1"><span>名</span><input value="'+esc(first||'')+'" placeholder="'+esc(phFirst||'')+'"></label></div>';
+}
+/* S-03-2 / S-03-4: ふりがなをローマ字 2 欄に置き換える */
+function romanFields(last, first, phLast, phFirst){
+  return '<div style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1"><span>ローマ字（LAST NAME (氏)）</span><input value="'+esc(last||'')+'" placeholder="'+esc(phLast||'')+'"></label>'
+    + '<label class="f" style="flex:1"><span>ローマ字（FIRST NAME (名)）</span><input value="'+esc(first||'')+'" placeholder="'+esc(phFirst||'')+'"></label></div>';
+}
+/* A-10-2: 学校名（自由入力）と学年（体系＋数字）に分ける */
+function schoolFields(school, sys, no){
+  var nums = '';
+  for(var i=1;i<=12;i++) nums += '<option'+(i===no?' selected':'')+'>'+i+'</option>';
+  return '<label class="f"><span>学校名</span><input value="'+esc(school||'')+'" placeholder="例: バンコク日本人学校"></label>'
+    + '<div style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1.2"><span>学年（体系）</span><select>'
+    + GRADE_SYSTEMS.map(function(g){return '<option'+(g===sys?' selected':'')+'>'+esc(g)+'</option>';}).join('')
+    + '</select></label>'
+    + '<label class="f" style="flex:1"><span>学年（数字）</span><select>'+nums+'</select></label></div>';
+}
 function renderAccount(){
   var h = '<div class="card"><h3 class="sub" style="margin-top:0">保護者</h3>'
-    + '<label class="f"><span>氏名</span><input value="'+esc(parent.name)+'"></label>'
-    + '<label class="f"><span>ふりがな</span><input value="'+esc(parent.kana)+'"></label>'
+    + nameFields(parent.lastName, parent.firstName)
+    + romanFields(parent.romanLast, parent.romanFirst)
     + '<label class="f"><span>メール（ログインID）</span><input value="'+esc(parent.email)+'"></label>'
     + '<label class="f"><span>電話番号</span><input value="'+esc(parent.tel)+'"></label>'
-    + '<label class="f"><span>ボイスメンバーNo.（任意）</span><input value="'+esc(parent.memberNo)+'"></label>'
+    + '<label class="f"><span>ボイスメンバーNo.（お持ちの方のみ）</span><input value="'+esc(parent.memberNo)+'"></label>'
     + '<button class="btn pri block" onclick="toast(\'保存しました（モック）\')">保存</button></div>';
 
   children.forEach(function(c){
     h += '<div class="card"><h3 class="sub" style="margin-top:0">'+esc(c.short)+'</h3>'
-      + '<label class="f"><span>氏名</span><input value="'+esc(c.name)+'"></label>'
-      + '<label class="f"><span>ふりがな</span><input value="'+esc(c.kana)+'"></label>'
-      + '<label class="f"><span>ローマ字</span><input value="'+esc(c.roman)+'"></label>'
+      + nameFields(c.lastName, c.firstName)
+      + romanFields(c.romanLast, c.romanFirst)
       + '<label class="f"><span>生年月日</span><input type="date" value="'+esc(c.birth)+'"></label>'
-      + '<label class="f"><span>学校</span><input value="'+esc(c.school)+'"></label>'
-      + '<label class="f"><span>学年</span><input value="'+esc(c.grade)+'"></label>'
+      + schoolFields(c.school, c.gradeSystem, c.gradeNo)
       + '<label class="f"><span>受験級</span><select>'
       + LEVELS.map(function(lv){return '<option'+(lv===c.level?' selected':'')+'>'+esc(lv)+'</option>';}).join('')
       + '</select></label>'
@@ -763,12 +1019,10 @@ function renderAccount(){
 
   if(state.addSibling){
     h += '<div class="card" style="border-color:var(--ink);border-width:2px"><h3 class="sub" style="margin-top:0">兄弟・姉妹を追加</h3>'
-      + '<label class="f"><span>氏名</span><input placeholder="例: 佐藤 葵"></label>'
-      + '<label class="f"><span>ふりがな</span><input placeholder="例: さとう あおい"></label>'
-      + '<label class="f"><span>ローマ字</span><input placeholder="例: SATO Aoi"></label>'
+      + nameFields('', '', '例: 佐藤', '例: 葵')
+      + romanFields('', '', 'SATO', 'AOI')
       + '<label class="f"><span>生年月日</span><input type="date"></label>'
-      + '<label class="f"><span>学校</span><input placeholder="例: バンコク日本人学校"></label>'
-      + '<label class="f"><span>学年</span><input placeholder="例: 小学2年"></label>'
+      + schoolFields('', '◯年生', 2)
       + '<label class="f"><span>受験級</span><select>'+LEVELS.map(function(lv){return '<option>'+esc(lv)+'</option>';}).join('')+'</select></label>'
       + '<div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="state.addSibling=false;render()">やめる</button>'
       + '<button class="btn pri" style="flex:1" onclick="state.addSibling=false;render();toast(\'モック画面のため登録されません\')">追加する</button></div></div>';
@@ -802,21 +1056,34 @@ function lessonsOfType(t){
   return out;
 }
 function bookBtn(id, label, cls){
-  return '<button class="btn '+(cls||'pri')+' sm" onclick="startBook(\''+id+'\')">'+(label||'予約')+'</button>';
+  return '<button class="btn '+(cls||'pri')+' sm" onclick="startBook(\''+id+'\')">'+(label||'予約する')+'</button>';
+}
+/* A-06-3: 受付開始前は押せないボタンと文言を出す */
+function notOpenBtn(l){
+  return '<span class="chip c-off">受付前</span>'
+    + '<button class="btn sm" disabled>予約する</button>';
 }
 
 /* --- 定期オンライン --- */
+/* S-05-1: 級チップを先頭・大きめに置く。S-06-1: 時刻にタイ時間を付ける */
+function rowHead(l, timeLabel){
+  return '<div class="mid">'
+    + (l.level ? '<div style="margin-bottom:2px">'+lvChip(l.level)+'</div>' : '')
+    + '<div class="t">'+(timeLabel || thai(l.start))+' '+esc(l.title)+' '+icon(l.type)+'</div></div>';
+}
 function regularRow(l, c){
   if(l.closed){
-    return '<div class="lrow off">'+dbk(l.date)
-      + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' 💻</div></div>'
+    return '<div class="lrow off">'+dbk(l.date) + rowHead(l)
       + '<span class="chip c-off">🚫 休校</span></div>';
   }
   var r = resFor(c.id, l.id);
-  var rt = r ? '<span class="chip c-ok">✅</span>' : bookBtn(l.id);
-  return '<div class="lrow">'+dbk(l.date)
-    + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' 💻</div></div>'
-    + '<div class="rt">'+rt+'</div></div>';
+  var rt;
+  if(r) rt = '<span class="chip c-ok">✅ 予約済み</span>';
+  else if(notOpenYet(l)) rt = notOpenBtn(l);
+  else rt = bookBtn(l.id);
+  return '<div class="lrow">'+dbk(l.date) + rowHead(l)
+    + '<div class="rt">'+rt+'</div></div>'
+    + (notOpenYet(l) ? '<div class="tiny muted" style="margin:-4px 0 8px 50px">'+esc(openAtText(l))+'</div>' : '');
 }
 function renderRegular(){
   var c = cur();
@@ -839,47 +1106,91 @@ function singleRow(l, c){
   var r = resFor(c.id, l.id);
   var free = l.cap - l.booked;
   var rt;
-  if(r && r.status === 'booked') rt = '<span class="chip c-ok">✅</span>';
-  else if(r && r.status === 'waiting') rt = '<span class="chip c-wait">⏳ '+r.waitPos+'番目</span>';
-  else if(free <= 0) rt = '<span class="chip c-off">満席</span><button class="btn sm" onclick="startWait(\''+l.id+'\')">待つ</button>';
+  if(r && r.status === 'booked') rt = '<span class="chip c-ok">✅ 予約済み</span>';
+  else if(r && r.status === 'waiting') rt = '<span class="chip c-wait">⏳ キャンセル待ち '+r.waitPos+'番目</span>';
+  else if(notOpenYet(l)) rt = notOpenBtn(l);
+  /* S-09-1: 「待つ」→「キャンセル待ちをする」 */
+  else if(free <= 0) rt = '<span class="chip c-off">満席</span><button class="btn sm" onclick="startWait(\''+l.id+'\')">キャンセル待ちをする</button>';
   else rt = '<span class="chip c-free">空き '+free+'</span>'+bookBtn(l.id);
-  return '<div class="lrow">'+dbk(l.date)
-    + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' 🏫</div></div>'
-    + '<div class="rt">'+rt+'</div></div>';
+  return '<div class="lrow">'+dbk(l.date) + rowHead(l)
+    + '<div class="rt">'+rt+'</div></div>'
+    + (notOpenYet(l) ? '<div class="tiny muted" style="margin:-4px 0 8px 50px">'+esc(openAtText(l))+'</div>' : '');
 }
 function renderSingle(){
   var c = cur();
-  return lessonsOfType('single').map(function(l){ return singleRow(l, c); }).join('');
+  /* S-07-1: 月見出しと前後の月送り */
+  var h = monthBar('singleMonth');
+  var list = lessonsOfType('single').filter(function(l){ return inMonth(l.date, 'singleMonth'); });
+  h += list.length ? list.map(function(l){ return singleRow(l, c); }).join('')
+                   : '<div class="card tight"><div class="small muted">この月の対面クラスはありません</div></div>';
+  return h;
 }
 
-/* --- 個別（マンツーマン） --- */
+/* --- マンツーマン --- */
+/* S-12-4: 枠に種別は持たせない（種別は予約確認で選ぶ） */
 function monoRow(l, c){
   var r = resFor(c.id, l.id);
   var otherRes = anyChildRes(l.id);
-  var limitReached = c.mono[l.kind] >= MONO_LIMIT[l.kind];
   var rt, off = false;
-  if(r){ rt = '<span class="chip c-ok">✅</span>'; }
+  if(r){ rt = '<span class="chip c-ok">✅ 予約済み（'+esc(MONO_NAME[monoKindOf(r)])+'）</span>'; }
   else if(l.other || (otherRes && otherRes.childId !== c.id)){ rt = '<span class="chip c-off">満席</span>'; off = true; }
-  else if(limitReached){ rt = '<span class="chip c-off">上限</span>'; off = true; }
+  else if(monoBothFull(c)){ rt = '<span class="chip c-off">上限に達しています</span>'; off = true; }
+  else if(notOpenYet(l)){ rt = notOpenBtn(l); }
   else { rt = bookBtn(l.id); }
   return '<div class="lrow'+(off?' off':'')+'">'+dbk(l.date)
-    + '<div class="mid"><div class="t">'+l.start+' '+esc(MONO_NAME[l.kind])+' 👤</div></div>'
+    + '<div class="mid"><div class="t">'+thai(l.time)+' マンツーマン 👤</div></div>'
     + '<div class="rt">'+rt+'</div></div>';
 }
 function renderMono(){
   var c = cur();
   var h = '<div class="card tight">'+monoGauge(c, true)+'</div>';
+  /* S-12-1: 対象の年月を出す */
+  h += monthBar('monoMonth');
+  /* S-12-3: 「W 書く」「S 話す」→ 全角表記 */
   h += '<div class="seg sm" style="margin-bottom:10px">'
     + '<button class="'+(state.monoFilter==='all'?'on':'')+'" onclick="setMonoFilter(\'all\')">すべて</button>'
-    + '<button class="'+(state.monoFilter==='W'?'on':'')+'" onclick="setMonoFilter(\'W\')">W 書く</button>'
-    + '<button class="'+(state.monoFilter==='S'?'on':'')+'" onclick="setMonoFilter(\'S\')">S 話す</button></div>';
-  var list = lessonsOfType('mono').filter(function(l){ return state.monoFilter==='all' || l.kind===state.monoFilter; });
+    + '<button class="'+(state.monoFilter==='W'?'on':'')+'" onclick="setMonoFilter(\'W\')">ライティング</button>'
+    + '<button class="'+(state.monoFilter==='S'?'on':'')+'" onclick="setMonoFilter(\'S\')">スピーキング</button></div>';
+  if(state.monoFilter !== 'all'){
+    h += '<div class="tiny muted" style="margin:-4px 0 8px">枠に種別はありません。'
+      + esc(MONO_NAME[state.monoFilter])+'の残り回数だけを上に表示しています。</div>';
+  }
+  var list = lessonsOfType('mono').filter(function(l){ return inMonth(l.date, 'monoMonth'); });
   h += list.length ? list.map(function(l){return monoRow(l, c);}).join('')
-                   : '<div class="card tight"><div class="small muted">該当なし</div></div>';
+                   : '<div class="card tight"><div class="small muted">この月のマンツーマン枠はありません</div></div>';
   return h;
 }
 
-/* --- カレンダー --- */
+/* --- カレンダー ---
+   S-05-2: 丸印をやめ「準2級 17:00-18:00」の色つきチップを置く
+   S-01-5: 受講中の級の枠はすべて薄いチップ、予約済みだけ濃色＋「予約済み」 */
+function calChip(l, booked){
+  /* S-05-2: 級と開始時刻を出す。S-01-5: 予約済みだけ濃色にして「予約済み」と書く */
+  var lab = (l.level ? l.level + ' ' : '') + l.start + (booked ? ' 予約済み' : '');
+  return '<span class="cchip '+lvCls(l.level || 'その他')+(booked?' booked':'')+'">'+esc(lab)+'</span>';
+}
+function monthGrid(opt){
+  /* opt: {ym, byDate, chipOf, selected, onPick, legend, todayYmd} */
+  var p = opt.ym.split('-'), y = +p[0], m = +p[1];
+  var first = new Date(y, m-1, 1).getDay();
+  var days = new Date(y, m, 0).getDate();
+  var h = '<div class="cal"><div class="spread" style="margin-bottom:6px"><b>'+y+'年 '+m+'月</b>'
+    + '<span class="tiny muted">'+(opt.legend||'')+'</span></div><div class="cg">';
+  WDJ.forEach(function(w,i){ h += '<div class="dw'+(i===0?' sun':(i===6?' sat':''))+'">'+w+'</div>'; });
+  for(var i=0;i<first;i++) h += '<div class="cell empty"></div>';
+  for(var d=1; d<=days; d++){
+    var ds = y + '-' + pad2(m) + '-' + pad2(d);
+    var ls = opt.byDate[ds] || [];
+    var closed = CLOSED_DAYS.indexOf(ds) >= 0;
+    var cls = 'cell' + (ls.length?' has tap':'') + (opt.selected===ds?' on':'') + (ds===opt.todayYmd?' today':'');
+    h += '<div class="'+cls+'"'+(ls.length?(' onclick="'+opt.onPick+'(\''+ds+'\')"'):'')+'>'
+      + '<div>'+d+'</div>'
+      + (closed ? '<span class="xx">休校</span>' : '')
+      + (ls.length ? ('<div class="cchips">'+ls.map(opt.chipOf).join('')+'</div>') : '')
+      + '</div>';
+  }
+  return h + '</div>';
+}
 function renderCalendar(){
   var c = cur();
   var byDate = {};
@@ -892,24 +1203,11 @@ function renderCalendar(){
     (byDate[l.date] = byDate[l.date] || []).push(l);
   });
 
-  var first = new Date(2026, 8, 1).getDay(); /* 2026-09-01 = 火 */
-  var days = 30;
-  var h = '<div class="cal"><div class="spread" style="margin-bottom:6px"><b>2026年 9月</b>'
-    + '<span class="tiny muted">'+icon(state.lessonType)+' '+TYPE[state.lessonType].label+'</span></div><div class="cg">';
-  WDJ.forEach(function(w,i){ h += '<div class="dw'+(i===0?' sun':(i===6?' sat':''))+'">'+w+'</div>'; });
-  for(var i=0;i<first;i++) h += '<div class="cell empty"></div>';
-  for(var d=1; d<=days; d++){
-    var ds = '2026-09-' + pad2(d);
-    var ls = byDate[ds] || [];
-    var closed = CLOSED_DAYS.indexOf(ds) >= 0;
-    var cls = 'cell' + (ls.length?' has tap':'') + (state.calDate===ds?' on':'') + (ds==='2026-09-01'?' today':'');
-    h += '<div class="'+cls+'"'+(ls.length?(' onclick="pickDay(\''+ds+'\')"'):'')+'>'
-      + '<div>'+d+'</div>'
-      + (closed ? '<span class="xx">休校</span>' : '')
-      + (ls.length ? ('<div class="dots">'+ls.map(function(l){return '<span class="dot '+(l.type==='regular'?'reg':(l.type==='single'?'sgl':'mono'))+'"></span>';}).join('')+'</div>') : '')
-      + '</div>';
-  }
-  h += '</div>';
+  var h = monthGrid({
+    ym:'2026-09', byDate:byDate, selected:state.calDate, onPick:'pickDay', todayYmd:'2026-09-01',
+    legend: icon(state.lessonType)+' '+TYPE[state.lessonType].label,
+    chipOf: function(l){ return calChip(l, !!resFor(c.id, l.id)); }
+  });
   if(state.lessonType==='regular'){
     h += '<button class="more mt6" onclick="toggleOther()">'+(state.showOther?esc(c.level)+'クラスのみ ›':'他の級も表示 ›')+'</button>';
   }
@@ -928,19 +1226,33 @@ function renderCalendar(){
   return h;
 }
 function pickDay(ds){ state.calDate = ds; render(); }
+function pickResDay(ds){ state.resCalDate = ds; render(); }
 
 /* =========================================================
    Render: 予約確認
    ========================================================= */
 function startBook(lessonId){
-  state.pending = {lessonId:lessonId, mode:'book', childId:state.childId};
+  state.pending = {lessonId:lessonId, mode:'book', childId:state.childId, kind:null, eligible:false};
   go('screen-confirm');
 }
 function startWait(lessonId){
-  state.pending = {lessonId:lessonId, mode:'wait', childId:state.childId};
+  state.pending = {lessonId:lessonId, mode:'wait', childId:state.childId, kind:null, eligible:false};
   go('screen-confirm');
 }
 function setPendingChild(id){ state.pending.childId = id; render(); }
+/* S-12-4: マンツーマンは予約確認でライティング／スピーキングを選ぶ */
+function setPendingKind(k){ state.pending.kind = k; render(); }
+/* A-17-3 案B（要相談）: 一次試験合格者のみの枠は、確認のチェックを挟む */
+function toggleEligible(){ state.pending.eligible = !state.pending.eligible; render(); }
+/* キャンセル待ちの流れ（S-13-2 / S-15-1 / S-10-3） */
+var WAIT_FLOW = [
+  '空席が出たら、待っている方 全員にメールでお知らせします',
+  '先着で受け付けます（順番に繰り上がる形ではありません）',
+  'キャンセル待ちの取消は、いつでもできます'
+];
+function waitFlowHtml(){
+  return '<ul class="mt10">'+WAIT_FLOW.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';
+}
 
 function renderConfirm(){
   var box = document.getElementById('confirmBody');
@@ -955,8 +1267,14 @@ function renderConfirm(){
   var cost = TYPE[l.type].cost;
   var planned = plannedCost(c.id);
   var avail = c.tickets - planned;
-  var shortage = !isWait && (avail < cost);
-  var limitReached = (l.type==='mono') && (c.mono[l.kind] >= MONO_LIMIT[l.kind]);
+  /* S-11-1 案B（要相談）: 残数が足りなくても −10 回までは予約できる */
+  var after = avail - cost;
+  var shortage = !isWait && (after < 0);
+  var blockedByMinus = !isWait && (after < -MINUS_ALLOW);
+  var kind = state.pending.kind;
+  var needKind = !isWait && (l.type === 'mono');
+  var limitReached = needKind && kind && (c.mono[kind] >= MONO_LIMIT[kind]);
+  var needEligible = !isWait && !!l.eligibleOnly;
   var dup = resFor(c.id, l.id);
 
   /* 誰の予約か（チップ選択） */
@@ -969,30 +1287,62 @@ function renderConfirm(){
 
   h += '<div class="card"><div class="lrow" style="border:0;padding:0;margin:0;min-height:0">'
     + dbk(l.date, true)
-    + '<div class="mid"><div class="t" style="font-size:16px">'+l.start+' '+esc(l.title)+' '+icon(l.type)+'</div>'
+    + '<div class="mid">'+(l.level ? '<div style="margin-bottom:2px">'+lvChip(l.level)+'</div>' : '')
+    + '<div class="t" style="font-size:16px">'+thai(l.time || l.start)+' '+esc(l.title)+' '+icon(l.type)+'</div>'
     + '<div class="m">'+esc(l.place)+'</div></div>'
-    + (isWait ? '<span class="chip c-wait">⏳ 待ち</span>' : '')+'</div>';
+    + (isWait ? '<span class="chip c-wait">⏳ キャンセル待ち</span>' : '')+'</div>';
+
+  /* S-12-4: 種別の選択をここに置く */
+  if(needKind){
+    h += '<div class="hr"></div><div class="small" style="font-weight:800;margin-bottom:6px">レッスンの種別を選んでください</div>'
+      + '<div class="seg sm">'
+      + '<button class="'+(kind==='W'?'on':'')+'" onclick="setPendingKind(\'W\')">ライティング</button>'
+      + '<button class="'+(kind==='S'?'on':'')+'" onclick="setPendingKind(\'S\')">スピーキング</button></div>'
+      + '<div class="tiny muted mt6">残り ライティング '+(MONO_LIMIT.W-c.mono.W)+' 回 ・ スピーキング '+(MONO_LIMIT.S-c.mono.S)+' 回</div>';
+  }
 
   if(isWait){
     h += '<div class="line info mt10">🎟 消費なし ・ 現在 '+l.wait+'人待ち</div>'
-      + '<div class="line ok mt6">✉️ 空席が出たらメール通知</div>';
+      + '<div class="line ok mt6">✉️ 空席が出たらメールでお知らせ</div>'
+      + waitFlowHtml();
+  } else if(blockedByMinus){
+    h += '<div class="line bad mt10">🎟 チケットのマイナスが '+MINUS_ALLOW+' 回を超えるため、この予約はお取りできません</div>';
   } else if(shortage){
-    h += '<div class="line bad mt10">🎟 チケットが足りません（使える '+(avail<0?0:avail)+' ／ 必要 '+cost+'）</div>';
+    /* S-11-1 案B（要相談）: 足りなくても予約できる。未入金として表示する */
+    h += '<div class="line bad mt10">🎟 チケットが足りませんが予約できます（未入金 '+(-after)+' 回）</div>'
+      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' タイ時間 までキャンセル無料</div>';
   } else {
-    h += '<div class="line info mt10">🎟 −'+cost+'  →  残り '+c.tickets+'（使える '+(avail-cost)+'）</div>'
-      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' までキャンセル無料</div>';
+    h += '<div class="line info mt10">🎟 −'+cost+'  →  残り '+c.tickets+'（使える '+after+'）</div>'
+      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' タイ時間 までキャンセル無料</div>';
   }
   if(dup){
     h += '<div class="line bad mt6">⚠️ '+esc(c.short)+' さんは登録済み</div>';
   } else if(limitReached){
-    h += '<div class="line bad mt6">⚠️ '+MONO_NAME[l.kind]+'は上限 '+MONO_LIMIT[l.kind]+' 回</div>';
+    h += '<div class="line bad mt6">⚠️ '+MONO_NAME[kind]+'は上限 '+MONO_LIMIT[kind]+' 回</div>';
   }
   h += '</div>';
 
-  var disabled = (dup || shortage || limitReached) ? ' disabled' : '';
+  /* A-17-3 案B（要相談）: 一次試験合格者のみの枠 */
+  if(needEligible){
+    h += '<div class="card" style="border-color:var(--orange);border-width:2px">'
+      + '<div class="line bad">⚠️ この枠は一次試験の合格者のみご予約いただけます</div>'
+      + '<label class="f mt10" style="display:flex;align-items:flex-start;gap:8px;margin-bottom:0">'
+      + '<input type="checkbox" style="width:22px;min-height:22px;margin-top:2px"'+(state.pending.eligible?' checked':'')+' onclick="toggleEligible()">'
+      + '<span style="margin:0;font-size:13px;color:var(--ink);font-weight:700">一次試験に合格していることを確認しました</span></label>'
+      + '<div class="talk"><span class="tk">ご相談中</span><span>合否をシステムで自動判定するか、この自己申告で進めるかは相談中です（A-17-3）。</span></div>'
+      + '</div>';
+  }
+
+  var disabled = (dup || blockedByMinus || limitReached || (needKind && !kind) || (needEligible && !state.pending.eligible)) ? ' disabled' : '';
   h += '<button class="btn '+(isWait?'warn':'pri')+' block"'+disabled+' onclick="doConfirm()">'
-    + (isWait ? 'キャンセル待ちに入る' : '予約を確定する') + '</button>'
+    /* S-10-2: 「キャンセル待ちに入る」→「キャンセル待ちをする」 */
+    + (isWait ? 'キャンセル待ちをする' : '予約を確定する') + '</button>'
+    + (needKind && !kind ? '<div class="tiny muted mt6" style="text-align:center">種別を選ぶと予約できます</div>' : '')
     + '<button class="btn block mt10" onclick="go(\'screen-lessons\')">戻る</button>';
+
+  if(shortage && !blockedByMinus){
+    h += '<div class="talk"><span class="tk">ご相談中</span><span>チケットが足りないときに予約を通すかどうか（何回分まで許すか）は、いま田中と相談しています（S-11-1）。</span></div>';
+  }
 
   box.innerHTML = h;
 }
@@ -1003,13 +1353,20 @@ function doConfirm(){
   var isWait = state.pending.mode === 'wait';
   state.childId = c.id;
 
+  var kind = state.pending.kind;
+
   if(isWait){
     l.wait += 1;
     reservations.push({id:'rv'+(seq++), childId:c.id, lessonId:l.id, status:'waiting', waitPos:l.wait});
     state.pending = null;
-    openModal({title:'キャンセル待ちに入りました',
-      body:'<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+' '+l.start+' ／ '+l.wait+'番目</div>'
-        + '<div class="line ok mt6">✉️ 空席が出たらメール通知</div>',
+    openModal({title:'キャンセル待ちをしました',
+      /* S-10-1: 対象の年月を出す */
+      body:'<div class="tiny muted">'+ymLabel(l.date)+'</div>'
+        + '<div class="line info">'+esc(c.short)+' ／ '+md(l.date)+'（'+realWd(l.date)+'） '+thai(l.start)+' ／ '+l.wait+'番目</div>'
+        /* S-13-2: 空席が出たときの流れを 3 行で書く */
+        + '<div class="small mt10" style="font-weight:800">空席が出たときの流れ</div>'
+        + waitFlowHtml()
+        + '<div class="tiny muted mt6">お知らせは、ご登録のメールアドレス宛にお送りします（モック）</div>',
       okText:'予約一覧', cancelText:null,
       onOk:function(){ go('screen-reservations'); }});
     toast('キャンセル待ちに登録しました');
@@ -1017,26 +1374,45 @@ function doConfirm(){
   }
 
   if(l.type === 'single') l.booked += 1;
-  if(l.type === 'mono') c.mono[l.kind] += 1;
-  reservations.push({id:'rv'+(seq++), childId:c.id, lessonId:l.id, status:'booked'});
+  if(l.type === 'mono' && kind) c.mono[kind] += 1;
+  reservations.push({id:'rv'+(seq++), childId:c.id, lessonId:l.id, status:'booked', kind:kind});
   state.pending = null;
   openModal({title:'予約しました',
-    body:'<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+'（'+realWd(l.date)+'） '+l.start+' ／ '+esc(l.title)+'</div>'
-      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' までキャンセル無料</div>'
-      + '<div class="tiny muted mt6">確認メールを送信しました（モック）</div>',
+    /* S-10-1: 対象の年月を出す */
+    body:'<div class="tiny muted">'+ymLabel(l.date)+'</div>'
+      + '<div class="line info">'+esc(c.short)+' ／ '+md(l.date)+'（'+realWd(l.date)+'） '+thai(l.start)+' ／ '+esc(l.title)
+      + (kind ? '（'+esc(MONO_NAME[kind])+'）' : '')+'</div>'
+      + '<div class="line ok mt6">⏰ '+fmtDl(deadlineOf(l))+' タイ時間 までキャンセル無料</div>'
+      /* S-14-1: 宛先を明記する */
+      + '<div class="tiny muted mt6">確認メールを、ご登録のメールアドレス宛に送信しました（モック）</div>',
     okText:'予約一覧', cancelText:null,
     onOk:function(){ go('screen-reservations'); }});
   toast('予約が完了しました');
 }
+/* S-10-1: 対象の年月 */
+function ymLabel(dateStr){ var d = ymd(dateStr); return d.getFullYear()+'年'+(d.getMonth()+1)+'月'; }
 
 /* =========================================================
    Render: 予約一覧
    ========================================================= */
+function resRow(x){
+  var l = x.l, r = x.r;
+  var ex = (r.status==='booked') && expired(l);
+  return '<button class="lrow tap" onclick="resSheet(\''+r.id+'\')">'+dbk(l.date)
+    + '<div class="mid">'+(l.level ? '<div style="margin-bottom:2px">'+lvChip(l.level,'sm')+'</div>' : '')
+    + '<div class="t">'+thai(l.start)+' '+esc(l.title)+' '+icon(l.type)+'</div>'
+    /* S-02-1: 「キャンセル不可」ではなく期限超過の意味を書く */
+    + (ex ? '<div class="m dgr">'+esc(expiredText(l))+'</div>' : '')+'</div>'
+    + statusChip(r) + '</button>';
+}
 function renderReservations(){
   var c = cur();
   var mine = reservations.filter(function(r){return r.childId===c.id;})
     .map(function(r){return {r:r, l:LESSONS[r.lessonId]};})
     .sort(function(a,b){return sortKey(a.l) < sortKey(b.l) ? -1 : 1;});
+
+  var vs = document.querySelectorAll('#resViewSeg button');
+  for(var i=0;i<vs.length;i++) vs[i].classList.toggle('on', vs[i].getAttribute('data-rv')===state.resView);
 
   var h = '';
   if(!mine.length){
@@ -1044,28 +1420,71 @@ function renderReservations(){
       + '<button class="btn pri block" onclick="go(\'screen-lessons\')">＋ レッスンを予約する</button>';
     document.getElementById('resBody').innerHTML = h; return;
   }
-  h += mine.map(function(x){
-    var l = x.l, r = x.r;
-    var ex = (r.status==='booked') && expired(l);
-    return '<button class="lrow tap" onclick="resSheet(\''+r.id+'\')">'+dbk(l.date)
-      + '<div class="mid"><div class="t">'+l.start+' '+esc(l.title)+' '+icon(l.type)+'</div>'
-      + (ex ? '<div class="m dgr">キャンセル期限 超過</div>' : '')+'</div>'
-      + statusChip(r) + '</button>';
-  }).join('');
+
+  if(state.resView === 'cal'){
+    /* S-01-3: 予約する画面の月カレンダー部品をそのまま流用する */
+    var byDate = {};
+    mine.forEach(function(x){ (byDate[x.l.date] = byDate[x.l.date] || []).push(x); });
+    h += monthGrid({
+      ym:'2026-09', byDate:byDate, selected:state.resCalDate, onPick:'pickResDay', todayYmd:'2026-09-01',
+      legend:'予約とキャンセル待ち',
+      chipOf: function(x){
+        if(x.r.status === 'waiting'){
+          return '<span class="cchip lv-ot">⏳ 待ち '+x.r.waitPos+'番目</span>';
+        }
+        return calChip(x.l, true);
+      }
+    }) + '</div>';
+    if(state.resCalDate){
+      var day = byDate[state.resCalDate] || [];
+      h += '<div class="subrow"><h3 class="sub">'+shortMd(state.resCalDate)+'（'+realWd(state.resCalDate)+'）</h3>'
+        + '<button class="more" onclick="state.resCalDate=null;render()">解除 ×</button></div>';
+      h += day.map(resRow).join('');
+    }
+  } else {
+    h += mine.map(resRow).join('');
+  }
   h += '<button class="btn pri block mt10" onclick="go(\'screen-lessons\')">＋ レッスンを予約する</button>';
   document.getElementById('resBody').innerHTML = h;
 }
 
 /* 予約詳細シート */
+/* S-08-1: Zoom は URL・ミーティングID・パスワードの 3 項目をコピーボタン付きで出す */
+function copyRow(k, v){
+  return '<div class="cprow"><span class="ck">'+esc(k)+'</span><span class="cv">'+esc(v)+'</span>'
+    + '<button class="cb" onclick="copyVal(\''+esc(v).replace(/'/g,"\\'")+'\')">コピー</button></div>';
+}
+function copyVal(v){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(v).then(function(){ toast('コピーしました'); },
+      function(){ toast('コピーできませんでした'); });
+  } else { toast('コピーしました（モック）'); }
+}
 function resSheet(rid){
   var r = resById(rid); if(!r) return;
   var l = LESSONS[r.lessonId], c = child(r.childId);
-  var body = '<div class="line info">'+esc(c.short)+' ／ '+md(l.date)+'（'+realWd(l.date)+'） '+l.time+'</div>';
-  body += '<div class="kv mt10"><span>レッスン</span><b>'+icon(l.type)+' '+esc(l.title)+'</b></div>'
-    + '<div class="kv"><span>場所</span><b>'+esc(l.place)+'</b></div>'
-    + (l.url ? '<div class="kv"><span>参加URL</span><b class="tiny">'+esc(l.url)+'</b></div>' : '')
-    + '<div class="kv"><span>キャンセル期限</span><b'+((r.status==='booked'&&expired(l))?' style="color:var(--danger)"':'')+'>'+fmtDl(deadlineOf(l))+'</b></div>'
+  /* S-13-1: レッスン日とキャンセル期限にタイ時間を付ける */
+  var body = '<div class="line info">'+esc(c.short)+' ／ '+md(l.date)+'（'+realWd(l.date)+'） '+thai(l.time)+'</div>';
+  body += '<div class="kv mt10"><span>レッスン</span><b>'+icon(l.type)+' '+esc(l.title)
+    + (l.type==='mono' ? '（'+esc(MONO_NAME[monoKindOf(r)])+'）' : '')+'</b></div>'
+    + (l.level ? '<div class="kv"><span>級</span><b>'+lvChip(l.level,'sm')+'</b></div>' : '')
+    + '<div class="kv"><span>場所</span><b>'+esc(l.place)+'</b></div>';
+  if(l.url){
+    body += '<div class="small mt10" style="font-weight:800">Zoom の参加情報</div>'
+      + copyRow('参加URL', l.url)
+      + copyRow('ミーティングID', ZOOM_ID)
+      + copyRow('パスワード', ZOOM_PW);
+  }
+  body += '<div class="kv mt10"><span>キャンセル期限</span><b'+((r.status==='booked'&&expired(l))?' style="color:var(--danger)"':'')+'>'
+    + fmtDl(deadlineOf(l))+' タイ時間</b></div>'
     + (r.status==='waiting' ? '<div class="kv"><span>順番</span><b>'+r.waitPos+'番目</b></div>' : '');
+  if(r.status==='booked' && expired(l)){
+    body += '<div class="line bad mt6">'+esc(expiredText(l))+'</div>';
+  }
+  /* S-15-1: キャンセル待ちの詳細にも同じ 3 行を置く */
+  if(r.status==='waiting'){
+    body += '<div class="small mt10" style="font-weight:800">空席が出たときの流れ</div>' + waitFlowHtml();
+  }
   openModal({title: r.status==='waiting' ? 'キャンセル待ち' : '予約の詳細',
     body: body,
     okText: r.status==='waiting' ? '待ちを取消' : 'キャンセルする', okClass:'dgr', cancelText:'閉じる',
@@ -1086,7 +1505,7 @@ function askCancel(rid){
   }
   var ex = expired(l);
   var body = '<div class="line info">'+esc(c.short)+' ／ '+shortMd(l.date)+' '+l.start+' ／ '+esc(l.title)+'</div>'
-    + (ex ? '<div class="line bad mt6">⚠️ 期限（'+fmtDl(deadlineOf(l))+'）超過 ・ 🎟 −'+cost+'</div>'
+    + (ex ? '<div class="line bad mt6">⚠️ '+esc(expiredText(l))+'</div>'
           : '<div class="line ok mt6">✓ チケット消費なし</div>');
   openModal({title:'予約をキャンセル', body:body,
     okText:'キャンセルする', okClass:'dgrf', cancelText:'やめる',
@@ -1110,12 +1529,14 @@ function doCancel(rid){
   }
 
   if(l.type === 'single') l.booked = Math.max(0, l.booked - 1);
-  if(l.type === 'mono') c.mono[l.kind] = Math.max(0, c.mono[l.kind] - 1);
+  if(l.type === 'mono'){ var mk = monoKindOf(r); c.mono[mk] = Math.max(0, c.mono[mk] - 1); }
 
   var ex = expired(l);
   var hist = lessonHistory[c.id] || (lessonHistory[c.id] = []);
   if(ex){
-    c.tickets = Math.max(0, c.tickets - cost);
+    /* S-11-1 案B（要相談）: 残数はマイナスまで落ちる */
+    c.tickets = c.tickets - cost;
+    c.used += cost;
     ticketHistory[c.id].unshift({dt:nowStamp(), text:'期限超過キャンセル（'+l.title+' '+shortMd(l.date)+'）', d:-cost, bal:c.tickets});
     hist.unshift({dt:l.date.replace(/-/g,'/')+' '+l.start, type:l.type, title:l.title,
       status:'キャンセル（期限超過）', sc:'b-cx', note:'キャンセル日時: '+nowStamp()+' ／ チケット'+cost+'回分を消費', score:''});
@@ -1146,11 +1567,23 @@ function renderHistory(){
     var list = lessonHistory[c.id] || [];
     box.innerHTML = list.length ? list.map(function(e){
       var t = e.dt.slice(11);
-      return '<div class="lrow" style="align-items:flex-start">'+dbkFromDt(e.dt)
-        + '<div class="mid"><div class="t">'+esc(t)+' '+esc(e.title)+' '+icon(e.type)+'</div>'
-        + (e.score ? '<div class="m" style="color:var(--purple);font-weight:700">'+esc(e.score)+'</div>' : '')
-        + (e.note ? '<details><summary>'+(e.status==='受講済'?'コメント':'詳細')+' ›</summary><div class="cm">'+esc(e.note)+'</div></details>' : '')
-        + '</div>' + histChip(e.status) + '</div>';
+      var isMono = (e.type === 'mono');
+      var h2 = '<div class="lrow" style="align-items:flex-start">'+dbkFromDt(e.dt)
+        + '<div class="mid"><div class="t">'+histDate(e.dt)+' '+esc(thai(t))+'</div>'
+        + '<div class="t" style="font-weight:700">'+esc(e.title)+' '+icon(e.type)+'</div>';
+      /* S-16-4: マンツーマンの行は生徒側に評価を出さない */
+      if(e.score && !isMono) h2 += '<div class="m" style="color:var(--purple);font-weight:700">'+esc(e.score)+'</div>';
+      /* S-16-3: 「詳細」→「取り組んだ内容」、「コメント」→「講師コメント」 */
+      if(e.did && e.did.length){
+        h2 += '<details><summary>取り組んだ内容 ›</summary><div class="cm">'+esc(e.did.join(' ／ '))+'</div></details>';
+      }
+      if(e.note && !isMono){
+        h2 += '<details><summary>'+(e.status==='受講済'?'講師コメント':'記録')+' ›</summary><div class="cm">'+esc(e.note)+'</div></details>';
+      }
+      if(e.note && isMono && e.status!=='受講済'){
+        h2 += '<details><summary>記録 ›</summary><div class="cm">'+esc(e.note)+'</div></details>';
+      }
+      return h2 + '</div>' + histChip(e.status) + '</div>';
     }).join('') : '<div class="card tight"><div class="small muted">記録なし</div></div>';
     return;
   }
@@ -1161,30 +1594,72 @@ function renderHistory(){
     var planned = plannedCost(c.id);
     var h = '<div class="card tkt">'
       + '<div class="spread" style="margin-bottom:10px"><div class="small" style="font-weight:800">🎟 チケット</div>'
-      + '<div><span class="pnum" data-s="'+s+'">'+c.tickets+'</span><span class="punit">回</span></div></div>'
-      + punchCard(c.tickets, planned) + '</div>';
-    if(c.tickets <= 1) h += transferBanner();
+      + '<div><span class="pnum" data-s="'+s+'">'+(c.tickets<0?'マイナス'+(-c.tickets):c.tickets)+'</span>'
+      + '<span class="punit">回</span></div></div>'
+      + '<div class="tiny mt6" style="font-weight:800">受講済み '+c.used+' / '+c.bundle+'回（'+c.bundle+'回券）</div>'
+      + punchCard(c.tickets, planned, c.bundle)
+      + ticketLine(c, planned)
+      + minusNote(c) + '</div>';
+    h += unpaidBanner(c);
+    if(c.tickets >= 0 && c.tickets <= 1) h += transferBanner();
     h += t2.map(function(e){
+      /* S-18-1: 残数がマイナスのときは「マイナス N 回」と書く */
+      var bal = e.bal < 0 ? 'マイナス'+(-e.bal)+'回' : '残 '+e.bal;
       return '<div class="lrow" style="min-height:48px">'+dbkFromDt(e.dt)
         + '<div class="mid"><div class="t" style="font-weight:600;font-size:13px">'+esc(e.text)+'</div></div>'
         + '<div class="rt"><span class="chip '+(e.d>0?'c-free':'c-dgr')+'">'+(e.d>0?'+':'−')+Math.abs(e.d)+'</span>'
-        + '<span class="tiny muted">残 '+e.bal+'</span></div></div>';
+        + '<span class="tiny '+(e.bal<0?'':'muted')+'" style="'+(e.bal<0?'color:var(--danger);font-weight:800':'')+'">'+bal+'</span></div></div>';
     }).join('');
     box.innerHTML = h;
     return;
   }
 
   var er = eikenResults[c.id] || [];
-  box.innerHTML = er.length ? er.map(function(e){
+  /* S-17-1: 保護者が結果を登録できるようにする */
+  var h3 = '<button class="btn pri block" onclick="eikenInputSheet()">＋ 結果を入力する</button><div class="mt10"></div>';
+  h3 += er.length ? er.map(function(e){
     return '<div class="card">'
-      + '<div class="spread"><div><div style="font-size:26px;font-weight:800;line-height:1.1">'+esc(e.level)+'</div>'
+      /* S-17-2: 年度と回を出す */
+      + '<div class="tiny muted">'+esc(e.year)+' '+esc(e.round)+'</div>'
+      + '<div class="spread" style="margin-top:2px"><div><div style="font-size:26px;font-weight:800;line-height:1.1">'+esc(e.level)+'</div>'
       + '<div class="tiny muted">'+md(e.date)+' 受験</div></div>'
       + '<span class="chip '+(e.pass==='合格'?'c-free':'c-dgr')+'" style="font-size:14px;padding:6px 14px">'+esc(e.pass)+'</span></div>'
       + '<div class="hr"></div>'
-      + skillBar('R', e.r) + skillBar('L', e.l) + skillBar('W', e.w) + skillBar('S', e.s)
+      /* S-01-8 と同じ方針で、R/L/W/S も文字に開く */
+      + skillBar('リーディング', e.r) + skillBar('リスニング', e.l)
+      + skillBar('ライティング', e.w) + skillBar('スピーキング', e.s)
       + '<div class="kv mt6"><span>CSE</span><b>'+esc(e.cse)+'</b></div>'
+      + '<div class="kv"><span>入力</span><b>'+esc(e.by)+'</b></div>'
       + '</div>';
   }).join('') : '<div class="card tight"><div class="small muted">記録なし</div></div>';
+  box.innerHTML = h3;
+}
+/* S-17-1 / A-16-1（種別プルダウンまで）: 結果の入力シート */
+function eikenInputSheet(){
+  var y = '';
+  for(var i=2026;i>=2022;i--) y += '<option>'+i+'年度</option>';
+  openModal({title:'英検の結果を入力する',
+    body:'<label class="f"><span>試験の種類</span><select onchange="toast(\'英検以外の入力欄は、お申し込みが決まってから作ります（モック）\')">'
+        + '<option>英検</option><option>IELTS</option><option>TOEFL iBT</option><option>TOEIC</option></select></label>'
+      + '<div class="tiny muted" style="margin:-4px 0 10px">英検以外（IELTS・TOEFL・TOEIC）は今回の範囲外です。プルダウンだけ置いています（A-16-1）。</div>'
+      + '<div style="display:flex;gap:8px">'
+      + '<label class="f" style="flex:1"><span>年度</span><select>'+y+'</select></label>'
+      + '<label class="f" style="flex:1"><span>回</span><select>'
+      + EIKEN_ROUNDS.map(function(r){return '<option>'+esc(r)+'</option>';}).join('')+'</select></label></div>'
+      + '<label class="f"><span>受験日</span><input type="date" value="2026-10-11"></label>'
+      + '<label class="f"><span>級</span><select>'
+      + LEVELS.map(function(lv){return '<option>'+esc(lv)+'</option>';}).join('')+'</select></label>'
+      + '<label class="f"><span>合否</span><select><option>合格</option><option>不合格</option><option>一次合格（二次待ち）</option></select></label>'
+      + '<div style="display:flex;gap:8px">'
+      + '<label class="f" style="flex:1"><span>リーディング</span><input placeholder="例: 22 / 30"></label>'
+      + '<label class="f" style="flex:1"><span>リスニング</span><input placeholder="例: 24 / 30"></label></div>'
+      + '<div style="display:flex;gap:8px">'
+      + '<label class="f" style="flex:1"><span>ライティング</span><input placeholder="例: 12 / 16"></label>'
+      + '<label class="f" style="flex:1"><span>スピーキング</span><input placeholder="例: 25 / 33"></label></div>'
+      + '<label class="f"><span>CSE スコア</span><input placeholder="例: 1610"></label>'
+      + '<div class="tiny muted">保護者が入力した結果は「保護者入力」として管理者側にも表示されます。</div>',
+    okText:'登録する', cancelText:'やめる',
+    onOk:function(){ toast('モック画面のため登録されません'); }});
 }
 function skillBar(label, val){
   var p = val.split('/');
