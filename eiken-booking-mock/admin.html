@@ -599,8 +599,16 @@ var DID_OPTIONS = ['単語','ライティング（意見論述）','ライティ
 /* A-11-4 / A-13-2: Zoom はミーティングID とパスワードも持つ */
 var ZOOM_ID_DEFAULT = '000 0000 0000';
 var ZOOM_PW_DEFAULT = 'aeg2026';
-/* A-10-2: 学年は「体系」と「数字」に分ける */
-var GRADE_SYSTEMS = ['◯年生','Grade ◯','Year ◯'];
+/* A-10-2: 学年は「体系」と「数字」に分ける。
+   「小学◯年／中学◯年／高校◯年」も選べる（T-0573 の判断 B） */
+var GRADE_SYSTEMS = ['小学◯年','中学◯年','高校◯年','◯年生','Grade ◯','Year ◯'];
+var GRADE_MAX = {'小学◯年':6, '中学◯年':3, '高校◯年':3, '◯年生':12, 'Grade ◯':12, 'Year ◯':13};
+function gradeMax(sys){ return GRADE_MAX[sys] || 12; }
+function gradeNoOptions(sys, no){
+  var out = '';
+  for (var i = 1; i <= gradeMax(sys); i++) out += '<option' + (i === no ? ' selected' : '') + '>' + i + '</option>';
+  return out;
+}
 function gradeText(st){
   if (!st.gradeSystem) return st.schoolGrade || '—';
   return st.gradeSystem.replace('◯', String(st.gradeNo || ''));
@@ -715,7 +723,7 @@ state.students = [
     school:'バンコク日本人学校', schoolGrade:'中学1年',
     parent:'佐藤 美咲', parentKana:'さとう みさき', email:'sato.misaki@example.com', phone:'080-xxxx-1234',
     memberNo:'V-01234', grade:'準2級', grades:['準2級','準2級プラス'], classId:'r2h', tickets:7, bundle:10,
-    active:true, lastAttended:'2026-08-28', gradeSystem:'◯年生', gradeNo:7,
+    active:true, lastAttended:'2026-08-28',
     limitW:6, limitS:null, lastReset:'2026-07-01',
     str:{ s1:'—', s2:'—', s3:'—', s4:'—', s5:'—' },
     siblings:['s2'], examTerm:'2026年度 第2回', notice:false, monoW:1, monoS:0,
@@ -761,7 +769,6 @@ state.students = [
     school:'バンコク日本人学校', schoolGrade:'小学4年',
     parent:'佐藤 美咲', parentKana:'さとう みさき', email:'sato.misaki@example.com', phone:'080-xxxx-1234',
     memberNo:'V-01234', grade:'4級', classId:'r4', tickets:1, bundle:10, active:true, lastAttended:'2026-08-29',
-    gradeSystem:'◯年生', gradeNo:4,
     siblings:['s1'], examTerm:'2026年度 第2回', notice:true, monoW:0, monoS:0,
     stats:{ term:8, total:8, absent:1, lateCancel:0 },
     ticketHistory:[
@@ -803,13 +810,12 @@ state.students = [
   mkStudent({ id:'s12', name:'木村 心春', kana:'きむら こはる', romaji:'KIMURA Koharu', birth:'2013-12-01', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'木村 綾', email:'kimura.aya@example.com', phone:'080-xxxx-1190', memberNo:'V-01901', grade:'3級', classId:'r3', tickets:2, active:true, lastAttended:'2026-07-14', stats:{term:1,total:7,absent:0,lateCancel:0}, memo:'7月中旬から予約が途切れている。チケット残2のため要フォロー。' })
 ];
 
-/* A-10-2: 既存の「中学1年／小学4年／高校1年」表記から体系と数字を割り出す */
+/* A-10-2: 既存の「中学1年／小学4年／高校1年」表記から体系と数字を割り出す。
+   判断 B により、日本の学校はそのまま「小学◯年／中学◯年／高校◯年」の体系にする */
 (function splitSchoolGrade(){
-  var MAP = { '小学':0, '中学':6, '高校':9 };
   state.students.forEach(function(st){
-    if (st.gradeNo && st.gradeSystem && st.gradeNo !== 1) return;
     var m = /^(小学|中学|高校)(\d+)年$/.exec(st.schoolGrade || '');
-    if (m) { st.gradeSystem = '◯年生'; st.gradeNo = MAP[m[1]] + (+m[2]); }
+    if (m) { st.gradeSystem = m[1] + '◯年'; st.gradeNo = +m[2]; }
     else   { st.gradeSystem = 'Grade ◯'; st.gradeNo = 1; }
   });
 })();
@@ -2277,7 +2283,7 @@ function editBasicModal(){
       '<div class="field"><label>学年（体系）</label><select id="bGSys">' +
         GRADE_SYSTEMS.map(function(g){ return '<option' + (g === s.gradeSystem ? ' selected' : '') + '>' + g + '</option>'; }).join('') + '</select></div>' +
       '<div class="field"><label>学年（数字）</label><select id="bGNo">' +
-        (function(){ var o=''; for (var i=1;i<=12;i++) o += '<option' + (i === s.gradeNo ? ' selected' : '') + '>' + i + '</option>'; return o; })() + '</select></div>' +
+        gradeNoOptions(s.gradeSystem, s.gradeNo) + '</select></div>' +
     '</div>' +
     '<div class="field"><label>保護者</label><input id="bParent" value="' + esc(s.parent) + '"></div>' +
     '<div class="field"><label>メール</label><input id="bMail" value="' + esc(s.email) + '"></div>' +
@@ -2950,6 +2956,11 @@ document.addEventListener('change', function(e){
   if (e.target.id === 'fs') { listFilter.status = e.target.value; renderStudents(); }
   if (e.target.id === 'resSel') { resultLessonKey = e.target.value; renderResults(); }
   if (e.target.id === 'nsType') { updateNewSlotFields(); }
+  /* A-10-2: 体系を変えたら学年の数字の選択肢を切り替える（小学 1〜6／中学・高校 1〜3 など） */
+  if (e.target.id === 'bGSys') {
+    var noSel = $('#bGNo');
+    if (noSel) { var keep = +noSel.value; noSel.innerHTML = gradeNoOptions(e.target.value, keep <= gradeMax(e.target.value) ? keep : 1); }
+  }
   /* A-15-1: 対象レッスンの絞り込み */
   if (e.target.id === 'resMode')  { resultFilter.mode = e.target.value; resultLessonKey = ''; renderResults(); }
   if (e.target.id === 'resMonth') { resultFilter.month = e.target.value; resultLessonKey = ''; renderResults(); }

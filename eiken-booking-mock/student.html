@@ -436,17 +436,20 @@ var parent = {
 };
 Object.defineProperty(parent, 'name', {get:function(){return this.lastName+' '+this.firstName;}});
 
-/* A-10-2: 学年は「体系」と「数字」に分ける（学校名は自由入力） */
-var GRADE_SYSTEMS = ['◯年生','Grade ◯','Year ◯'];
+/* A-10-2: 学年は「体系」と「数字」に分ける（学校名は自由入力）。
+   「小学◯年／中学◯年／高校◯年」も選べる（T-0573 の判断 B） */
+var GRADE_SYSTEMS = ['小学◯年','中学◯年','高校◯年','◯年生','Grade ◯','Year ◯'];
+var GRADE_MAX = {'小学◯年':6, '中学◯年':3, '高校◯年':3, '◯年生':12, 'Grade ◯':12, 'Year ◯':13};
+function gradeMax(sys){ return GRADE_MAX[sys] || 12; }
 var children = [
   { id:'c1', no:'AEG-0001', lastName:'佐藤', firstName:'陽菜', short:'陽菜',
     romanLast:'SATO', romanFirst:'HINA',
-    birth:'2013-04-12', school:'バンコク日本人学校', gradeSystem:'◯年生', gradeNo:7,
+    birth:'2013-04-12', school:'バンコク日本人学校', gradeSystem:'中学◯年', gradeNo:1,
     level:'準2級', classId:'clj2', tickets:7, bundle:10, used:3,
     exam:'2026年度 第2回', examRound:'2026年度 第2回', mono:{W:1, S:0} },
   { id:'c2', no:'AEG-0002', lastName:'佐藤', firstName:'蓮', short:'蓮',
     romanLast:'SATO', romanFirst:'REN',
-    birth:'2016-09-03', school:'バンコク日本人学校', gradeSystem:'◯年生', gradeNo:4,
+    birth:'2016-09-03', school:'バンコク日本人学校', gradeSystem:'小学◯年', gradeNo:4,
     level:'4級', classId:'cl4', tickets:1, bundle:10, used:9,
     exam:'2026年度 第2回', examRound:'2026年度 第2回', mono:{W:0, S:0} }
 ];
@@ -985,16 +988,28 @@ function romanFields(last, first, phLast, phFirst){
     + '<label class="f" style="flex:1"><span>ローマ字（LAST NAME (氏)）</span><input value="'+esc(last||'')+'" placeholder="'+esc(phLast||'')+'"></label>'
     + '<label class="f" style="flex:1"><span>ローマ字（FIRST NAME (名)）</span><input value="'+esc(first||'')+'" placeholder="'+esc(phFirst||'')+'"></label></div>';
 }
-/* A-10-2: 学校名（自由入力）と学年（体系＋数字）に分ける */
+/* A-10-2: 学校名（自由入力）と学年（体系＋数字）に分ける。
+   体系を変えると数字の選択肢（小学 1〜6／中学・高校 1〜3 など）が切り替わる */
+function gradeNoOptions(sys, no){
+  var out = '';
+  for(var i=1;i<=gradeMax(sys);i++) out += '<option'+(i===no?' selected':'')+'>'+i+'</option>';
+  return out;
+}
+function syncGradeNo(sel){
+  var box = sel.closest('.gradebox');
+  if(!box) return;
+  var numSel = box.querySelector('select[data-gno]');
+  if(!numSel) return;
+  var keep = +numSel.value;
+  numSel.innerHTML = gradeNoOptions(sel.value, keep <= gradeMax(sel.value) ? keep : 1);
+}
 function schoolFields(school, sys, no){
-  var nums = '';
-  for(var i=1;i<=12;i++) nums += '<option'+(i===no?' selected':'')+'>'+i+'</option>';
   return '<label class="f"><span>学校名</span><input value="'+esc(school||'')+'" placeholder="例: バンコク日本人学校"></label>'
-    + '<div style="display:flex;gap:8px">'
-    + '<label class="f" style="flex:1.2"><span>学年（体系）</span><select>'
+    + '<div class="gradebox" style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1.2"><span>学年（体系）</span><select onchange="syncGradeNo(this)">'
     + GRADE_SYSTEMS.map(function(g){return '<option'+(g===sys?' selected':'')+'>'+esc(g)+'</option>';}).join('')
     + '</select></label>'
-    + '<label class="f" style="flex:1"><span>学年（数字）</span><select>'+nums+'</select></label></div>';
+    + '<label class="f" style="flex:1"><span>学年（数字）</span><select data-gno>'+gradeNoOptions(sys, no)+'</select></label></div>';
 }
 function renderAccount(){
   var h = '<div class="card"><h3 class="sub" style="margin-top:0">保護者</h3>'
@@ -1022,7 +1037,7 @@ function renderAccount(){
       + nameFields('', '', '例: 佐藤', '例: 葵')
       + romanFields('', '', 'SATO', 'AOI')
       + '<label class="f"><span>生年月日</span><input type="date"></label>'
-      + schoolFields('', '◯年生', 2)
+      + schoolFields('', '小学◯年', 2)
       + '<label class="f"><span>受験級</span><select>'+LEVELS.map(function(lv){return '<option>'+esc(lv)+'</option>';}).join('')+'</select></label>'
       + '<div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="state.addSibling=false;render()">やめる</button>'
       + '<button class="btn pri" style="flex:1" onclick="state.addSibling=false;render();toast(\'モック画面のため登録されません\')">追加する</button></div></div>';
