@@ -496,6 +496,40 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
 .sgprev .n{font-size:26px; font-weight:900; line-height:1}
 .b-direct{background:#E8F0FF; color:#2B4C8C}
 .line-note{background:var(--brand-soft); border-radius:10px; padding:8px 10px}
+
+/* T-0668: 学年の一括更新 */
+.gu-quick{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px}
+.gu-list{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+.gu-row{display:grid; grid-template-columns:auto minmax(0,1.6fr) auto minmax(0,1.6fr) auto minmax(0,1fr); align-items:center; gap:6px 12px;
+  border:1px solid var(--border); border-radius:12px; padding:9px 12px; background:#fff; cursor:pointer}
+.gu-row.on{border:2px solid var(--ink); background:var(--brand-soft)}
+.gu-row.gu-none{cursor:default; background:#FAFAFA}
+.gu-row input[type=checkbox]{width:20px; height:20px}
+.gu-name{min-width:0; word-break:break-word}
+.gu-cnt{white-space:nowrap}
+.gu-cnt .gn,.gu-sum .gn{font-size:20px; font-weight:900; font-variant-numeric:tabular-nums}
+.gu-mix{display:flex; flex-wrap:wrap; gap:4px; min-width:0}
+.gu-g{font-size:11.5px; background:#F4F1E4; border-radius:999px; padding:1px 8px; white-space:nowrap}
+.gu-mon{display:flex; align-items:center; gap:6px}
+.gu-mon label{margin:0; white-space:nowrap}
+.gu-mon select{width:auto; padding:4px 6px}
+.gu-bar{position:sticky; bottom:0; background:#fff; border-top:1px solid var(--line); margin:12px -4px 0; padding:10px 4px 2px;
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px}
+.gu-bar .gu-hint{flex:1 1 100%}
+.gu-bar .btn:disabled{opacity:.45; cursor:not-allowed}
+.gu-result{border:2px solid var(--success); background:var(--success-soft)}
+.gu-result ul{margin:6px 0 0; padding-left:18px}
+.gu-sum{display:flex; gap:22px; margin:4px 0 6px}
+.gu-h{margin:12px 0 4px; font-size:13px}
+.gu-li{display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; padding:6px 2px; border-bottom:1px dashed var(--line); font-weight:400}
+.gu-li .nm{font-weight:800}
+.gu-li input[type=checkbox],.gu-li input[type=radio]{width:20px; height:20px; flex:none; margin:0}
+.gu-li .gu-arrow{margin-left:auto; font-size:13px}
+.gu-stay{background:#FAFAFA}
+@media (max-width:760px){
+  .gu-row{grid-template-columns:auto minmax(0,1fr) auto}
+  .gu-mix,.gu-mon,.gu-last{grid-column:2 / -1}
+}
 </style>
 </head>
 <body>
@@ -535,7 +569,7 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
       <button class="btn btn-sm" id="btnLogout">ログアウト</button>
     </div>
   </div>
-  <div><span class="mockchip">モック v7・2026-09-30 · 9/1（火）21:00 タイ時間</span></div>
+  <div><span class="mockchip">モック v7.1・2026-10-01 · 9/1（火）21:00 タイ時間</span></div>
 
   <div class="layout">
     <nav class="navrail" id="navRail"></nav>
@@ -553,6 +587,8 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
       <section class="screen" id="screen-students"></section>
       <!-- 新規登録の確認（T-0665） -->
       <section class="screen" id="screen-signups"></section>
+      <!-- 学年の一括更新（T-0668） -->
+      <section class="screen" id="screen-gradeup"></section>
       <!-- 生徒詳細 -->
       <section class="screen" id="screen-student-detail"></section>
       <!-- レッスン枠管理 -->
@@ -690,7 +726,7 @@ var state = {
 /* ---------------- 生徒マスタ ---------------- */
 function mkStudent(o){
   return Object.assign({
-    id:'', no:'', name:'', kana:'', romaji:'', birth:'', school:'', schoolGrade:'',
+    id:'', no:'', name:'', kana:'', romaji:'', birth:'', school:'BKK日本人学校', schoolGrade:'中学1年',
     /* A-10-2: 学年は体系＋数字 */
     gradeSystem:'◯年生', gradeNo:1,
     parent:'', parentKana:'', email:'', phone:'', memberNo:'',
@@ -810,16 +846,25 @@ state.students = [
     eiken:[],
     memo:'チケット残1。振込案内を表示中（保護者へ連絡済み）。'
   }),
-  mkStudent({ id:'s3',  name:'高橋 悠斗', kana:'たかはし ゆうと', romaji:'TAKAHASHI Yuto', birth:'2014-02-20', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'高橋 由美', email:'takahashi.yumi@example.com', phone:'080-xxxx-2201', memberNo:'V-01988', grade:'3級', classId:'r3', tickets:1, active:true, lastAttended:'2026-08-26', notice:true, stats:{term:7,total:21,absent:1,lateCancel:0} }),
-  mkStudent({ id:'s4',  name:'中村 結衣', kana:'なかむら ゆい', romaji:'NAKAMURA Yui', birth:'2011-11-05', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'中村 恵', email:'nakamura.megumi@example.com', phone:'080-xxxx-3312', memberNo:'V-02045', grade:'2級', classId:'r2', tickets:1, active:true, lastAttended:'2026-08-28', notice:true, stats:{term:6,total:18,absent:0,lateCancel:1} }),
-  mkStudent({ id:'s5',  name:'伊藤 大和', kana:'いとう やまと', romaji:'ITO Yamato', birth:'2017-06-30', school:'バンコク日本人学校', schoolGrade:'小学3年', parent:'伊藤 香織', email:'ito.kaori@example.com', phone:'080-xxxx-4423', memberNo:'', grade:'5級', classId:'r5', tickets:9, active:true, lastAttended:'2026-08-31', stats:{term:1,total:3,absent:0,lateCancel:0} }),
-  mkStudent({ id:'s6',  name:'渡辺 さくら', kana:'わたなべ さくら', romaji:'WATANABE Sakura', birth:'2010-01-18', school:'インター校（BKK）', schoolGrade:'高校1年', parent:'渡辺 直子', email:'watanabe.naoko@example.com', phone:'080-xxxx-5534', memberNo:'V-01777', grade:'準1級', classId:'r1h', tickets:4, active:true, lastAttended:'2026-08-29', stats:{term:5,total:14,absent:1,lateCancel:0} }),
-  mkStudent({ id:'s7',  name:'小林 颯太', kana:'こばやし そうた', romaji:'KOBAYASHI Sota', birth:'2013-08-08', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'小林 亜紀', email:'kobayashi.aki@example.com', phone:'080-xxxx-6645', memberNo:'V-02110', grade:'3級', classId:'r3', tickets:6, active:true, lastAttended:'2026-07-29', stats:{term:4,total:9,absent:0,lateCancel:0}, memo:'8月に入ってから予約が途切れている。9/13 の対面クラスはキャンセル待ち中。' }),
+  mkStudent({ id:'s3',  name:'高橋 悠斗', kana:'たかはし ゆうと', romaji:'TAKAHASHI Yuto', birth:'2014-02-20', school:'日本人学校', schoolGrade:'中学1年', parent:'高橋 由美', email:'takahashi.yumi@example.com', phone:'080-xxxx-2201', memberNo:'V-01988', grade:'3級', classId:'r3', tickets:1, active:true, lastAttended:'2026-08-26', notice:true, stats:{term:7,total:21,absent:1,lateCancel:0} }),
+  mkStudent({ id:'s4',  name:'中村 結衣', kana:'なかむら ゆい', romaji:'NAKAMURA Yui', birth:'2011-11-05', school:'Bangkok Patana School', schoolGrade:'Year 10', parent:'中村 恵', email:'nakamura.megumi@example.com', phone:'080-xxxx-3312', memberNo:'V-02045', grade:'2級', classId:'r2', tickets:1, active:true, lastAttended:'2026-08-28', notice:true, stats:{term:6,total:18,absent:0,lateCancel:1} }),
+  mkStudent({ id:'s5',  name:'伊藤 大和', kana:'いとう やまと', romaji:'ITO Yamato', birth:'2017-06-30', school:'泰日協会学校', schoolGrade:'小学3年', parent:'伊藤 香織', email:'ito.kaori@example.com', phone:'080-xxxx-4423', memberNo:'', grade:'5級', classId:'r5', tickets:9, active:true, lastAttended:'2026-08-31', stats:{term:1,total:3,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s6',  name:'渡辺 さくら', kana:'わたなべ さくら', romaji:'WATANABE Sakura', birth:'2010-01-18', school:'NIST International School', schoolGrade:'Grade 10', parent:'渡辺 直子', email:'watanabe.naoko@example.com', phone:'080-xxxx-5534', memberNo:'V-01777', grade:'準1級', classId:'r1h', tickets:4, active:true, lastAttended:'2026-08-29', stats:{term:5,total:14,absent:1,lateCancel:0} }),
+  mkStudent({ id:'s7',  name:'小林 颯太', kana:'こばやし そうた', romaji:'KOBAYASHI Sota', birth:'2013-08-08', school:'BKK日本人学校', schoolGrade:'中学1年', parent:'小林 亜紀', email:'kobayashi.aki@example.com', phone:'080-xxxx-6645', memberNo:'V-02110', grade:'3級', classId:'r3', tickets:6, active:true, lastAttended:'2026-07-29', stats:{term:4,total:9,absent:0,lateCancel:0}, memo:'8月に入ってから予約が途切れている。9/13 の対面クラスはキャンセル待ち中。' }),
   mkStudent({ id:'s8',  name:'加藤 美月', kana:'かとう みつき', romaji:'KATO Mitsuki', birth:'2012-03-25', school:'バンコク日本人学校', schoolGrade:'中学2年', parent:'加藤 真理', email:'kato.mari@example.com', phone:'080-xxxx-7756', memberNo:'V-01555', grade:'準2級プラス', classId:'r2hp', tickets:3, active:true, lastAttended:'2026-08-29', stats:{term:7,total:16,absent:0,lateCancel:1} }),
-  mkStudent({ id:'s9',  name:'山本 陸', kana:'やまもと りく', romaji:'YAMAMOTO Riku', birth:'2015-05-14', school:'バンコク日本人学校', schoolGrade:'小学5年', parent:'山本 恭子', email:'yamamoto.kyoko@example.com', phone:'080-xxxx-8867', memberNo:'', grade:'4級', classId:'r4', tickets:0, active:false, lastAttended:'2026-06-16', stats:{term:0,total:10,absent:0,lateCancel:0} }),
-  mkStudent({ id:'s10', name:'松本 芽依', kana:'まつもと めい', romaji:'MATSUMOTO Mei', birth:'2011-07-02', school:'インター校（BKK）', schoolGrade:'中学3年', parent:'松本 里奈', email:'matsumoto.rina@example.com', phone:'080-xxxx-9978', memberNo:'V-02233', grade:'2級', classId:'r2', tickets:8, active:true, lastAttended:'2026-08-04', stats:{term:2,total:5,absent:0,lateCancel:0}, memo:'8月上旬以降は受講なし。チケットは8回残っている。' }),
+  mkStudent({ id:'s9',  name:'山本 陸', kana:'やまもと りく', romaji:'YAMAMOTO Riku', birth:'2015-05-14', school:'シラチャ日本人学校', schoolGrade:'小学5年', parent:'山本 恭子', email:'yamamoto.kyoko@example.com', phone:'080-xxxx-8867', memberNo:'', grade:'4級', classId:'r4', tickets:0, active:false, lastAttended:'2026-06-16', stats:{term:0,total:10,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s10', name:'松本 芽依', kana:'まつもと めい', romaji:'MATSUMOTO Mei', birth:'2011-07-02', school:'パタナ', schoolGrade:'Year 11', parent:'松本 里奈', email:'matsumoto.rina@example.com', phone:'080-xxxx-9978', memberNo:'V-02233', grade:'2級', classId:'r2', tickets:8, active:true, lastAttended:'2026-08-04', stats:{term:2,total:5,absent:0,lateCancel:0}, memo:'8月上旬以降は受講なし。チケットは8回残っている。' }),
   mkStudent({ id:'s11', name:'井上 湊', kana:'いのうえ みなと', romaji:'INOUE Minato', birth:'2018-02-11', school:'バンコク日本人学校', schoolGrade:'小学2年', parent:'井上 千尋', email:'inoue.chihiro@example.com', phone:'080-xxxx-1089', memberNo:'', grade:'5級', classId:'r5', tickets:10, active:true, lastAttended:'', stats:{term:0,total:0,absent:0,lateCancel:0}, memo:'2026-08-30 新規登録。初回受講はこれから。' }),
-  mkStudent({ id:'s12', name:'木村 心春', kana:'きむら こはる', romaji:'KIMURA Koharu', birth:'2013-12-01', school:'バンコク日本人学校', schoolGrade:'中学1年', parent:'木村 綾', email:'kimura.aya@example.com', phone:'080-xxxx-1190', memberNo:'V-01901', grade:'3級', classId:'r3', tickets:2, active:true, lastAttended:'2026-07-14', stats:{term:1,total:7,absent:0,lateCancel:0}, memo:'7月中旬から予約が途切れている。チケット残2のため要フォロー。' })
+  mkStudent({ id:'s12', name:'木村 心春', kana:'きむら こはる', romaji:'KIMURA Koharu', birth:'2013-12-01', school:'Shrewsbury International School', schoolGrade:'Year 8', parent:'木村 綾', email:'kimura.aya@example.com', phone:'080-xxxx-1190', memberNo:'V-01901', grade:'3級', classId:'r3', tickets:2, active:true, lastAttended:'2026-07-14', stats:{term:1,total:7,absent:0,lateCancel:0}, memo:'7月中旬から予約が途切れている。チケット残2のため要フォロー。' }),
+  /* T-0668: 学年の一括更新を見せるため、学校（表記ゆれ込み）が 10 校前後になるよう生徒を足した */
+  mkStudent({ id:'s13', name:'森 大翔', kana:'もり ひろと', romaji:'MORI Hiroto', birth:'2011-06-19', school:'バンコク日本人学校', schoolGrade:'中学3年', parent:'森 裕子', email:'mori.yuko@example.com', phone:'080-xxxx-1301', memberNo:'V-02301', grade:'準2級', classId:'r2h', tickets:5, active:true, lastAttended:'2026-08-28', stats:{term:4,total:12,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s14', name:'清水 杏', kana:'しみず あん', romaji:'SHIMIZU An', birth:'2014-10-02', school:'KIS International School', schoolGrade:'Grade 6', parent:'清水 麻衣', email:'shimizu.mai@example.com', phone:'080-xxxx-1402', memberNo:'', grade:'4級', classId:'r4', tickets:7, active:true, lastAttended:'2026-08-27', stats:{term:3,total:3,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s15', name:'山口 蒼', kana:'やまぐち あお', romaji:'YAMAGUCHI Ao', birth:'2014-01-23', school:'Harrow International School', schoolGrade:'Year 7', parent:'山口 瞳', email:'yamaguchi.hitomi@example.com', phone:'080-xxxx-1503', memberNo:'V-02315', grade:'3級', classId:'r3', tickets:6, active:true, lastAttended:'2026-08-25', stats:{term:3,total:8,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s16', name:'石井 花', kana:'いしい はな', romaji:'ISHII Hana', birth:'2008-11-30', school:'NIST', schoolGrade:'Grade 12', parent:'石井 紀子', email:'ishii.noriko@example.com', phone:'080-xxxx-1604', memberNo:'V-01102', grade:'準1級', classId:'r1h', tickets:3, active:true, lastAttended:'2026-08-29', stats:{term:5,total:30,absent:1,lateCancel:0} }),
+  mkStudent({ id:'s17', name:'前田 樹', kana:'まえだ いつき', romaji:'MAEDA Itsuki', birth:'2014-07-07', school:'バンコク日本人学校', schoolGrade:'小学6年', parent:'前田 綾香', email:'maeda.ayaka@example.com', phone:'080-xxxx-1705', memberNo:'', grade:'4級', classId:'r4', tickets:4, active:true, lastAttended:'2026-08-26', stats:{term:2,total:6,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s18', name:'藤田 ひかり', kana:'ふじた ひかり', romaji:'FUJITA Hikari', birth:'2013-05-15', school:'St. Andrews International School', schoolGrade:'Year 8', parent:'藤田 和美', email:'fujita.kazumi@example.com', phone:'080-xxxx-1806', memberNo:'V-02320', grade:'3級', classId:'r3', tickets:9, active:true, lastAttended:'2026-08-25', stats:{term:1,total:1,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s19', name:'岡田 蓮', kana:'おかだ れん', romaji:'OKADA Ren', birth:'2012-09-09', school:'Ruamrudee International School', schoolGrade:'Grade 8', parent:'岡田 千夏', email:'okada.chinatsu@example.com', phone:'080-xxxx-1907', memberNo:'', grade:'準2級', classId:'r2h', tickets:2, active:false, lastAttended:'2026-06-20', stats:{term:0,total:9,absent:0,lateCancel:0} }),
+  mkStudent({ id:'s20', name:'長谷川 楓', kana:'はせがわ かえで', romaji:'HASEGAWA Kaede', birth:'2015-04-04', school:'bangkok patana school', schoolGrade:'Year 6', parent:'長谷川 舞', email:'hasegawa.mai@example.com', phone:'080-xxxx-2008', memberNo:'V-02340', grade:'4級', classId:'r4', tickets:8, active:true, lastAttended:'2026-08-27', stats:{term:2,total:4,absent:0,lateCancel:0} })
 ];
 
 /* A-10-2: 既存の「中学1年／小学4年／高校1年」表記から体系と数字を割り出す。
@@ -827,7 +872,9 @@ state.students = [
 (function splitSchoolGrade(){
   state.students.forEach(function(st){
     var m = /^(小学|中学|高校)(\d+)年$/.exec(st.schoolGrade || '');
+    var m2 = /^(Grade|Year) (\d+)$/.exec(st.schoolGrade || '');
     if (m) { st.gradeSystem = m[1] + '◯年'; st.gradeNo = +m[2]; }
+    else if (m2) { st.gradeSystem = m2[1] + ' ◯'; st.gradeNo = +m2[2]; }
     else   { st.gradeSystem = 'Grade ◯'; st.gradeNo = 1; }
   });
 })();
@@ -963,6 +1010,7 @@ var HELP = {
   settings:  ['変更は今後の予約のみに適用', '期限内キャンセルはチケット消費なし', '期限超過・欠席はチケットを消費'],
   results:   ['保存した時点でチケットを消費', '欠席も同じ回数を消費（無断欠席と同扱い）', '確定した回は「今後の予約」から外れる', '取り組んだ内容は対面クラスのときだけ入力できる', '点数は扱わない'],
   signups:   ['保護者が新規登録ページ（LINE で送るリンク）から入力した内容が届く', '紙のチケットカードを見て「いまの残り回数」を入れて確定すると生徒一覧に入る', '残り回数は確定時に「移行時の残数」としてチケット履歴に 1 行残る', '同じ人かどうかの自動照合はしない（必要なら確定後に生徒詳細で直す）'],
+  gradeup:   ['保護者が入力した学校名ごとに生徒をまとめて表示する', '学校にチェックして「一学年進める」を押すと、確認画面のあとで学年が 1 つ上がる', '中学3年・高校3年・Grade 12・Year 13 などの最終学年は自動では進めない（生徒詳細で個別に直す）', '表記ゆれした学校名は、チェックして「学校名をまとめる」で 1 つにそろえる。以後の新規登録も同じ名前にそろう', '進めた直後は「元に戻す」で取り消せる'],
   pastadd:   ['予約を作らずに、受講（または欠席）の記録だけを残す', '保存した時点でチケットを消費する（回数は変更できる）', '「直接追加」のチップで予約経由の記録と見分けられる'],
   eiken:     ['4技能スコアと CSE を記録', '年度と回もあわせて記録する', '保存すると生徒詳細に反映', '結果待ちのまま登録も可', '保護者が入力した結果は「保護者入力」と表示される']
 };
@@ -1048,6 +1096,7 @@ var NAV = [
   { id:'screen-calendar',   icon:'📅', label:'予約カレンダー' },
   { id:'screen-students',   icon:'👦', label:'生徒一覧' },
   { id:'screen-signups',    icon:'🆕', label:'新規登録の確認' },
+  { id:'screen-gradeup',    icon:'🎓', label:'学年の一括更新' },
   { id:'screen-lessons',    icon:'🗂', label:'レッスン枠管理' },
   { id:'screen-results',    icon:'📝', label:'レッスン結果入力' },
   { id:'screen-eiken',      icon:'🏅', label:'試験結果入力' },
@@ -1072,6 +1121,7 @@ function showScreen(id, arg){
   if (id === 'screen-calendar') renderCalendar();
   if (id === 'screen-students') renderStudents();
   if (id === 'screen-signups') renderSignups();
+  if (id === 'screen-gradeup') renderGradeup();
   if (id === 'screen-student-detail') renderStudentDetail(arg || currentStudentId);
   if (id === 'screen-lessons') renderLessons();
   if (id === 'screen-settings') renderSettings();
@@ -2003,7 +2053,7 @@ function renderStudents(){
       '<td class="wrap"><span class="strong">' + esc(s.name) + '</span><div class="tiny muted">' + esc(romanFull(s)) + '</div></td>' +
       /* A-09-2: 級を名前のすぐ右に置く。A-09-3: 複数並べる。A-09-4: 年齢を横に出す */
       '<td class="wrap">' + gradeChips(s, 'sm') +
-        '<div class="tiny muted">' + (age === null ? '' : age + '歳 ・ ') + esc(gradeText(s)) + '</div>' +
+        '<div class="tiny muted">' + (age === null ? '' : age + '歳 ・ ') + esc(gradeText(s)) + (s.school ? ' ・ ' + esc(s.school) : '') + '</div>' +
         '<div class="tiny muted">' + typeIcon('regular') + ' ' + esc(className(s.classId)) + '</div></td>' +
       '<td>' + miniPunch(s) + (s.notice ? ' 🔔' : '') + '</td>' +
       '<td><span class="strong">' + s.stats.term + '</span> <span class="tiny muted">/ ' + s.stats.total + '</span></td>' +
@@ -3265,6 +3315,268 @@ document.addEventListener('click', function(e){
   if ((el = t.closest('[data-sgedit]'))) { sgEdit(el.getAttribute('data-sgedit')); return; }
   if ((el = t.closest('[data-addpast]'))) { addPastModal(el.getAttribute('data-addpast'), null); return; }
   if ((el = t.closest('[data-addpast-lesson]'))) { addPastModal(null, el.getAttribute('data-addpast-lesson')); return; }
+});
+
+/* =========================================================
+   学年の一括更新（T-0668）
+   保護者が入力した学校名ごとに生徒をまとめ、選んだ学校の生徒を一学年進める。
+   表記ゆれは管理者が選んで 1 つの学校名にそろえる（自動判定はしない）。
+   ========================================================= */
+/* 学年が上がる月（目安）と前回進めた日。日本人学校は 4 月、インター校は 8 月・9 月 */
+var GU_SCHOOLS = {
+  'バンコク日本人学校':               { start:4, last:'2026-04-06' },
+  'シラチャ日本人学校':               { start:4, last:'2026-04-06' },
+  '泰日協会学校':                     { start:4, last:'2026-04-06' },
+  'Bangkok Patana School':            { start:8, last:'2025-08-18' },
+  'NIST International School':        { start:8, last:'2025-08-18' },
+  'KIS International School':         { start:8, last:'' },
+  'St. Andrews International School': { start:8, last:'' },
+  'Ruamrudee International School':   { start:8, last:'' },
+  'Shrewsbury International School':  { start:9, last:'2025-09-01' },
+  'Harrow International School':      { start:9, last:'' }
+};
+var GU_MONTHS = [4, 8, 9, 1];
+var guAlias = {};      /* 入力された表記 → そろえた学校名 */
+var guSel = {};        /* 選択中の学校 */
+var guLast = null;     /* 直前の実行（元に戻す用） */
+var guExclude = {};    /* 確認画面でチェックを外した生徒 */
+
+function guNorm(name){ return String(name || '').replace(/\s+/g, ' ').trim(); }
+function guKey(st){ var n = guNorm(st.school); return guAlias[n] || n; }
+function guInfo(key){ return GU_SCHOOLS[key] || (GU_SCHOOLS[key] = { start:null, last:'' }); }
+function guAliasesOf(key){ return Object.keys(guAlias).filter(function(a){ return guAlias[a] === key; }); }
+/* 次の学年。小学6年 → 中学1年。最終学年は null（自動では進めない） */
+function guNext(sys, no){
+  if (sys === '小学◯年' && no >= 6) return { sys:'中学◯年', no:1 };
+  if (no >= gradeMax(sys)) return null;
+  return { sys:sys, no:no + 1 };
+}
+function guGradeLabel(sys, no){ return String(sys || '').replace('◯', String(no)); }
+function guGroups(){
+  var map = {}, list = [];
+  state.students.forEach(function(st){
+    var k = guKey(st);
+    if (!map[k]) { map[k] = { key:k, students:[] }; list.push(map[k]); }
+    map[k].students.push(st);
+  });
+  function mo(g){ if (!g.key) return 99; var m = guInfo(g.key).start; return m ? GU_MONTHS.indexOf(m) : 50; }
+  list.sort(function(a, b){ return (mo(a) - mo(b)) || (b.students.length - a.students.length) || (a.key < b.key ? -1 : 1); });
+  return list;
+}
+function guMix(students){
+  var c = {}, order = [];
+  students.forEach(function(st){ var t = gradeText(st); if (!c[t]) { c[t] = 0; order.push(t); } c[t]++; });
+  return order.map(function(t){ return '<span class="gu-g">' + esc(t) + (c[t] > 1 ? ' ×' + c[t] : '') + '</span>'; }).join('');
+}
+function guDaysSince(ds){ return ds ? Math.round((parseD(TODAY) - parseD(ds)) / 86400000) : null; }
+function guSelected(){ return guGroups().filter(function(g){ return g.key && guSel[g.key]; }); }
+
+function renderGradeup(){
+  var groups = guGroups();
+  var named = groups.filter(function(g){ return g.key; });
+  var sel = guSelected();
+  var selCount = sel.reduce(function(n, g){ return n + g.students.length; }, 0);
+  var monOpts = function(m){
+    return '<option value="">未設定</option>' + GU_MONTHS.map(function(x){
+      return '<option value="' + x + '"' + (x === m ? ' selected' : '') + '>' + x + '月</option>';
+    }).join('');
+  };
+  var rows = groups.map(function(g){
+    if (!g.key) {
+      return '<div class="gu-row gu-none"><input type="checkbox" disabled aria-label="学校名が未入力">' +
+        '<div class="gu-name"><span class="strong">（学校名が未入力）</span><div class="tiny muted">生徒詳細で学校名を入れると一覧に出ます</div></div>' +
+        '<div class="gu-cnt"><span class="gn">' + g.students.length + '</span> 名</div>' +
+        '<div class="gu-mix">' + g.students.map(function(st){ return '<span class="pchip" data-goto-student="' + st.id + '">' + esc(st.name) + '</span>'; }).join(' ') + '</div></div>';
+    }
+    var info = guInfo(g.key), al = guAliasesOf(g.key), d = guDaysSince(info.last);
+    var lastTxt = info.last ? '前回 ' + esc(info.last) : '<span class="muted">まだ進めていない</span>';
+    var recent = (d !== null && d < 200) ? ' ' + chip('b-muted', '今年度は進めた') : '';
+    return '<div class="gu-row' + (guSel[g.key] ? ' on' : '') + '" data-gurow="' + esc(g.key) + '">' +
+      '<input type="checkbox" data-gusel="' + esc(g.key) + '"' + (guSel[g.key] ? ' checked' : '') + ' aria-label="' + esc(g.key) + ' を選ぶ">' +
+      '<div class="gu-name"><span class="strong">' + esc(g.key) + '</span>' +
+        (info.start ? '' : ' ' + chip('b-warn', '上がる月が未設定')) +
+        (al.length ? '<div class="tiny muted">まとめた表記: ' + al.map(esc).join('、') + '</div>' : '') + '</div>' +
+      '<div class="gu-cnt"><span class="gn">' + g.students.length + '</span> 名</div>' +
+      '<div class="gu-mix">' + guMix(g.students) + '</div>' +
+      '<div class="gu-mon"><label class="tiny muted">上がる月</label><select data-gumon="' + esc(g.key) + '">' + monOpts(info.start) + '</select></div>' +
+      '<div class="gu-last tiny">' + lastTxt + recent + '</div>' +
+    '</div>';
+  }).join('');
+
+  var result = '';
+  if (guLast) {
+    var lines = guLast.changes.map(function(c){
+      var st = studentById(c.sid);
+      return '<li>' + esc(st ? st.name : c.sid) + '　' + esc(guGradeLabel(c.fromSys, c.fromNo)) + ' → <span class="strong">' + esc(guGradeLabel(c.toSys, c.toNo)) + '</span></li>';
+    }).join('');
+    result = '<div class="card gu-result"><h3>✅ ' + esc(guLast.at) + ' に ' + guLast.schools.length + ' 校・' + guLast.changes.length + ' 名の学年を進めました</h3>' +
+      '<div class="small muted">' + guLast.schools.map(esc).join('、') + '</div>' +
+      '<details><summary class="small">進めた生徒を見る</summary><ul class="small">' + lines + '</ul></details>' +
+      '<div class="btn-row" style="margin-top:8px"><button class="btn btn-sm" data-guundo="1">元に戻す</button>' +
+      '<button class="btn btn-sm" data-screen="screen-students">生徒一覧で確かめる</button></div></div>';
+  }
+
+  $('#screen-gradeup').innerHTML =
+    headHtml('学年の一括更新', named.length + ' 校 ・ 生徒 ' + state.students.length + ' 名', 'gradeup') +
+    result +
+    '<div class="card">' +
+      '<div class="small">保護者が入力した <span class="strong">学校名ごと</span> に生徒をまとめています。学校にチェックして <span class="strong">「一学年進める」</span> を押すと、確認のあとでその学校の生徒の学年が 1 つ上がります。</div>' +
+      '<div class="gu-quick"><span class="tiny muted">まとめて選ぶ:</span>' +
+        GU_MONTHS.filter(function(m){ return named.some(function(g){ return guInfo(g.key).start === m; }); }).map(function(m){
+          return '<button class="pchip" data-gupick="' + m + '">' + m + '月に上がる学校</button>';
+        }).join('') +
+        '<button class="pchip" data-gupick="none">選択を外す</button></div>' +
+      '<div class="talk"><span class="tk">ご相談中</span><span>学年は自動では上がりません。4月（日本人学校）と 8月・9月（インター校）に、この画面で玲奈さんが進めます。その月にダッシュボードでお知らせを出すかを 10/1 にご相談します。</span></div>' +
+      '<div class="gu-list">' + rows + '</div>' +
+      '<div class="gu-bar">' +
+        '<div class="small"><span class="strong">選択中 ' + sel.length + ' 校 ・ ' + selCount + ' 名</span></div>' +
+        '<div class="btn-row">' +
+          '<button class="btn btn-primary" data-guadvance="1"' + (sel.length ? '' : ' disabled') + '>🎓 一学年進める</button>' +
+          '<button class="btn" data-gumerge="1"' + (sel.length >= 2 ? '' : ' disabled') + '>学校名をまとめる</button>' +
+        '</div>' +
+        '<div class="tiny muted gu-hint">同じ学校なのに別々に並んでいるとき（例: 「日本人学校」と「バンコク日本人学校」）は、2 つ以上チェックして「学校名をまとめる」を押します。</div>' +
+      '</div>' +
+    '</div>';
+}
+
+function guPlan(){
+  var go = [], stay = [];
+  guSelected().forEach(function(g){
+    g.students.forEach(function(st){
+      var nx = guNext(st.gradeSystem, st.gradeNo);
+      (nx ? go : stay).push({ st:st, school:g.key, nx:nx });
+    });
+  });
+  return { go:go, stay:stay };
+}
+function guGoCount(plan){ return plan.go.filter(function(p){ return !guExclude[p.st.id]; }).length; }
+function guAdvanceModal(){
+  var sel = guSelected();
+  if (!sel.length) return;
+  guExclude = {};
+  var plan = guPlan();
+  var warn = sel.filter(function(g){ var d = guDaysSince(guInfo(g.key).last); return d !== null && d < 200; }).map(function(g){
+    return '<div class="talk"><span class="tk">⚠</span><span>' + esc(g.key) + ' は ' + esc(guInfo(g.key).last) + ' に進めています。二回進めないようご確認ください。</span></div>';
+  }).join('');
+  var bySchool = sel.map(function(g){
+    var items = plan.go.filter(function(p){ return p.school === g.key; }).map(function(p){
+      return '<label class="gu-li"><input type="checkbox" data-guex="' + p.st.id + '" checked>' +
+        '<span class="nm">' + esc(p.st.name) + (p.st.active ? '' : ' ' + chip('b-muted', '休会')) + '</span>' +
+        '<span class="gu-arrow">' + esc(gradeText(p.st)) + ' → <span class="strong">' + esc(guGradeLabel(p.nx.sys, p.nx.no)) + '</span></span></label>';
+    }).join('');
+    return items ? '<h4 class="gu-h">' + esc(g.key) + '</h4>' + items : '';
+  }).join('');
+  var stay = plan.stay.length ?
+    '<h4 class="gu-h">自動では進めない生徒（' + plan.stay.length + ' 名）</h4>' +
+    plan.stay.map(function(p){
+      return '<div class="gu-li gu-stay"><span class="nm">' + esc(p.st.name) + '</span><span class="gu-arrow">' + esc(gradeText(p.st)) + '（最終学年）</span>' +
+        '<span class="pchip" data-goto-student="' + p.st.id + '">生徒詳細 ›</span></div>';
+    }).join('') +
+    '<p class="tiny muted">卒業・進学で学校が変わるため、進学先がわかったら生徒詳細で個別に直します。</p>' : '';
+  openModal('学年を一つ進める',
+    warn +
+    '<div class="gu-sum"><div><span class="gn" id="guGoN">' + plan.go.length + '</span> 名<div class="tiny muted">進める</div></div>' +
+      '<div><span class="gn">' + plan.stay.length + '</span> 名<div class="tiny muted">自動では進めない</div></div></div>' +
+    '<p class="tiny muted">留年・転校などで今回は進めない生徒は、チェックを外してください。</p>' +
+    bySchool + stay,
+    [{ label:'やめる', fn: closeModal },
+     { label: plan.go.length + ' 名の学年を進める', cls:'btn-primary', fn: guExecute }]);
+}
+function guExecute(){
+  var plan = guPlan(), sel = guSelected(), changes = [], prevLast = {};
+  plan.go.forEach(function(p){
+    if (guExclude[p.st.id]) return;
+    changes.push({ sid:p.st.id, fromSys:p.st.gradeSystem, fromNo:p.st.gradeNo, toSys:p.nx.sys, toNo:p.nx.no, fromText:p.st.schoolGrade });
+    p.st.gradeSystem = p.nx.sys; p.st.gradeNo = p.nx.no; p.st.schoolGrade = gradeText(p.st);
+  });
+  if (!changes.length) { toast('進める生徒がいません', 'warn'); return; }
+  sel.forEach(function(g){ prevLast[g.key] = guInfo(g.key).last; guInfo(g.key).last = TODAY; });
+  guLast = { at:TODAY, schools:sel.map(function(g){ return g.key; }), changes:changes, prevLast:prevLast };
+  guSel = {};
+  closeModal();
+  toast(changes.length + ' 名の学年を一つ進めました', 'ok');
+  renderGradeup();
+}
+function guUndo(){
+  if (!guLast) return;
+  confirmModal('元に戻す', '<p>' + esc(guLast.at) + ' に進めた ' + guLast.changes.length + ' 名の学年を、進める前に戻します。</p>', '元に戻す', function(){
+    guLast.changes.forEach(function(c){
+      var st = studentById(c.sid); if (!st) return;
+      st.gradeSystem = c.fromSys; st.gradeNo = c.fromNo; st.schoolGrade = c.fromText;
+    });
+    Object.keys(guLast.prevLast).forEach(function(k){ guInfo(k).last = guLast.prevLast[k]; });
+    toast(guLast.changes.length + ' 名の学年を元に戻しました', 'ok');
+    guLast = null;
+    renderGradeup();
+  });
+}
+function guMergeModal(){
+  var sel = guSelected();
+  if (sel.length < 2) return;
+  var def = sel.slice().sort(function(a, b){ return b.students.length - a.students.length; })[0].key;
+  var opts = sel.map(function(g){
+    return '<label class="gu-li"><input type="radio" name="guTo" value="' + esc(g.key) + '"' + (g.key === def ? ' checked' : '') + '>' +
+      '<span class="nm">' + esc(g.key) + '</span><span class="tiny muted">' + g.students.length + ' 名</span></label>';
+  }).join('');
+  openModal('学校名をまとめる',
+    '<p class="small">選んだ ' + sel.length + ' つの学校名を 1 つにそろえます。残す名前を選んでください。</p>' + opts +
+    '<label class="gu-li"><input type="radio" name="guTo" value="__new">' +
+      '<input id="guNewName" placeholder="別の名前にする（例: Bangkok Patana School）" style="flex:1;min-width:0"></label>' +
+    '<p class="tiny muted">そろえた後は、保護者が同じ表記で新しく登録しても自動でこの学校名に入ります。</p>',
+    [{ label:'やめる', fn: closeModal },
+     { label:'この名前にそろえる', cls:'btn-primary', fn: guMerge }]);
+}
+function guMerge(){
+  var sel = guSelected(), r = document.querySelector('input[name="guTo"]:checked');
+  var to = r ? r.value : '';
+  if (to === '__new') to = guNorm($('#guNewName').value);
+  if (!to) { toast('残す学校名を選ぶか入力してください', 'warn'); return; }
+  var info = guInfo(to), moved = 0;
+  sel.forEach(function(g){
+    var gi = guInfo(g.key);
+    if (!info.start && gi.start) info.start = gi.start;
+    if (gi.last > info.last) info.last = gi.last;
+    if (g.key !== to) {
+      guAlias[g.key] = to;
+      Object.keys(guAlias).forEach(function(a){ if (guAlias[a] === g.key) guAlias[a] = to; });
+    }
+    g.students.forEach(function(st){ if (guNorm(st.school) !== to) { st.school = to; moved++; } });
+  });
+  delete guAlias[to];
+  guSel = {}; guSel[to] = true;
+  closeModal();
+  toast(moved + ' 名の学校名を「' + to + '」にそろえました', 'ok');
+  renderGradeup();
+}
+document.addEventListener('change', function(e){
+  var t = e.target, a;
+  if (!t.getAttribute) return;
+  if ((a = t.getAttribute('data-gusel')) !== null) { if (t.checked) guSel[a] = true; else delete guSel[a]; renderGradeup(); return; }
+  if ((a = t.getAttribute('data-gumon')) !== null) { guInfo(a).start = t.value ? +t.value : null; renderGradeup(); return; }
+  if ((a = t.getAttribute('data-guex')) !== null) {
+    if (t.checked) delete guExclude[a]; else guExclude[a] = true;
+    var n = guGoCount(guPlan()), b = document.querySelector('#modalFoot [data-act="a1"]');
+    if (b) b.textContent = n + ' 名の学年を進める';
+    var el = document.getElementById('guGoN'); if (el) el.textContent = n;
+  }
+});
+document.addEventListener('click', function(e){
+  var t = e.target, el;
+  if (!t.closest) return;
+  if ((el = t.closest('[data-gupick]'))) {
+    var m = el.getAttribute('data-gupick');
+    guSel = {};
+    if (m !== 'none') guGroups().forEach(function(g){ if (g.key && guInfo(g.key).start === +m) guSel[g.key] = true; });
+    renderGradeup(); return;
+  }
+  if ((el = t.closest('[data-guadvance]'))) { guAdvanceModal(); return; }
+  if ((el = t.closest('[data-gumerge]'))) { guMergeModal(); return; }
+  if ((el = t.closest('[data-guundo]'))) { guUndo(); return; }
+  if ((el = t.closest('[data-gurow]')) && !t.closest('input,select,label,button,.pchip')) {
+    var k = el.getAttribute('data-gurow');
+    if (guSel[k]) delete guSel[k]; else guSel[k] = true;
+    renderGradeup();
+  }
 });
 
 buildNav();
