@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Achieve English Gym 管理画面 — 画面モック（v6・2026-09-20）</title>
+<title>Achieve English Gym 管理画面 — 画面モック（v7・2026-09-30）</title>
 <style>
 :root{
   /* v4 テーマ: 既存サイト（レモンイエロー＋黒の極太ゴシック）に合わせる */
@@ -486,6 +486,16 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
 @media (max-width:900px){
   .gcards{grid-template-columns:repeat(auto-fill, minmax(150px, 1fr))}
 }
+/* T-0665: 新規登録の確認・受講履歴の直接追加 */
+.sgkid{border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:10px; background:#FFFDF3; min-width:0}
+.sgkid .who{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:8px}
+.sgkid .who .nm{font-weight:900; font-size:15px}
+.sgform{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; align-items:end}
+.sgprev{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:8px; min-width:0}
+.sgprev .punch{flex:1 1 180px}
+.sgprev .n{font-size:26px; font-weight:900; line-height:1}
+.b-direct{background:#E8F0FF; color:#2B4C8C}
+.line-note{background:var(--brand-soft); border-radius:10px; padding:8px 10px}
 </style>
 </head>
 <body>
@@ -525,7 +535,7 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
       <button class="btn btn-sm" id="btnLogout">ログアウト</button>
     </div>
   </div>
-  <div><span class="mockchip">モック v6・2026-09-20 · 9/1（火）21:00 タイ時間</span></div>
+  <div><span class="mockchip">モック v7・2026-09-30 · 9/1（火）21:00 タイ時間</span></div>
 
   <div class="layout">
     <nav class="navrail" id="navRail"></nav>
@@ -541,6 +551,8 @@ td.wrap,th.wrap{white-space:normal; min-width:140px}
       <section class="screen" id="screen-calendar"></section>
       <!-- 生徒一覧 -->
       <section class="screen" id="screen-students"></section>
+      <!-- 新規登録の確認（T-0665） -->
+      <section class="screen" id="screen-signups"></section>
       <!-- 生徒詳細 -->
       <section class="screen" id="screen-student-detail"></section>
       <!-- レッスン枠管理 -->
@@ -950,6 +962,8 @@ var HELP = {
   lessons:   ['オンラインは毎週固定・定員なし', '対面クラスは定員あり・満席時のみキャンセル待ち（代理予約なら定員超過も可）', 'マンツーマンは定員1名・1コマ 🎟×2。種別は予約のときに決まる'],
   settings:  ['変更は今後の予約のみに適用', '期限内キャンセルはチケット消費なし', '期限超過・欠席はチケットを消費'],
   results:   ['保存した時点でチケットを消費', '欠席も同じ回数を消費（無断欠席と同扱い）', '確定した回は「今後の予約」から外れる', '取り組んだ内容は対面クラスのときだけ入力できる', '点数は扱わない'],
+  signups:   ['保護者が新規登録ページ（LINE で送るリンク）から入力した内容が届く', '紙のチケットカードを見て「いまの残り回数」を入れて確定すると生徒一覧に入る', '残り回数は確定時に「移行時の残数」としてチケット履歴に 1 行残る', '同じ人かどうかの自動照合はしない（必要なら確定後に生徒詳細で直す）'],
+  pastadd:   ['予約を作らずに、受講（または欠席）の記録だけを残す', '保存した時点でチケットを消費する（回数は変更できる）', '「直接追加」のチップで予約経由の記録と見分けられる'],
   eiken:     ['4技能スコアと CSE を記録', '年度と回もあわせて記録する', '保存すると生徒詳細に反映', '結果待ちのまま登録も可', '保護者が入力した結果は「保護者入力」と表示される']
 };
 function headHtml(title, sub, helpKey, backBtn){
@@ -1033,6 +1047,7 @@ var NAV = [
   { id:'screen-dashboard',  icon:'🏠', label:'ダッシュボード' },
   { id:'screen-calendar',   icon:'📅', label:'予約カレンダー' },
   { id:'screen-students',   icon:'👦', label:'生徒一覧' },
+  { id:'screen-signups',    icon:'🆕', label:'新規登録の確認' },
   { id:'screen-lessons',    icon:'🗂', label:'レッスン枠管理' },
   { id:'screen-results',    icon:'📝', label:'レッスン結果入力' },
   { id:'screen-eiken',      icon:'🏅', label:'試験結果入力' },
@@ -1056,6 +1071,7 @@ function showScreen(id, arg){
   if (id === 'screen-dashboard') renderDashboard();
   if (id === 'screen-calendar') renderCalendar();
   if (id === 'screen-students') renderStudents();
+  if (id === 'screen-signups') renderSignups();
   if (id === 'screen-student-detail') renderStudentDetail(arg || currentStudentId);
   if (id === 'screen-lessons') renderLessons();
   if (id === 'screen-settings') renderSettings();
@@ -1229,6 +1245,9 @@ function renderDashboard(){
 
   $('#screen-dashboard').innerHTML =
     headHtml('ダッシュボード', '9/1（火）', 'dashboard') +
+    (pendingSignups().length ? '<div class="card"><div class="rowitem"><div class="grow"><span class="strong">🆕 新規登録の確認待ち ' + pendingSignups().length + ' 家族</span>' +
+      '<div class="tiny muted">紙のチケットカードの残り回数を付けて確定してください</div></div>' +
+      '<button class="btn btn-primary btn-sm" data-screen="screen-signups">確認する</button></div></div>' : '') +
     '<div class="card"><h3>🎓 級別の受講中生徒 <span class="tiny muted">今後の予約がある生徒</span></h3>' +
       '<div class="gcards">' + gradeCards + '</div></div>' +
     '<div class="grid grid-3">' +
@@ -2069,7 +2088,7 @@ function renderStudentDetail(id){
   /* A-14-1: 点数の列を削る。A-14-2: 取り組んだ内容を出す */
   var pastRows = pastShown.map(function(p){
     return '<tr><td>' + esc(p.date) + '</td><td class="wrap">' + typeIcon(p.type) + ' ' + esc(shortTitle(p.title)) + '</td>' +
-      '<td>' + statusLabel(p.status) + '</td>' +
+      '<td>' + statusLabel(p.status) + (p.direct ? ' ' + chip('b-direct', '直接追加') : '') + '</td>' +
       '<td class="wrap">' + esc((p.did && p.did.length) ? p.did.join(' ／ ') : '—') + '</td>' +
       '<td class="wrap">' + esc(p.comment || '—') + '</td></tr>';
   }).join('') || '<tr><td colspan="5" class="muted">なし</td></tr>';
@@ -2187,7 +2206,8 @@ function renderStudentDetail(id){
       '<div class="table-wrap"><table><thead><tr><th>日付</th><th>増減</th><th class="wrap">内容</th><th>残</th></tr></thead><tbody>' + histRows + '</tbody></table></div>' +
       (histAll.length > 5 ? '<div class="btn-row" style="margin-top:8px"><button class="btn btn-sm" data-expand="hist">' + (detailExpand.hist ? '折りたたむ' : 'すべて表示 ' + histAll.length) + '</button></div>' : '') + '</div>' +
 
-    '<div class="card"><h3>🕘 受講履歴 <span class="badge b-muted">' + s.past.length + '</span></h3>' +
+    '<div class="card"><h3>🕘 受講履歴 <span class="badge b-muted">' + s.past.length + '</span>' +
+      '<button class="btn btn-sm btn-primary" data-addpast="' + s.id + '" style="margin-left:auto">＋ 受講履歴を追加</button></h3>' +
       '<div class="table-wrap"><table><thead><tr><th>日付</th><th class="wrap">レッスン</th><th>状態</th><th class="wrap">取り組んだ内容</th><th class="wrap">講師コメント</th></tr></thead><tbody>' + pastRows + '</tbody></table></div>' +
       (s.past.length > 5 ? '<div class="btn-row" style="margin-top:8px"><button class="btn btn-sm" data-expand="past">' + (detailExpand.past ? '折りたたむ' : 'すべて表示 ' + s.past.length) + '</button></div>' : '') +
       gradeStatHtml + '</div>' +
@@ -2609,7 +2629,8 @@ function renderResults(){
     '</div>' +
     (l ? '<div class="card"><h3>出席簿 <span class="badge b-muted">' + l.book.length + '</span></h3>' +
       '<div class="table-wrap"><table><thead><tr><th class="wrap">生徒</th><th>出欠</th><th class="wrap">取り組んだ内容</th><th class="wrap">講師コメント</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" data-saveresults="1">保存する</button></div></div>' : '');
+      '<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" data-saveresults="1">保存する</button>' +
+      '<button class="btn" data-addpast-lesson="' + resultLessonKey + '">＋ 予約なしで来た生徒を追加</button></div></div>' : '');
 }
 function saveResults(){
   var l = getLesson(resultLessonKey);
@@ -2996,6 +3017,255 @@ $('#btnLogout').addEventListener('click', function(){
   });
 });
 $('#btnMenu').addEventListener('click', function(){ $('#sidebar').classList.toggle('open'); });
+
+
+/* =========================================================
+   T-0665: 新規登録の確認（保護者が入力した内容に、紙カードの残り回数を付けて確定する）
+   9/29 合意: 招待リンク・自動照合・生徒台帳の一括取り込みはしない。
+   登録してくれた家族から順に、レイナ先生が手で残り回数を付けて移行する。
+   ========================================================= */
+var SIGNUPS = [
+  { id:'rg1', at:'2026-08-31 20:14', status:'pending',
+    parent:{ lastName:'高橋', firstName:'結衣', romanLast:'TAKAHASHI', romanFirst:'YUI', email:'takahashi.yui@example.com', tel:'080-xxxx-2231', lineName:'ゆい', memberNo:'V-03310' },
+    kids:[
+      { lastName:'高橋', firstName:'悠真', romanLast:'TAKAHASHI', romanFirst:'YUMA', birth:'2015-10-08', school:'バンコク日本人学校', gradeSystem:'小学◯年', gradeNo:5, level:'4級', card:'あり' },
+      { lastName:'高橋', firstName:'美月', romanLast:'TAKAHASHI', romanFirst:'MIZUKI', birth:'2017-05-21', school:'バンコク日本人学校', gradeSystem:'小学◯年', gradeNo:3, level:'5級', card:'あり' }
+    ] },
+  { id:'rg2', at:'2026-09-01 08:02', status:'pending',
+    parent:{ lastName:'中村', firstName:'舞', romanLast:'NAKAMURA', romanFirst:'MAI', email:'nakamura.mai@example.com', tel:'080-xxxx-7781', lineName:'Mai N', memberNo:'' },
+    kids:[
+      { lastName:'中村', firstName:'奏太', romanLast:'NAKAMURA', romanFirst:'SOTA', birth:'2012-12-14', school:'Bangkok Patana School', gradeSystem:'Year ◯', gradeNo:9, level:'準2級', card:'あり' }
+    ] },
+  { id:'rg3', at:'2026-09-01 19:40', status:'pending',
+    parent:{ lastName:'小林', firstName:'恵', romanLast:'KOBAYASHI', romanFirst:'MEGUMI', email:'kobayashi.megumi@example.com', tel:'080-xxxx-4410', lineName:'', memberNo:'V-02871' },
+    kids:[
+      { lastName:'小林', firstName:'さくら', romanLast:'KOBAYASHI', romanFirst:'SAKURA', birth:'2013-03-30', school:'NIST International School', gradeSystem:'Grade ◯', gradeNo:7, level:'3級', card:'なし（これから始める）' }
+    ] }
+];
+/* モック: 同じブラウザの student.html#register で登録した内容も取り込む（ブラウザ内だけ） */
+(function(){
+  try {
+    var list = JSON.parse(localStorage.getItem('aeg_mock_signups') || '[]');
+    list.forEach(function(r){ r.status = 'pending'; SIGNUPS.unshift(r); });
+  } catch (e) {}
+})();
+var sgTab = 'pending';
+var sgDraft = {};   // 'rgid|i' -> { tickets, used, classId }
+function pendingSignups(){ return SIGNUPS.filter(function(r){ return r.status === 'pending'; }); }
+function sgKidName(k){ return k.lastName + ' ' + k.firstName; }
+function sgGradeText(k){ return String(k.gradeSystem || '').replace('◯', String(k.gradeNo || '')); }
+function sgDefaultClass(level){
+  var r = null; state.recurring.forEach(function(x){ if (!r && x.grade === level) r = x; });
+  return r ? r.id : '';
+}
+function sgD(rid, i, k){
+  var key = rid + '|' + i;
+  if (!sgDraft[key]) sgDraft[key] = { tickets: (k.card === 'あり' ? '' : 0), used:'', classId: sgDefaultClass(k.level) };
+  return sgDraft[key];
+}
+function sgPreview(rid, i){
+  var d = sgDraft[rid + '|' + i] || {}, n = parseInt(d.tickets, 10);
+  if (isNaN(n)) return '<span class="tiny muted">紙カードの残り回数を入れると、ここにパンチカードで表示されます</span>';
+  var tmp = mkStudent({ tickets:n, upcoming:[] });
+  return '<div><div class="n">' + n + '</div><div class="tiny muted">🎟 残り</div></div>' + punchHtml(tmp) +
+    (d.used !== '' && d.used !== undefined ? '<div class="tiny muted">紙カードで受講済み ' + esc(d.used) + ' 回</div>' : '');
+}
+function renderSignups(){
+  var pend = pendingSignups(), done = SIGNUPS.filter(function(r){ return r.status === 'done'; });
+  var list = sgTab === 'pending' ? pend : done;
+  var classOpts = function(sel){
+    return '<option value="">（あとで決める）</option>' + state.recurring.map(function(r){
+      return '<option value="' + r.id + '"' + (r.id === sel ? ' selected' : '') + '>' + esc(r.name) + '</option>';
+    }).join('');
+  };
+  var cards = list.map(function(r){
+    var p = r.parent;
+    var head = '<h3>👪 ' + esc(p.lastName + ' ' + p.firstName) + ' <span class="tiny muted">' + esc((p.romanLast + ' ' + p.romanFirst).trim()) + '</span>' +
+      '<span style="margin-left:auto">' + chip(r.status === 'done' ? 'b-ok' : 'b-warn', r.status === 'done' ? '登録済み' : '確認待ち') + '</span></h3>' +
+      '<div class="kv">' + kv('受付', r.at + '（タイ時間）') + kv('メール', p.email) + kv('電話', p.tel || '—') +
+        kv('LINE の表示名', p.lineName || '—') + kv('メンバーNo.', p.memberNo || '—') + '</div>';
+    var kids = r.kids.map(function(k, i){
+      var who = '<div class="who"><span class="nm">' + esc(sgKidName(k)) + '</span>' + lvChip(k.level, 'sm') +
+        '<span class="tiny muted">' + esc(k.school) + ' ／ ' + esc(sgGradeText(k)) + (k.birth ? ' ／ ' + esc(k.birth) + (ageOf(k.birth) === null ? '' : '（' + ageOf(k.birth) + '歳）') : '') + '</span>' +
+        chip(k.card === 'あり' ? 'b-muted' : 'b-wait', '紙カード ' + esc(k.card)) + '</div>';
+      if (r.status === 'done') {
+        return '<div class="sgkid">' + who + (k.sid ? '<span class="pchip" data-goto-student="' + k.sid + '">生徒詳細を開く ›</span>' : '') + '</div>';
+      }
+      var d = sgD(r.id, i, k);
+      return '<div class="sgkid">' + who +
+        '<div class="sgform">' +
+          '<div class="field" style="margin:0"><label>紙カードの残り回数 <span class="tiny muted">必須</span></label>' +
+            '<input type="number" min="0" max="40" inputmode="numeric" data-sgn="' + r.id + '|' + i + '|tickets" value="' + esc(d.tickets) + '" placeholder="例: 6"></div>' +
+          '<div class="field" style="margin:0"><label>受講済みの回数 <span class="tiny muted">任意・丸がいくつ付いているか</span></label>' +
+            '<input type="number" min="0" max="40" inputmode="numeric" data-sgn="' + r.id + '|' + i + '|used" value="' + esc(d.used) + '" placeholder="例: 4"></div>' +
+          '<div class="field" style="margin:0"><label>オンラインのクラス</label><select data-sgn="' + r.id + '|' + i + '|classId">' + classOpts(d.classId) + '</select></div>' +
+        '</div>' +
+        '<div class="sgprev" id="sgp-' + r.id + '-' + i + '">' + sgPreview(r.id, i) + '</div></div>';
+    }).join('');
+    var foot = r.status === 'done' ? '' :
+      '<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" data-sgconfirm="' + r.id + '">残り回数を付けて登録を確定</button>' +
+      '<button class="btn" data-sgedit="' + r.id + '">入力内容を直す</button></div>';
+    return '<div class="card">' + head + kids + foot + '</div>';
+  }).join('') || '<div class="card"><p class="muted">' + (sgTab === 'pending' ? '確認待ちの登録はありません' : 'まだ確定した登録はありません') + '</p></div>';
+
+  $('#screen-signups').innerHTML =
+    headHtml('新規登録の確認', '確認待ち ' + pend.length + ' 家族', 'signups') +
+    '<div class="card"><div class="small">保護者が <span class="strong">新規登録ページ</span>（LINE でお送りするリンク）から入力した内容です。' +
+      'お手元の紙のチケットカードを見て <span class="strong">いまの残り回数</span> を入れ、確定すると生徒一覧に入り、保護者の画面にも残り回数が出ます。</div>' +
+      '<div class="seg" style="margin-top:10px;max-width:320px">' +
+        '<button data-sgtab="pending" class="' + (sgTab === 'pending' ? 'active' : '') + '">確認待ち ' + pend.length + '</button>' +
+        '<button data-sgtab="done" class="' + (sgTab === 'done' ? 'active' : '') + '">登録済み ' + done.length + '</button></div>' +
+      '<div class="talk"><span class="tk">ご相談中</span><span>確定するまでの間、保護者が予約できるようにするか（チケット 0 回として扱う）、確定後に予約を開けるかを 10/1 にご相談します。</span></div>' +
+    '</div>' + cards;
+}
+function sgConfirm(rid){
+  var r = null; SIGNUPS.forEach(function(x){ if (x.id === rid) r = x; });
+  if (!r) return;
+  for (var i = 0; i < r.kids.length; i++) {
+    var d = sgD(r.id, i, r.kids[i]);
+    if (d.tickets === '' || isNaN(parseInt(d.tickets, 10))) { toast(sgKidName(r.kids[i]) + ' の残り回数を入れてください（0 でも可）', 'warn'); return; }
+  }
+  var lines = r.kids.map(function(k, i){
+    var d = sgDraft[r.id + '|' + i];
+    return '<li><span class="strong">' + esc(sgKidName(k)) + '</span>　🎟 ' + parseInt(d.tickets, 10) + ' 回' +
+      (d.classId ? ' ／ ' + esc(className(d.classId)) : '') + '</li>';
+  }).join('');
+  confirmModal('登録を確定', '<p>' + esc(r.parent.lastName + ' ' + r.parent.firstName) + ' さんのご家族を登録します。</p><ul>' + lines + '</ul>' +
+    '<p class="tiny muted">残り回数はチケット履歴に「移行時の残数（紙カード）」として残ります。</p>', '確定する', function(){
+    var made = [];
+    r.kids.forEach(function(k, i){
+      var d = sgDraft[r.id + '|' + i];
+      var id = 's' + (state.students.length + 1 + made.length) + 'n';
+      var st = mkStudent({
+        id:id, name:sgKidName(k), kana:'', romaji:(k.romanLast + ' ' + k.romanFirst).trim(), birth:k.birth || '',
+        school:k.school, schoolGrade:sgGradeText(k), gradeSystem:k.gradeSystem, gradeNo:k.gradeNo,
+        parent:r.parent.lastName + ' ' + r.parent.firstName, email:r.parent.email, phone:r.parent.tel || '', memberNo:r.parent.memberNo || '',
+        grade:k.level, classId:d.classId || '', tickets:0, active:true,
+        stats:{ term:0, total:0, absent:0, lateCancel:0 },
+        memo:'2026-09-01 新規登録ページから登録。残り回数は紙カードから移行。' + (d.used !== '' ? '紙カードで受講済み ' + d.used + ' 回。' : '')
+      });
+      var n = parseInt(d.tickets, 10);
+      if (n) addTicketHistory(st, n, '移行時の残数（紙カード' + (d.used !== '' ? '・受講済み ' + d.used + ' 回' : '') + '）', TODAY);
+      else { st.notice = true; }
+      state.students.push(st);
+      k.sid = id;
+      made.push(st);
+    });
+    made.forEach(function(st){ st.siblings = made.filter(function(x){ return x !== st; }).map(function(x){ return x.id; }); });
+    assignStudentNumbers();
+    r.status = 'done';
+    toast(r.parent.lastName + ' さんのご家族 ' + made.length + ' 名を登録しました', 'ok');
+    renderSignups();
+  });
+}
+function sgEdit(rid){
+  var r = null; SIGNUPS.forEach(function(x){ if (x.id === rid) r = x; });
+  if (!r) return;
+  var body = r.kids.map(function(k, i){
+    return '<h4 style="margin:10px 0 6px">' + esc(sgKidName(k)) + '</h4><div class="grid grid-2">' +
+      '<div class="field"><label>学校名</label><input data-sge="' + i + '|school" value="' + esc(k.school) + '"></div>' +
+      '<div class="field"><label>級</label><select data-sge="' + i + '|level">' + GRADES.map(function(g){ return '<option' + (g === k.level ? ' selected' : '') + '>' + g + '</option>'; }).join('') + '</select></div></div>';
+  }).join('');
+  openModal('入力内容を直す', '<p class="tiny muted">保護者の入力の誤り（学校名の表記ゆれ、級の選び間違いなど）を直せます。</p>' + body, [
+    { label:'やめる', fn: closeModal },
+    { label:'保存', cls:'btn-primary', fn: function(){
+      $all('[data-sge]').forEach(function(el){ var q = el.getAttribute('data-sge').split('|'); r.kids[+q[0]][q[1]] = el.value; });
+      closeModal(); renderSignups(); toast('入力内容を直しました', 'ok');
+    } }
+  ]);
+}
+
+/* =========================================================
+   T-0665: 受講履歴の直接追加（予約なしで来た生徒を、代理予約を経ずに記録する）
+   ========================================================= */
+function apLessonOptions(ds, selKey){
+  var ls = lessonsOn(ds).filter(function(l){ return l.type !== 'closed'; });
+  var opts = ls.map(function(l){
+    return '<option value="' + l.key + '"' + (l.key === selKey ? ' selected' : '') + '>' + typeIcon(l.type) + ' ' + l.start + ' ' + esc(l.title) + '</option>';
+  }).join('');
+  return opts + '<option value="none"' + (selKey === 'none' || !ls.length ? ' selected' : '') + '>枠のないレッスン（振替・体験など）</option>';
+}
+function apCurType(){
+  var k = $('#apL') ? $('#apL').value : 'none';
+  if (k === 'none') return $('#apT') ? $('#apT').value : 'regular';
+  var l = getLesson(k); return l ? l.type : 'regular';
+}
+function apSync(){
+  var none = $('#apL').value === 'none';
+  $('#apTBox').style.display = none ? '' : 'none';
+  $('#apTitleBox').style.display = none ? '' : 'none';
+  $('#apC').value = cost(apCurType());
+}
+function addPastModal(sid, lessonKey){
+  var l = lessonKey ? getLesson(lessonKey) : null;
+  var ds = l ? l.date : TODAY;
+  var studs = state.students.slice().sort(function(a, b){ return romanFull(a) < romanFull(b) ? -1 : 1; });
+  var body =
+    '<div class="line-note small" style="margin-bottom:10px">予約を作らずに、受講の記録だけを残します。保存した時点でチケットを消費します。</div>' +
+    '<div class="field"><label for="apS">生徒</label><select id="apS">' + studs.map(function(st){
+      return '<option value="' + st.id + '"' + (st.id === sid ? ' selected' : '') + '>' + esc(st.name) + '（' + esc(gradesOf(st).join('・')) + '・🎟 ' + st.tickets + '）</option>';
+    }).join('') + '</select></div>' +
+    '<div class="grid grid-2">' +
+      '<div class="field"><label for="apD">日付</label><input id="apD" type="date" value="' + ds + '"></div>' +
+      '<div class="field"><label for="apL">レッスン</label><select id="apL">' + apLessonOptions(ds, lessonKey || '') + '</select></div>' +
+      '<div class="field" id="apTBox"><label for="apT">種別</label><select id="apT">' +
+        '<option value="regular">💻 オンライン</option><option value="oneoff">🏫 対面</option><option value="mono">👤 マンツーマン</option></select></div>' +
+      '<div class="field" id="apTitleBox"><label for="apTitle">レッスン名</label><input id="apTitle" placeholder="例: 振替レッスン"></div>' +
+      '<div class="field"><label for="apSt">出欠</label><select id="apSt"><option value="attended">✅ 受講</option><option value="absent">✗ 欠席</option></select></div>' +
+      '<div class="field"><label for="apC">🎟 消費する回数</label><input id="apC" type="number" min="0" max="10" value="1"></div>' +
+    '</div>' +
+    '<div class="field"><label for="apM">講師コメント（任意）</label><input id="apM" placeholder="保護者へのひとこと"></div>';
+  openModal('受講履歴を追加', body, [
+    { label:'やめる', fn: closeModal },
+    { label:'追加する', cls:'btn-primary', fn: savePast }
+  ]);
+  apSync();
+}
+function savePast(){
+  var st = studentById($('#apS').value), ds = $('#apD').value || TODAY, key = $('#apL').value;
+  var status = $('#apSt').value, c = parseInt($('#apC').value, 10) || 0, cm = $('#apM').value.trim();
+  var l = key === 'none' ? null : getLesson(key);
+  var type = l ? l.type : $('#apT').value;
+  var title = l ? l.title : ($('#apTitle').value.trim() || typeShort(type) + 'レッスン');
+  if (l && l.book.indexOf(st.id) >= 0) { toast(st.name + ' はこのレッスンを予約済みです。レッスン結果入力で出欠を付けてください', 'warn'); return; }
+  st.past.unshift({ date:ds, title:title, type:type, status:status, comment:cm, did:[], score:'', direct:true });
+  st.past.sort(function(a, b){ return a.date < b.date ? 1 : -1; });
+  if (c) addTicketHistory(st, -c, (status === 'absent' ? '欠席' : 'レッスン受講') + '（予約なし・直接追加：' + title + '）', ds);
+  if (status === 'absent') st.stats.absent++;
+  else { st.stats.term++; st.stats.total++; if (!st.lastAttended || st.lastAttended < ds) st.lastAttended = ds; }
+  if (l) {
+    l.book.push(st.id);
+    resultDraft[key + '::' + st.id] = { status:status, comment:cm, did:[], didOther:'', saved:true };
+  }
+  closeModal();
+  toast(st.name + ' の受講履歴を追加しました（🎟 ' + st.tickets + '）', 'ok');
+  if (currentScreen === 'screen-student-detail') renderStudentDetail(st.id);
+  if (currentScreen === 'screen-results') renderResults();
+}
+document.addEventListener('input', function(e){
+  var a = e.target.getAttribute && e.target.getAttribute('data-sgn');
+  if (!a) return;
+  var q = a.split('|'), key = q[0] + '|' + q[1];
+  if (!sgDraft[key]) return;
+  sgDraft[key][q[2]] = e.target.value;
+  var pv = document.getElementById('sgp-' + q[0] + '-' + q[1]);
+  if (pv) pv.innerHTML = sgPreview(q[0], +q[1]);
+});
+document.addEventListener('change', function(e){
+  var a = e.target.getAttribute && e.target.getAttribute('data-sgn');
+  if (a) { var q = a.split('|'); if (sgDraft[q[0] + '|' + q[1]]) sgDraft[q[0] + '|' + q[1]][q[2]] = e.target.value; }
+  if (e.target.id === 'apD') { $('#apL').innerHTML = apLessonOptions(e.target.value || TODAY, ''); apSync(); }
+  if (e.target.id === 'apL' || e.target.id === 'apT') apSync();
+});
+document.addEventListener('click', function(e){
+  var t = e.target, el;
+  if (!t.closest) return;
+  if ((el = t.closest('[data-sgtab]'))) { sgTab = el.getAttribute('data-sgtab'); renderSignups(); return; }
+  if ((el = t.closest('[data-sgconfirm]'))) { sgConfirm(el.getAttribute('data-sgconfirm')); return; }
+  if ((el = t.closest('[data-sgedit]'))) { sgEdit(el.getAttribute('data-sgedit')); return; }
+  if ((el = t.closest('[data-addpast]'))) { addPastModal(el.getAttribute('data-addpast'), null); return; }
+  if ((el = t.closest('[data-addpast-lesson]'))) { addPastModal(null, el.getAttribute('data-addpast-lesson')); return; }
+});
 
 buildNav();
 </script>

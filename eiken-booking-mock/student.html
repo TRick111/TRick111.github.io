@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Achieve English Gym 予約システム（生徒・保護者側モック v6・2026-09-20）</title>
+<title>Achieve English Gym 予約システム（生徒・保護者側モック v7・2026-09-30）</title>
 <style>
 :root{
   /* ===== v4 テーマトークン（既存サイト voicehobbyclub の黄色トーンに準拠） ===== */
@@ -298,6 +298,23 @@ details .cm{color:var(--muted);padding:2px 0 4px;}
   .cprow{flex-wrap:wrap;}
   .cprow .cv{flex-basis:100%;}
 }
+/* T-0665: 新規登録ページ */
+.regsteps{display:flex;gap:4px;margin:4px 0 12px;}
+.regsteps span{flex:1;min-width:0;text-align:center;font-size:11px;font-weight:800;padding:6px 2px;border-radius:8px;background:#fff;border:1px solid var(--border);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.regsteps span.on{background:var(--brand);border-color:var(--ink);color:var(--ink);}
+.regsteps span.done{background:var(--brand-soft);color:var(--ink);}
+.reglink{font-size:11.5px;background:#fff;border:1px dashed var(--brand-deep);border-radius:10px;padding:8px 10px;word-break:break-all;margin-bottom:12px;}
+.regkid{border:2px solid var(--ink);}
+.regkid .kh{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.regkid .kh h3{margin:0;flex:1;font-size:14px;}
+.regsum{font-size:13px;}
+.regsum dt{font-size:11px;color:var(--muted);font-weight:800;margin-top:6px;}
+.regsum dd{margin:0;font-weight:700;word-break:break-all;}
+.regdone{text-align:center;padding:10px 0;}
+.regdone .big{font-size:44px;line-height:1;}
+.regflow{counter-reset:rf;padding:0;margin:8px 0 0;list-style:none;}
+.regflow li{position:relative;padding:6px 0 6px 30px;font-size:13px;}
+.regflow li:before{counter-increment:rf;content:counter(rf);position:absolute;left:0;top:5px;width:22px;height:22px;border-radius:50%;background:var(--brand);border:1.5px solid var(--ink);font-size:12px;font-weight:900;text-align:center;line-height:20px;}
 </style>
 </head>
 <body>
@@ -321,8 +338,13 @@ details .cm{color:var(--muted);padding:2px 0 4px;}
       <div style="text-align:center"><button class="linkbtn" onclick="toast('モック画面のため、メールは送信されません')">パスワードを忘れた方</button></div>
     </div>
     <div class="tiny muted" style="text-align:center">保護者アカウント1つで兄弟・姉妹をまとめて管理</div>
-    <div class="talk"><span class="tk">ご相談中</span><span>はじめての方がご自分でアカウントを作れるようにするかどうかは、いま田中と相談しています（S-11-2）。</span></div>
-    <div id="signupBox"></div>
+    <button class="btn block" onclick="go('screen-register')">＋ はじめての方（新規登録）</button>
+    <div class="tiny muted mt6" style="text-align:center">LINE でお送りした登録用リンクからも開けます</div>
+  </section>
+
+  <!-- ============ REGISTER（T-0665: 保護者の新規登録ページ。LINE で流すリンク先） ============ -->
+  <section id="screen-register" class="screen">
+    <div id="regBody"></div>
   </section>
 
   <!-- ============ HOME ============ -->
@@ -789,9 +811,10 @@ function go(id){
   for(var i=0;i<ss.length;i++) ss[i].classList.toggle('active', ss[i].id === id);
   var nb = document.querySelectorAll('.bnav button');
   for(var j=0;j<nb.length;j++) nb[j].classList.toggle('on', nb[j].getAttribute('data-nav') === id);
-  document.body.classList.toggle('nonav', id === 'screen-login');
-  document.getElementById('hdWho').hidden = (id === 'screen-login');
-  document.getElementById('hdOut').hidden = (id === 'screen-login');
+  var pre = (id === 'screen-login' || id === 'screen-register');
+  document.body.classList.toggle('nonav', pre);
+  document.getElementById('hdWho').hidden = pre;
+  document.getElementById('hdOut').hidden = pre;
   window.scrollTo(0,0);
   render();
 }
@@ -819,6 +842,164 @@ function renderSignup(){
     + '<button class="btn" style="flex:1" onclick="toggleSignup()">やめる</button>'
     + '<button class="btn pri" style="flex:1" onclick="toggleSignup();toast(\'モック画面のため登録されません\')">作成してはじめる</button></div>'
     + '</div>';
+}
+
+/* =========================================================
+   T-0665: 保護者の新規登録ページ（LINE で流すリンク先）
+   9/29 合意: 保護者が保護者情報とお子さま（兄弟を含む）の基本情報を最初から入力する。
+   チケットの残り回数はレイナ先生が紙のカードを見て管理画面で付ける（自動照合はしない）。
+   ========================================================= */
+var REG_LINK = 'https://（教室のドメイン）/register';
+var REG_STEPS = ['保護者', 'お子さま', '確認', '完了'];
+var reg = null;
+function regNewKid(){
+  return {lastName:'', firstName:'', romanLast:'', romanFirst:'', birth:'', school:'',
+    gradeSystem:'小学◯年', gradeNo:1, level:'5級', card:'あり'};
+}
+function regReset(){
+  reg = {step:1, parent:{lastName:'', firstName:'', romanLast:'', romanFirst:'', email:'', pw:'', tel:'', memberNo:'', lineName:''},
+    kids:[regNewKid()]};
+}
+regReset();
+function regSet(el){
+  var k = el.getAttribute('data-rk'), v = el.value;
+  var p = k.split('.');
+  if(p[0] === 'p') reg.parent[p[1]] = v;
+  else { var kid = reg.kids[+p[0].slice(1)]; kid[p[1]] = (p[1] === 'gradeNo') ? +v : v; }
+}
+function regIn(key, val, label, ph, type){
+  return '<label class="f"><span>'+label+'</span><input data-rk="'+key+'" oninput="regSet(this)"'
+    + (type ? ' type="'+type+'"' : '') + ' value="'+esc(val||'')+'" placeholder="'+esc(ph||'')+'"></label>';
+}
+function regPair(a, b){ return '<div style="display:flex;gap:8px"><div style="flex:1;min-width:0">'+a+'</div><div style="flex:1;min-width:0">'+b+'</div></div>'; }
+function regSteps(){
+  return '<div class="regsteps">' + REG_STEPS.map(function(t, i){
+    var n = i + 1;
+    return '<span class="'+(n === reg.step ? 'on' : (n < reg.step ? 'done' : ''))+'">'+n+'. '+t+'</span>';
+  }).join('') + '</div>';
+}
+function regKidCard(c, i){
+  var pre = 'k'+i+'.';
+  var gno = '';
+  for(var n=1;n<=gradeMax(c.gradeSystem);n++) gno += '<option'+(n===c.gradeNo?' selected':'')+'>'+n+'</option>';
+  return '<div class="card regkid"><div class="kh"><h3>お子さま '+(i+1)+'</h3>'
+    + (reg.kids.length > 1 ? '<button class="btn sm" onclick="regRemoveKid('+i+')">削除</button>' : '') + '</div>'
+    + regPair(regIn(pre+'lastName', c.lastName, '姓', '例: 山田'), regIn(pre+'firstName', c.firstName, '名', '例: 葵'))
+    + regPair(regIn(pre+'romanLast', c.romanLast, 'ローマ字（LAST NAME (氏)）', 'YAMADA'), regIn(pre+'romanFirst', c.romanFirst, 'ローマ字（FIRST NAME (名)）', 'AOI'))
+    + regIn(pre+'birth', c.birth, '生年月日', '', 'date')
+    + regIn(pre+'school', c.school, '学校名', '例: バンコク日本人学校')
+    + '<div style="display:flex;gap:8px">'
+    + '<label class="f" style="flex:1.2;min-width:0"><span>学年（体系）</span><select data-rk="'+pre+'gradeSystem" onchange="regSet(this);regGrade('+i+')">'
+    + GRADE_SYSTEMS.map(function(g){return '<option'+(g===c.gradeSystem?' selected':'')+'>'+esc(g)+'</option>';}).join('')
+    + '</select></label>'
+    + '<label class="f" style="flex:1;min-width:0"><span>学年（数字）</span><select data-rk="'+pre+'gradeNo" onchange="regSet(this)">'+gno+'</select></label></div>'
+    + '<label class="f"><span>受講中（または受講したい）級</span><select data-rk="'+pre+'level" onchange="regSet(this)">'
+    + LEVELS.map(function(lv){return '<option'+(lv===c.level?' selected':'')+'>'+esc(lv)+'</option>';}).join('')
+    + '</select></label>'
+    + '<label class="f"><span>いま使っているチケットカード（紙）</span><select data-rk="'+pre+'card" onchange="regSet(this)">'
+    + ['あり','なし（これから始める）'].map(function(o){return '<option'+(o===c.card?' selected':'')+'>'+o+'</option>';}).join('')
+    + '</select></label>'
+    + '</div>';
+}
+function regGrade(i){ var c = reg.kids[i]; if(c.gradeNo > gradeMax(c.gradeSystem)) c.gradeNo = 1; renderRegister(); }
+function regAddKid(){ reg.kids.push(regNewKid()); renderRegister(); }
+function regRemoveKid(i){ reg.kids.splice(i, 1); renderRegister(); }
+/* モック用: 打合せで入力の手間を省くための例 */
+function regSample(){
+  if(reg.step === 1){
+    reg.parent = {lastName:'山田', firstName:'由紀', romanLast:'YAMADA', romanFirst:'YUKI', email:'yamada.yuki@example.com',
+      pw:'mockpassword', tel:'080-xxxx-5566', memberNo:'', lineName:'ゆき'};
+  } else if(reg.step === 2){
+    reg.kids = [
+      {lastName:'山田', firstName:'葵', romanLast:'YAMADA', romanFirst:'AOI', birth:'2014-06-20', school:'バンコク日本人学校',
+        gradeSystem:'小学◯年', gradeNo:6, level:'3級', card:'あり'},
+      {lastName:'山田', firstName:'湊', romanLast:'YAMADA', romanFirst:'MINATO', birth:'2017-11-02', school:'Bangkok Patana School',
+        gradeSystem:'Year ◯', gradeNo:4, level:'5級', card:'あり'}
+    ];
+  }
+  renderRegister();
+}
+function regNext(){
+  if(reg.step === 1){
+    var p = reg.parent;
+    if(!p.lastName || !p.firstName || !p.email || !p.pw){ toast('姓・名・メール・パスワードを入れてください'); return; }
+  }
+  if(reg.step === 2){
+    for(var i=0;i<reg.kids.length;i++){
+      var c = reg.kids[i];
+      if(!c.lastName || !c.firstName || !c.school){ toast('お子さま '+(i+1)+' の姓・名・学校名を入れてください'); return; }
+    }
+  }
+  if(reg.step === 3) regSubmit();
+  reg.step++;
+  window.scrollTo(0,0);
+  renderRegister();
+}
+function regBack(){ if(reg.step > 1){ reg.step--; window.scrollTo(0,0); renderRegister(); } else go('screen-login'); }
+/* モック: 同じブラウザで admin.html を開くと「新規登録の確認」に出る（ブラウザ内だけ） */
+function regSubmit(){
+  try{
+    var key = 'aeg_mock_signups', list = JSON.parse(localStorage.getItem(key) || '[]');
+    list.push({id:'r'+Date.now(), at:'2026-09-01 21:00', parent:reg.parent, kids:reg.kids});
+    localStorage.setItem(key, JSON.stringify(list));
+  }catch(e){}
+}
+function regGradeText(c){ return c.gradeSystem.replace('◯', String(c.gradeNo)); }
+function renderRegister(){
+  var h = '<div class="hrow"><h2 class="title">新規登録</h2></div>';
+  if(reg.step < 4) h += regSteps();
+  if(reg.step === 1){
+    h += '<div class="reglink">🔗 LINE でお送りするリンク（例）<br><b>'+esc(REG_LINK)+'</b></div>'
+      + '<div class="line info" style="margin-bottom:12px">はじめに保護者の方の情報を入れてください。お子さまは次の画面で何人でも登録できます。</div>'
+      + '<div class="card">'
+      + regPair(regIn('p.lastName', reg.parent.lastName, '姓', '例: 山田'), regIn('p.firstName', reg.parent.firstName, '名', '例: 由紀'))
+      + regPair(regIn('p.romanLast', reg.parent.romanLast, 'ローマ字（LAST NAME (氏)）', 'YAMADA'), regIn('p.romanFirst', reg.parent.romanFirst, 'ローマ字（FIRST NAME (名)）', 'YUKI'))
+      + regIn('p.email', reg.parent.email, 'メール（ログインID）', '例: yamada@example.com', 'email')
+      + regIn('p.pw', reg.parent.pw, 'パスワード', '8文字以上', 'password')
+      + regIn('p.tel', reg.parent.tel, '電話番号', '例: 080-xxxx-5566')
+      + regIn('p.lineName', reg.parent.lineName, 'LINE の表示名（任意）', '先生からの個別連絡の確認用')
+      + regIn('p.memberNo', reg.parent.memberNo, 'ボイスメンバーNo.（お持ちの方のみ）', '例: V-01234')
+      + '</div>';
+  } else if(reg.step === 2){
+    h += '<div class="line info" style="margin-bottom:12px">兄弟・姉妹で通っている場合は、全員を登録してください。</div>'
+      + reg.kids.map(regKidCard).join('')
+      + '<button class="btn block" onclick="regAddKid()">＋ 兄弟・姉妹を追加</button>';
+  } else if(reg.step === 3){
+    var p = reg.parent;
+    h += '<div class="card"><h3 class="sub" style="margin-top:0">保護者</h3><dl class="regsum">'
+      + '<dt>お名前</dt><dd>'+esc(p.lastName+' '+p.firstName)+'（'+esc((p.romanLast+' '+p.romanFirst).trim())+'）</dd>'
+      + '<dt>メール（ログインID）</dt><dd>'+esc(p.email)+'</dd>'
+      + '<dt>電話番号</dt><dd>'+esc(p.tel || '—')+'</dd>'
+      + '<dt>LINE の表示名</dt><dd>'+esc(p.lineName || '—')+'</dd>'
+      + '<dt>ボイスメンバーNo.</dt><dd>'+esc(p.memberNo || '—')+'</dd></dl>'
+      + '<button class="linkbtn" onclick="reg.step=1;renderRegister()">保護者の情報を直す</button></div>';
+    reg.kids.forEach(function(c, i){
+      h += '<div class="card"><h3 class="sub" style="margin-top:0">お子さま '+(i+1)+'</h3><dl class="regsum">'
+        + '<dt>お名前</dt><dd>'+esc(c.lastName+' '+c.firstName)+'（'+esc((c.romanLast+' '+c.romanFirst).trim())+'）</dd>'
+        + '<dt>生年月日</dt><dd>'+esc(c.birth || '—')+'</dd>'
+        + '<dt>学校名・学年</dt><dd>'+esc(c.school)+' ／ '+esc(regGradeText(c))+'</dd>'
+        + '<dt>級</dt><dd>'+lvChip(c.level, 'sm')+'</dd>'
+        + '<dt>チケットカード（紙）</dt><dd>'+esc(c.card)+'</dd></dl></div>';
+    });
+    h += '<button class="linkbtn" onclick="reg.step=2;renderRegister()">お子さまの情報を直す</button>'
+      + '<div class="line info mt10">チケットの残り回数は、レイナ先生がお手元のカードを確認して登録します。ここでの入力は不要です。</div>';
+  } else {
+    h += '<div class="card regdone"><div class="big">🎉</div><h3 class="sub" style="font-size:16px">登録を受け付けました</h3>'
+      + '<div class="small">'+esc(reg.parent.lastName)+' 様 ／ お子さま '+reg.kids.length+' 名</div></div>'
+      + '<div class="card"><h3 class="sub" style="margin-top:0">このあとの流れ</h3><ol class="regflow">'
+      + '<li>レイナ先生が紙のチケットカードを確認し、残り回数を登録します。</li>'
+      + '<li>登録が済んだら LINE でお知らせします。</li>'
+      + '<li>メールアドレスとパスワードでログインし、予約してください。</li></ol></div>'
+      + '<div class="talk"><span class="tk">ご相談中</span><span>残り回数の登録が済むまでの間、予約を止めるか（チケット 0 回として扱う）、先に予約だけ受け付けるかは 10/1 にご相談します。</span></div>'
+      + '<button class="btn pri block mt10" onclick="regReset();go(\'screen-login\')">ログイン画面へ</button>';
+  }
+  if(reg.step < 4){
+    h += '<div style="display:flex;gap:8px;margin-top:12px">'
+      + '<button class="btn" style="flex:1" onclick="regBack()">'+(reg.step === 1 ? 'やめる' : '戻る')+'</button>'
+      + '<button class="btn pri" style="flex:1.4" onclick="regNext()">'+(reg.step === 3 ? 'この内容で登録する' : '次へ')+'</button></div>';
+    if(reg.step < 3) h += '<div style="text-align:center"><button class="linkbtn tiny" onclick="regSample()">（モック用）例を入れる</button></div>';
+  }
+  document.getElementById('regBody').innerHTML = h;
 }
 function login(){
   document.getElementById('hdWho').textContent = parent.name;
@@ -867,6 +1048,7 @@ function renderChildSegs(){
 function render(){
   renderChildSegs();
   if(state.screen==='screen-login') renderSignup();
+  if(state.screen==='screen-register') renderRegister();
   if(state.screen==='screen-home') renderHome();
   if(state.screen==='screen-account') renderAccount();
   if(state.screen==='screen-lessons') renderLessons();
@@ -1689,7 +1871,7 @@ function skillBar(label, val){
    init
    ========================================================= */
 document.getElementById('hdWho').textContent = parent.name;
-go('screen-login');
+go(location.hash === '#register' ? 'screen-register' : 'screen-login');
 </script>
 </body>
 </html>
