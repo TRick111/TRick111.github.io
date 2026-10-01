@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Achieve English Gym 予約システム（生徒・保護者側モック v7・2026-09-30）</title>
+<title>Achieve English Gym 予約システム（生徒・保護者側モック v7.2・2026-10-01）</title>
 <style>
 :root{
   /* ===== v4 テーマトークン（既存サイト voicehobbyclub の黄色トーンに準拠） ===== */
@@ -850,14 +850,18 @@ function renderSignup(){
    チケットの残り回数はレイナ先生が紙のカードを見て管理画面で付ける（自動照合はしない）。
    ========================================================= */
 var REG_LINK = 'https://（教室のドメイン）/register';
-var REG_STEPS = ['保護者', 'お子さま', '確認', '完了'];
+/* T-0676: メール確認を先頭に足した。入力したアドレスに届いたリンクからしか登録を続けられない（むやみに登録されないため） */
+var REG_STEPS = ['メール', '保護者', 'お子さま', '確認', '完了'];
+/* T-0676: 学校名はリストから選ぶか、無ければ自分で入力する。リストは管理者が持つ学校名（表記ゆれを減らす） */
+var SCHOOL_LIST = ['バンコク日本人学校','シラチャ日本人学校','泰日協会学校','Bangkok Patana School','NIST International School',
+  'Harrow International School','KIS International School','Ruamrudee International School','Shrewsbury International School','St. Andrews International School'];
 var reg = null;
 function regNewKid(){
-  return {lastName:'', firstName:'', romanLast:'', romanFirst:'', birth:'', school:'',
+  return {lastName:'', firstName:'', romanLast:'', romanFirst:'', birth:'', school:'', schoolOther:false,
     gradeSystem:'小学◯年', gradeNo:1, level:'5級', card:'あり'};
 }
 function regReset(){
-  reg = {step:1, parent:{lastName:'', firstName:'', romanLast:'', romanFirst:'', email:'', pw:'', tel:'', memberNo:'', lineName:''},
+  reg = {step:0, sent:false, parent:{lastName:'', firstName:'', romanLast:'', romanFirst:'', email:'', pw:'', tel:'', memberNo:'', lineName:''},
     kids:[regNewKid()]};
 }
 regReset();
@@ -873,10 +877,23 @@ function regIn(key, val, label, ph, type){
 }
 function regPair(a, b){ return '<div style="display:flex;gap:8px"><div style="flex:1;min-width:0">'+a+'</div><div style="flex:1;min-width:0">'+b+'</div></div>'; }
 function regSteps(){
-  return '<div class="regsteps">' + REG_STEPS.map(function(t, i){
-    var n = i + 1;
-    return '<span class="'+(n === reg.step ? 'on' : (n < reg.step ? 'done' : ''))+'">'+n+'. '+t+'</span>';
+  return '<div class="regsteps">' + REG_STEPS.map(function(t, n){
+    return '<span class="'+(n === reg.step ? 'on' : (n < reg.step ? 'done' : ''))+'">'+(n+1)+'. '+t+'</span>';
   }).join('') + '</div>';
+}
+function regSchool(c, i){
+  var pre = 'k'+i+'.';
+  var opts = '<option value=""'+(!c.school && !c.schoolOther ? ' selected' : '')+'>選んでください</option>'
+    + SCHOOL_LIST.map(function(s){ return '<option'+(!c.schoolOther && s===c.school ? ' selected' : '')+'>'+esc(s)+'</option>'; }).join('')
+    + '<option value="__other"'+(c.schoolOther ? ' selected' : '')+'>リストにない（自分で入力する）</option>';
+  return '<label class="f"><span>学校名</span><select onchange="regSchoolPick('+i+', this.value)">'+opts+'</select></label>'
+    + (c.schoolOther ? regIn(pre+'school', c.school, '学校名を入力', '例: ○○インターナショナルスクール') : '');
+}
+function regSchoolPick(i, v){
+  var c = reg.kids[i];
+  if(v === '__other'){ c.schoolOther = true; c.school = ''; }
+  else { c.schoolOther = false; c.school = v; }
+  renderRegister();
 }
 function regKidCard(c, i){
   var pre = 'k'+i+'.';
@@ -887,7 +904,7 @@ function regKidCard(c, i){
     + regPair(regIn(pre+'lastName', c.lastName, '姓', '例: 山田'), regIn(pre+'firstName', c.firstName, '名', '例: 葵'))
     + regPair(regIn(pre+'romanLast', c.romanLast, 'ローマ字（LAST NAME (氏)）', 'YAMADA'), regIn(pre+'romanFirst', c.romanFirst, 'ローマ字（FIRST NAME (名)）', 'AOI'))
     + regIn(pre+'birth', c.birth, '生年月日', '', 'date')
-    + regIn(pre+'school', c.school, '学校名', '例: バンコク日本人学校')
+    + regSchool(c, i)
     + '<div style="display:flex;gap:8px">'
     + '<label class="f" style="flex:1.2;min-width:0"><span>学年（体系）</span><select data-rk="'+pre+'gradeSystem" onchange="regSet(this);regGrade('+i+')">'
     + GRADE_SYSTEMS.map(function(g){return '<option'+(g===c.gradeSystem?' selected':'')+'>'+esc(g)+'</option>';}).join('')
@@ -906,23 +923,32 @@ function regAddKid(){ reg.kids.push(regNewKid()); renderRegister(); }
 function regRemoveKid(i){ reg.kids.splice(i, 1); renderRegister(); }
 /* モック用: 打合せで入力の手間を省くための例 */
 function regSample(){
-  if(reg.step === 1){
-    reg.parent = {lastName:'山田', firstName:'由紀', romanLast:'YAMADA', romanFirst:'YUKI', email:'yamada.yuki@example.com',
+  if(reg.step === 0){
+    reg.parent.email = 'yamada.yuki@example.com';
+  } else if(reg.step === 1){
+    reg.parent = {lastName:'山田', firstName:'由紀', romanLast:'YAMADA', romanFirst:'YUKI', email:reg.parent.email,
       pw:'mockpassword', tel:'080-xxxx-5566', memberNo:'', lineName:'ゆき'};
   } else if(reg.step === 2){
     reg.kids = [
-      {lastName:'山田', firstName:'葵', romanLast:'YAMADA', romanFirst:'AOI', birth:'2014-06-20', school:'バンコク日本人学校',
+      {lastName:'山田', firstName:'葵', romanLast:'YAMADA', romanFirst:'AOI', birth:'2014-06-20', school:'バンコク日本人学校', schoolOther:false,
         gradeSystem:'小学◯年', gradeNo:6, level:'3級', card:'あり'},
-      {lastName:'山田', firstName:'湊', romanLast:'YAMADA', romanFirst:'MINATO', birth:'2017-11-02', school:'Bangkok Patana School',
+      {lastName:'山田', firstName:'湊', romanLast:'YAMADA', romanFirst:'MINATO', birth:'2017-11-02', school:'みどりインターナショナルスクール', schoolOther:true,
         gradeSystem:'Year ◯', gradeNo:4, level:'5級', card:'あり'}
     ];
   }
   renderRegister();
 }
+/* T-0676: メールアドレスだけ先に受け取り、登録用リンクを送る（モックでは送らない） */
+function regSendLink(){
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reg.parent.email)){ toast('メールアドレスを正しく入れてください'); return; }
+  reg.sent = true;
+  renderRegister();
+}
+function regOpenLink(){ reg.step = 1; window.scrollTo(0,0); renderRegister(); }
 function regNext(){
   if(reg.step === 1){
     var p = reg.parent;
-    if(!p.lastName || !p.firstName || !p.email || !p.pw){ toast('姓・名・メール・パスワードを入れてください'); return; }
+    if(!p.lastName || !p.firstName || !p.pw){ toast('姓・名・パスワードを入れてください'); return; }
   }
   if(reg.step === 2){
     for(var i=0;i<reg.kids.length;i++){
@@ -948,20 +974,43 @@ function regGradeText(c){ return c.gradeSystem.replace('◯', String(c.gradeNo))
 function renderRegister(){
   var h = '<div class="hrow"><h2 class="title">新規登録</h2></div>';
   if(reg.step < 4) h += regSteps();
-  if(reg.step === 1){
+  if(reg.step === 0 && !reg.sent){
     h += '<div class="reglink">🔗 LINE でお送りするリンク（例）<br><b>'+esc(REG_LINK)+'</b></div>'
-      + '<div class="line info" style="margin-bottom:12px">はじめに保護者の方の情報を入れてください。お子さまは次の画面で何人でも登録できます。</div>'
+      + '<div class="line info" style="margin-bottom:12px">はじめにメールアドレスを入れてください。登録用のリンクをメールでお送りします。</div>'
       + '<div class="card">'
+      + regIn('p.email', reg.parent.email, 'メールアドレス（ログインID になります）', '例: yamada@example.com', 'email')
+      + '<button class="btn pri block" onclick="regSendLink()">登録用リンクを送る</button>'
+      + '</div>'
+      + '<div class="tiny muted" style="text-align:center">届いたメールのリンクからのみ、登録を続けられます</div>'
+      + '<button class="btn block mt10" onclick="go(\'screen-login\')">やめる</button>'
+      + '<div style="text-align:center"><button class="linkbtn tiny" onclick="regSample()">（モック用）例を入れる</button></div>';
+  } else if(reg.step === 0){
+    h += '<div class="card regdone"><div class="big">📩</div><h3 class="sub" style="font-size:16px">メールを送りました</h3>'
+      + '<div class="small"><b>'+esc(reg.parent.email)+'</b></div></div>'
+      + '<div class="card"><ol class="regflow">'
+      + '<li>メールに書かれたリンクを開いてください。</li>'
+      + '<li>開いた画面で、保護者とお子さまの情報を入れて登録します。</li></ol>'
+      + '<div class="tiny muted mt6">リンクの有効期限は 24 時間です。メールが届かないときは、迷惑メールのフォルダもご確認ください。</div></div>'
+      + '<div class="card" style="background:#fafafa"><div class="tiny muted">（モック）届くメールの例</div>'
+      + '<div class="small" style="margin-top:4px"><b>【Achieve English Gym】新規登録のご案内</b></div>'
+      + '<div class="small mt6">下のボタンから登録を続けてください。</div>'
+      + '<button class="btn pri block mt10" onclick="regOpenLink()">登録を続ける（メールのリンク）</button></div>'
+      + '<div style="display:flex;gap:8px;margin-top:12px">'
+      + '<button class="btn" style="flex:1" onclick="reg.sent=false;renderRegister()">アドレスを直す</button>'
+      + '<button class="btn" style="flex:1" onclick="toast(\'モック画面のため、メールは送信されません\')">もう一度送る</button></div>';
+  } else if(reg.step === 1){
+    h += '<div class="line ok" style="margin-bottom:12px">✓ メールアドレスを確認しました。保護者の方の情報を入れてください。お子さまは次の画面で何人でも登録できます。</div>'
+      + '<div class="card">'
+      + '<label class="f"><span>メール（ログインID）</span><input value="'+esc(reg.parent.email)+'" readonly style="background:#f3f3f3"></label>'
       + regPair(regIn('p.lastName', reg.parent.lastName, '姓', '例: 山田'), regIn('p.firstName', reg.parent.firstName, '名', '例: 由紀'))
       + regPair(regIn('p.romanLast', reg.parent.romanLast, 'ローマ字（LAST NAME (氏)）', 'YAMADA'), regIn('p.romanFirst', reg.parent.romanFirst, 'ローマ字（FIRST NAME (名)）', 'YUKI'))
-      + regIn('p.email', reg.parent.email, 'メール（ログインID）', '例: yamada@example.com', 'email')
       + regIn('p.pw', reg.parent.pw, 'パスワード', '8文字以上', 'password')
       + regIn('p.tel', reg.parent.tel, '電話番号', '例: 080-xxxx-5566')
       + regIn('p.lineName', reg.parent.lineName, 'LINE の表示名（任意）', '先生からの個別連絡の確認用')
       + regIn('p.memberNo', reg.parent.memberNo, 'ボイスメンバーNo.（お持ちの方のみ）', '例: V-01234')
       + '</div>';
   } else if(reg.step === 2){
-    h += '<div class="line info" style="margin-bottom:12px">兄弟・姉妹で通っている場合は、全員を登録してください。</div>'
+    h += '<div class="line info" style="margin-bottom:12px">兄弟・姉妹で通っている場合は、全員を登録してください。学校名はリストから選べます。リストにない学校は入力してください。</div>'
       + reg.kids.map(regKidCard).join('')
       + '<button class="btn block" onclick="regAddKid()">＋ 兄弟・姉妹を追加</button>';
   } else if(reg.step === 3){
@@ -984,16 +1033,19 @@ function renderRegister(){
     h += '<button class="linkbtn" onclick="reg.step=2;renderRegister()">お子さまの情報を直す</button>'
       + '<div class="line info mt10">チケットの残り回数は、レイナ先生がお手元のカードを確認して登録します。ここでの入力は不要です。</div>';
   } else {
-    h += '<div class="card regdone"><div class="big">🎉</div><h3 class="sub" style="font-size:16px">登録を受け付けました</h3>'
+    h += '<div class="card regdone"><div class="big">🎉</div><h3 class="sub" style="font-size:16px">登録が完了しました</h3>'
       + '<div class="small">'+esc(reg.parent.lastName)+' 様 ／ お子さま '+reg.kids.length+' 名</div></div>'
-      + '<div class="card"><h3 class="sub" style="margin-top:0">このあとの流れ</h3><ol class="regflow">'
-      + '<li>レイナ先生が紙のチケットカードを確認し、残り回数を登録します。</li>'
-      + '<li>登録が済んだら LINE でお知らせします。</li>'
-      + '<li>メールアドレスとパスワードでログインし、予約してください。</li></ol></div>'
-      + '<div class="talk"><span class="tk">ご相談中</span><span>残り回数の登録が済むまでの間、予約を止めるか（チケット 0 回として扱う）、先に予約だけ受け付けるかは 10/1 にご相談します。</span></div>'
-      + '<button class="btn pri block mt10" onclick="regReset();go(\'screen-login\')">ログイン画面へ</button>';
+      + '<div class="card"><h3 class="sub" style="margin-top:0">これからは、このシステムで</h3><ol class="regflow">'
+      + '<li>レッスンの予約・キャンセル</li>'
+      + '<li>チケットの残り回数の確認</li>'
+      + '<li>受講やチケットの履歴の確認</li></ol>'
+      + '<div class="line info mt10"><span>🔖</span><span>このページを<b>ブックマーク</b>（またはホーム画面に追加）しておくと、次から開くときに便利です。</span></div></div>'
+      + '<div class="card"><h3 class="sub" style="margin-top:0">🎫 チケットの残り回数について</h3>'
+      + '<div class="small">レイナ先生がお手元の紙のカードを確認して登録するため、残り回数が表示されるまで<b>数日かかります</b>。</div>'
+      + '<div class="line ok mt10">残り回数が表示される前でも、レッスンの予約はできます。</div></div>'
+      + '<button class="btn pri block mt10" onclick="regReset();go(\'screen-login\')">ログインして予約する</button>';
   }
-  if(reg.step < 4){
+  if(reg.step >= 1 && reg.step < 4){
     h += '<div style="display:flex;gap:8px;margin-top:12px">'
       + '<button class="btn" style="flex:1" onclick="regBack()">'+(reg.step === 1 ? 'やめる' : '戻る')+'</button>'
       + '<button class="btn pri" style="flex:1.4" onclick="regNext()">'+(reg.step === 3 ? 'この内容で登録する' : '次へ')+'</button></div>';
