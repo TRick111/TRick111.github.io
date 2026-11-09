@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>決算書から自社株評価へ（モック）</title>
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--ink:#1a202c;--sub:#5a6577;--line:#e2e8f0;--bg:#f5f7fa;--card:#fff;
+--c-bs:#2b6cb0;--c-bs-bg:#ebf4ff;--c-pl:#2f855a;--c-pl-bg:#e6f6ec;--c-nt:#b7791f;--c-nt-bg:#fdf3dc;--warn:#c05621;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;font-size:15px;line-height:1.55}
+body{overflow-x:hidden}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 16px 48px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+header.top h1{font-size:20px;margin:0;color:var(--navy)}
+header.top .tag{font-size:12px;color:var(--sub);background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 10px}
+/* hero */
+.hero{display:grid;grid-template-columns:1fr auto 1fr 260px;gap:14px;align-items:stretch;margin-bottom:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.hero .before{border-left:5px solid #a0aec0}
+.hero .after{border-left:5px solid var(--navy)}
+.hero h3{margin:0 0 6px;font-size:13px;color:var(--sub);font-weight:600}
+.hero .flow{font-size:14px;margin:0;padding:0;list-style:none}
+.hero .flow li{padding:2px 0}
+.hero .flow li::before{content:"・";color:var(--sub)}
+.arrow{display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--navy)}
+.timebox{background:var(--navy);color:#fff;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
+.timebox .lbl{font-size:12px;opacity:.85}
+.timebox .big{font-size:30px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.timebox .big s{opacity:.6;font-weight:500;font-size:22px}
+.timebox .small{font-size:12px;opacity:.9;margin-top:4px}
+/* stepper */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.step{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--sub);cursor:pointer;display:flex;gap:8px;align-items:center;min-width:0}
+.step .n{flex:none;width:24px;height:24px;border-radius:50%;background:#edf2f7;color:var(--sub);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.step.on{border-color:var(--navy);color:var(--navy);font-weight:600}
+.step.on .n{background:var(--navy);color:#fff}
+.step.done .n{background:#c6f6d5;color:#22543d}
+.step.locked{cursor:default;opacity:.55}
+.panel{display:none}
+.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h2{font-size:17px;margin:0 0 12px;color:var(--navy)}
+.btn{appearance:none;border:0;border-radius:8px;padding:11px 18px;font-size:15px;font-weight:600;cursor:pointer;background:var(--navy);color:#fff}
+.btn:hover{background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.xl{background:#217346}
+.btn.xl:hover{background:#1a5c38}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--sub);font-size:13px}
+/* upload */
+.drop{border:2px dashed #a0b4cc;border-radius:12px;padding:34px 16px;text-align:center;background:#f8fbff}
+.drop .ic{font-size:40px}
+.files{margin-top:14px;display:none}
+.file{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;background:#fff}
+.file .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.bar{height:6px;background:#edf2f7;border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .25s}
+.log{font-size:13px;color:var(--sub);margin-top:10px;min-height:22px}
+/* extract */
+.two>*,.need>*,.hero>*{min-width:0}
+.two{display:grid;grid-template-columns:1fr 1.15fr;gap:16px}
+.doc{background:#fbfbf8;border:1px solid #d9d6cc;border-radius:6px;padding:14px;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.doc .pg{font-family:inherit;font-size:11px;color:#8a8574;text-align:right}
+.doc h4{text-align:center;margin:4px 0 8px;font-size:14px;letter-spacing:4px}
+.doc table{width:100%;border-collapse:collapse}
+.doc td{padding:3px 4px;border-bottom:1px dotted #d9d6cc}
+.doc td.v{text-align:right;white-space:nowrap}
+.hl-bs{background:var(--c-bs-bg);outline:2px solid var(--c-bs);outline-offset:-2px}
+.hl-pl{background:var(--c-pl-bg);outline:2px solid var(--c-pl);outline-offset:-2px}
+.hl-nt{background:var(--c-nt-bg);outline:2px solid var(--c-nt);outline-offset:-2px}
+.docs{display:flex;flex-direction:column;gap:12px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin-bottom:8px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.lg-bs::before{background:var(--c-bs)}.lg-pl::before{background:var(--c-pl)}.lg-nt::before{background:var(--c-nt)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th,table.t td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+table.t th{background:#f7fafc;font-size:12px;color:var(--sub);font-weight:600}
+table.t td.num{text-align:right;font-variant-numeric:tabular-nums}
+.src{display:inline-block;font-size:11px;border-radius:4px;padding:1px 6px;font-weight:600}
+.src.bs{background:var(--c-bs-bg);color:var(--c-bs)}.src.pl{background:var(--c-pl-bg);color:var(--c-pl)}.src.nt{background:var(--c-nt-bg);color:var(--c-nt)}
+.conf{font-size:12px;color:#22543d}
+.conf.low{color:var(--warn);font-weight:600}
+tr.pulse td{animation:pulse 1.2s ease 1}
+@keyframes pulse{0%{background:#fffbe6}100%{background:transparent}}
+/* valuation */
+.ctrl{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.ctrl label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
+.ctrl select,.ctrl .ro{width:100%;padding:9px 10px;border:1px solid #cbd5e0;border-radius:8px;font-size:15px;background:#fff}
+.ctrl .ro{background:#f7fafc;font-weight:700;color:var(--navy)}
+.cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.cmp .k{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+.cmp .k.best{border:2px solid var(--navy);background:#f3f7fc}
+.cmp .k .l{font-size:12px;color:var(--sub)}
+.cmp .k .v{font-size:24px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.cmp .k .s{font-size:12px;color:var(--sub)}
+.badge{display:inline-block;font-size:11px;background:var(--navy);color:#fff;border-radius:4px;padding:1px 6px;margin-left:4px;vertical-align:2px}
+.hbar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.hbar .nm{width:110px;flex:none;color:var(--sub)}
+.hbar .tr{flex:1;background:#edf2f7;border-radius:4px;height:16px;overflow:hidden}
+.hbar .tr i{display:block;height:100%;background:var(--navy2);transition:width .5s}
+.hbar .vv{width:96px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
+/* need */
+.need{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+.sum{font-size:13px}
+.sum .line{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);gap:8px}
+.sum .line b{font-variant-numeric:tabular-nums}
+.sum .tot{display:flex;justify-content:space-between;padding:12px 14px;margin-top:10px;background:var(--navy);color:#fff;border-radius:10px;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sum .tot b{font-size:26px}
+.sheet{border:1px solid #c7d2cc;border-radius:6px;overflow:hidden;background:#fff}
+.sheet .tb{background:#217346;color:#fff;font-size:12px;padding:6px 10px;display:flex;justify-content:space-between}
+.sheet table{border-collapse:collapse;width:100%;font-size:12px;font-family:Menlo,Consolas,monospace}
+.sheet td{border:1px solid #e3e8e5;padding:4px 6px;white-space:nowrap}
+.sheet td.h{background:#f3f6f4;color:#6b7a72;text-align:center;width:28px}
+.sheet td.r{text-align:right}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1a202c;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.on{opacity:1}
+.next{display:flex;justify-content:flex-end;margin-top:16px;gap:10px;flex-wrap:wrap}
+.note{font-size:11px;color:var(--sub);margin-top:10px}
+@media (max-width:900px){
+ .hero{grid-template-columns:1fr}
+ .arrow{transform:rotate(90deg);height:24px}
+ .two,.need{grid-template-columns:1fr}
+ .ctrl,.cmp{grid-template-columns:1fr}
+ .steps{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:480px){
+ .wrap{padding:14px 12px 40px}
+ header.top h1{font-size:17px}
+ .timebox .big{font-size:26px}
+ .card{padding:14px}
+ .hbar .nm{width:84px;font-size:12px}
+ .hbar .vv{width:78px;font-size:12px}
+ .step{font-size:12px;padding:8px}
+ table.t{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="top">
+  <h1>決算書 → 自社株評価 → 必要保障額</h1>
+  <span class="tag">保険営業向け AI アシスタント（画面モック・数値はすべてダミー）</span>
+ </header>
+
+ <!-- 今→AI後 -->
+ <section class="hero">
+  <div class="box before">
+   <h3>いま（手作業）</h3>
+   <ul class="flow">
+    <li>決算書 PDF を見ながら Excel に転記</li>
+    <li>3 比準要素・純資産を手計算</li>
+    <li>転記ミスの見直し・保障額の試算</li>
+   </ul>
+  </div>
+  <div class="arrow">➜</div>
+  <div class="box after">
+   <h3>AI で</h3>
+   <ul class="flow">
+    <li>決算書をアップロードするだけで数値を自動抽出</li>
+    <li>2 方式＋併用方式の評価額を即計算</li>
+    <li>いつもの Excel 形式でそのまま出力</li>
+   </ul>
+  </div>
+  <div class="timebox">
+   <div class="lbl">1 社あたりの作業時間</div>
+   <div class="big"><s>60分</s> → 3分</div>
+   <div class="small">月 10 社なら 約 9.5 時間を提案準備に</div>
+  </div>
+ </section>
+
+ <nav class="steps" id="steps">
+  <div class="step on" data-s="1"><span class="n">1</span>決算書アップロード</div>
+  <div class="step locked" data-s="2"><span class="n">2</span>数値の自動抽出</div>
+  <div class="step locked" data-s="3"><span class="n">3</span>自社株評価</div>
+  <div class="step locked" data-s="4"><span class="n">4</span>保障額・Excel 出力</div>
+ </nav>
+
+ <!-- STEP1 -->
+ <section class="panel on" id="p1">
+  <div class="card">
+   <h2>① 決算書をアップロード</h2>
+   <div class="drop">
+    <div class="ic">📄</div>
+    <div style="font-weight:600;margin:6px 0">決算書（PDF・スマホ撮影の画像）をここにドラッグ</div>
+    <div class="muted">直近 2〜3 期分・勘定科目内訳書・法人税申告書 別表 も可</div>
+    <div class="row" style="justify-content:center;margin-top:16px">
+     <button class="btn" id="btnSample">サンプル決算書で試す</button>
+    </div>
+   </div>
+   <div class="files" id="files">
+    <div class="file"><span>📕</span><div class="nm">サンプル工業株式会社_第32期_決算報告書.pdf<div class="bar"><i id="b1"></i></div></div><span class="muted">12p</span></div>
+    <div class="file"><span>📕</span><div class="nm">サンプル工業株式会社_第31期_決算報告書.pdf<div class="bar"><i id="b2"></i></div></div><span class="muted">12p</span></div>
+    <div class="file"><span>🖼</span><div class="nm">別表四・別表五（一）_撮影.jpg<div class="bar"><i id="b3"></i></div></div><span class="muted">2枚</span></div>
+    <div class="log" id="log"></div>
+   </div>
+  </div>
+ </section>
+
+ <!-- STEP2 -->
+ <section class="panel" id="p2">
+  <div class="card">
+   <h2>② 決算書から数値を自動抽出 <span class="muted" style="font-weight:400">— 色で「どこから取ったか」がわかる</span></h2>
+   <div class="legend"><span class="lg-bs">貸借対照表</span><span class="lg-pl">損益計算書</span><span class="lg-nt">株主資本等変動計算書・別表</span></div>
+   <div class="two">
+    <div class="docs">
+     <div class="doc">
+      <div class="pg">第32期 決算報告書 p.3</div>
+      <h4>貸 借 対 照 表</h4>
+      <table>
+       <tr><td>流動資産 合計</td><td class="v">312,480,000</td></tr>
+       <tr><td>固定資産 合計</td><td class="v">277,520,000</td></tr>
+       <tr class="hl-bs"><td>資産の部 合計</td><td class="v">590,000,000</td></tr>
+       <tr class="hl-bs"><td>負債の部 合計</td><td class="v">270,000,000</td></tr>
+       <tr class="hl-bs"><td>資本金</td><td class="v">10,000,000</td></tr>
+       <tr><td>利益剰余金</td><td class="v">305,000,000</td></tr>
+       <tr class="hl-bs"><td>純資産の部 合計</td><td class="v">320,000,000</td></tr>
+      </table>
+     </div>
+     <div class="doc">
+      <div class="pg">第32期 決算報告書 p.5／別表四</div>
+      <h4>損 益 計 算 書</h4>
+      <table>
+       <tr class="hl-pl"><td>売上高</td><td class="v">1,280,000,000</td></tr>
+       <tr><td>営業利益</td><td class="v">41,600,000</td></tr>
+       <tr class="hl-pl"><td>経常利益</td><td class="v">38,200,000</td></tr>
+       <tr class="hl-nt"><td>法人税の課税所得（別表四）</td><td class="v">24,000,000</td></tr>
+       <tr class="hl-nt"><td>年配当金額（変動計算書）</td><td class="v">3,000,000</td></tr>
+      </table>
+     </div>
+    </div>
+    <div>
+     <div class="tw">
+      <table class="t" id="extTable">
+       <thead><tr><th>項目</th><th>抽出値（円）</th><th>出どころ</th><th>確度</th></tr></thead>
+       <tbody></tbody>
+      </table>
+     </div>
+     <div class="note">⚠ 確度が低い項目はオレンジ表示。クリックで決算書の該当箇所に戻って確認できる想定。</div>
+     <div class="box" style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap">
+      <div><div class="muted">抽出項目</div><b style="font-size:20px">10 項目</b></div>
+      <div><div class="muted">要確認</div><b style="font-size:20px;color:var(--warn)">1 項目</b></div>
+      <div><div class="muted">処理時間</div><b style="font-size:20px">42 秒</b></div>
+     </div>
+    </div>
+   </div>
+   <div class="next"><button class="btn" id="toStep3">この数値で自社株を評価する →</button></div>
+  </div>
+ </section>
+
+ <!-- STEP3 -->
+ <section class="panel" id="p3">
+  <div class="card">
+   <h2>③ 非上場株式の評価（原則的評価方式）</h2>
+   <div class="ctrl">
+    <div><label>会社規模区分（従業員数・総資産・売上高から自動判定）</label>
+     <select id="size">
+      <option value="large">大会社</option>
+      <option value="m_l">中会社の大</option>
+      <option value="m_m" selected>中会社の中</option>
+      <option value="m_s">中会社の小</option>
+      <option value="small">小会社</option>
+     </select></div>
+    <div><label>L の割合</label><div class="ro" id="lval">0.75</div></div>
+    <div><label>業種（類似業種比準の業種目）</label><div class="ro" style="font-weight:600;color:var(--ink)">金属製品製造業（ダミー）</div></div>
+   </div>
+
+   <div class="tw">
+    <table class="t">
+     <thead><tr><th>3 比準要素（1 株 50 円換算）</th><th>評価会社</th><th>類似業種</th><th>比準割合</th></tr></thead>
+     <tbody id="ratioBody"></tbody>
+    </table>
+   </div>
+
+   <div class="cmp" id="cmp"></div>
+
+   <div class="box">
+    <div class="muted" style="margin-bottom:4px">1 株あたり評価額の比較</div>
+    <div id="bars"></div>
+   </div>
+   <div class="note">※ 計算はモック用の簡略式です（類似業種株価・斟酌率・評価差額の法人税等相当額 37% などはダミー値）。</div>
+   <div class="next"><button class="btn" id="toStep4">事業承継・相続の必要保障額を見る →</button></div>
+  </div>
+ </section>
+
+ <!-- STEP4 -->
+ <section class="panel" id="p4">
+  <div class="card">
+   <h2>④ 事業承継・相続の必要保障額（目安）と Excel 出力</h2>
+   <div class="need">
+    <div class="sum" id="needSum"></div>
+    <div>
+     <div class="sheet">
+      <div class="tb"><span>自社株評価シート.xlsx（いつもの書式）</span><span>Sheet1</span></div>
+      <div class="tw"><table id="sheet"></table></div>
+     </div>
+     <div class="row" style="margin-top:12px">
+      <button class="btn xl" id="btnXls">⬇ Excel でダウンロード</button>
+      <button class="btn ghost" id="btnPdf">提案書 PDF に差し込む</button>
+     </div>
+     <div class="note">既存の Excel 書式（セル位置）に合わせて書き出す想定。モックでは .xls（表形式）を出力します。</div>
+    </div>
+   </div>
+   <div class="next"><button class="btn ghost" id="restart">最初からやり直す</button></div>
+  </div>
+ </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const yen=n=>Math.round(n).toLocaleString('ja-JP');
+const man=n=>(n/1e4>=1e4? (n/1e8).toFixed(2)+' 億円' : Math.round(n/1e4).toLocaleString('ja-JP')+' 万円');
+let reached=1;
+function go(n){
+  if(n>reached) reached=n;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  $('#p'+n).classList.add('on');
+  document.querySelectorAll('.step').forEach(s=>{
+    const k=+s.dataset.s; s.classList.toggle('on',k===n); s.classList.toggle('done',k<n);
+    s.classList.toggle('locked',k>reached);
+  });
+  window.scrollTo({top:$('#steps').offsetTop-8,behavior:'smooth'});
+}
+document.querySelectorAll('.step').forEach(s=>s.onclick=()=>{const k=+s.dataset.s;if(k<=reached)go(k)});
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
+
+/* ダミー会社データ */
+const C={shares:20000,capital:10000000,assetsBook:590000000,assetsTax:680000000,liab:270000000,
+ netBook:320000000,dividend:3000000,profit:24000000,sales:1280000000,ordinary:38200000,employees:68,
+ owner:0.8, otherAssets:120000000};
+const IND={A:312,B:4.8,C:28,D:310}; // 類似業種（ダミー）
+const SIZE={large:{n:'大会社',L:1,s:0.7},m_l:{n:'中会社の大',L:0.9,s:0.6},m_m:{n:'中会社の中',L:0.75,s:0.6},m_s:{n:'中会社の小',L:0.6,s:0.6},small:{n:'小会社',L:0.5,s:0.5}};
+
+const EXT=[
+ ['資産の部 合計（帳簿価額）',C.assetsBook,'bs','p.3 貸借対照表',99],
+ ['資産の部 合計（相続税評価額）',C.assetsTax,'nt','科目内訳書から再計算',86],
+ ['負債の部 合計',C.liab,'bs','p.3 貸借対照表',99],
+ ['純資産の部 合計',C.netBook,'bs','p.3 貸借対照表',99],
+ ['資本金等の額',C.capital,'bs','p.3／別表五（一）',97],
+ ['売上高',C.sales,'pl','p.5 損益計算書',99],
+ ['経常利益',C.ordinary,'pl','p.5 損益計算書',98],
+ ['課税所得（利益金額）',C.profit,'nt','別表四（撮影）',93],
+ ['年配当金額',C.dividend,'nt','株主資本等変動計算書',96],
+ ['発行済株式数（株）',C.shares,'nt','p.7 注記',99],
+];
+
+/* STEP1 */
+$('#btnSample').onclick=()=>{
+  $('#btnSample').disabled=true; $('#files').style.display='block';
+  const msgs=['📖 ページを読み取り中…','🔎 貸借対照表・損益計算書を検出','🧮 勘定科目を評価用の項目に対応付け','✅ 抽出完了（10 項目）'];
+  let p=0; const iv=setInterval(()=>{p+=7;
+    $('#b1').style.width=Math.min(100,p*1.4)+'%';$('#b2').style.width=Math.min(100,Math.max(0,p-15)*1.4)+'%';$('#b3').style.width=Math.min(100,Math.max(0,p-30)*1.6)+'%';
+    $('#log').textContent=msgs[Math.min(3,Math.floor(p/30))];
+    if(p>=105){clearInterval(iv);setTimeout(()=>{renderExt();go(2)},500)}},90);
+};
+function renderExt(){
+  const tb=$('#extTable tbody'); tb.innerHTML='';
+  EXT.forEach((r,i)=>{setTimeout(()=>{
+    const tr=document.createElement('tr'); tr.className='pulse';
+    const lab={bs:'B/S',pl:'P/L',nt:'別表等'}[r[2]];
+    tr.innerHTML=`<td>${r[0]}</td><td class="num">${yen(r[1])}</td><td><span class="src ${r[2]}">${lab}</span> <span class="muted">${r[3]}</span></td><td class="conf ${r[4]<90?'low':''}">${r[4]<90?'要確認 ':''}${r[4]}%</td>`;
+    tb.appendChild(tr);},i*120)});
+}
+$('#toStep3').onclick=()=>{calc();go(3)};
+
+/* STEP3 計算（簡略ダミー） */
+let R={};
+function calc(){
+  const sz=SIZE[$('#size').value]; $('#lval').textContent=sz.L.toFixed(2);
+  const n50=C.capital/50, per50=C.capital/C.shares/50;
+  const b=C.dividend/n50, c=C.profit/n50, d=C.netBook/n50;
+  const rb=b/IND.B, rc=c/IND.C, rd=d/IND.D, ratio=(rb+rc+rd)/3;
+  const ruiji=IND.A*ratio*sz.s*per50;
+  const netTax=C.assetsTax-C.liab, netBk=C.assetsBook-C.liab;
+  const corp=Math.max(0,(netTax-netBk)*0.37);
+  const junshi=(netTax-corp)/C.shares;
+  const heiyo=ruiji*sz.L+junshi*(1-sz.L);
+  // 原則：大会社=類似業種（純資産の方が低ければ純資産）、それ以外は併用と純資産の低い方
+  const opts=sz.L===1?[['類似業種比準価額',ruiji],['純資産価額',junshi]]:[['併用方式',heiyo],['純資産価額',junshi]];
+  const adopt=opts.reduce((a,b)=>b[1]<a[1]?b:a);
+  R={sz,b,c,d,rb,rc,rd,ratio,ruiji,junshi,heiyo,adopt};
+  $('#ratioBody').innerHTML=[
+    ['配当（b / B）',b.toFixed(1)+' 円',IND.B+' 円',rb],
+    ['利益（c / C）',c.toFixed(0)+' 円',IND.C+' 円',rc],
+    ['純資産（d / D）',d.toFixed(0)+' 円',IND.D+' 円',rd],
+  ].map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3].toFixed(2)}</td></tr>`).join('')
+  +`<tr><td><b>比準割合（平均）</b></td><td></td><td class="num muted">株価 A ${IND.A} 円</td><td class="num"><b>${ratio.toFixed(2)}</b></td></tr>`;
+  const k=(l,v,s,best)=>`<div class="k ${best?'best':''}"><div class="l">${l}${best?'<span class="badge">採用</span>':''}</div><div class="v">${yen(v)} 円</div><div class="s">${s}</div></div>`;
+  $('#cmp').innerHTML=
+    k('類似業種比準価額',ruiji,`斟酌率 ${sz.s}／1 株あたり`,adopt[0]==='類似業種比準価額')+
+    k('純資産価額',junshi,'評価差額の法人税等 37% 控除後',adopt[0]==='純資産価額')+
+    k(`併用方式（L＝${sz.L.toFixed(2)}）`,heiyo,`類似×${sz.L.toFixed(2)}＋純資産×${(1-sz.L).toFixed(2)}`,adopt[0]==='併用方式');
+  const mx=Math.max(ruiji,junshi,heiyo);
+  $('#bars').innerHTML=[['類似業種比準',ruiji],['純資産価額',junshi],['併用方式',heiyo]].map(r=>
+    `<div class="hbar"><span class="nm">${r[0]}</span><span class="tr"><i style="width:0" data-w="${r[1]/mx*100}"></i></span><span class="vv">${yen(r[1])} 円</span></div>`).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#bars i').forEach(i=>i.style.width=i.dataset.w+'%'));
+}
+$('#size').onchange=()=>{calc();toast('会社規模区分を変更 → L の割合と評価額を再計算しました')};
+$('#toStep4').onclick=()=>{renderNeed();go(4)};
+
+/* STEP4 */
+let N={};
+function renderNeed(){
+  const per=R.adopt[1], own=C.shares*C.owner, stock=per*own;
+  const estate=stock+C.otherAssets;
+  const taxable=Math.max(0,estate-(3000e4+600e4*3)); // 基礎控除（相続人3人想定）
+  const tax=taxable*0.30; // 簡易：実効 30% のダミー
+  const daisho=stock*0.25; // 後継者以外への代償金（ダミー）
+  const fund=3000e4;       // 経営者交代時の運転資金（ダミー）
+  const need=tax+daisho+fund;
+  N={per,own,stock,estate,tax,daisho,fund,need};
+  const L=(a,b)=>`<div class="line"><span>${a}</span><b>${b}</b></div>`;
+  $('#needSum').innerHTML=
+   L('採用評価額（1 株）',`${yen(per)} 円 <span class="muted">${R.adopt[0]}</span>`)+
+   L('経営者の持株',`${yen(own)} 株（${C.owner*100}%）`)+
+   L('自社株の評価額',man(stock))+
+   L('その他の個人資産（ヒアリング値）',man(C.otherAssets))+
+   L('相続税の概算（簡易試算）',man(tax))+
+   L('後継者以外への代償金',man(daisho))+
+   L('事業継続の運転資金',man(fund))+
+   `<div class="tot"><span>必要保障額の目安</span><b>${man(need)}</b></div>`+
+   `<div class="box" style="margin-top:12px"><div class="muted">次の一手</div><b>必要保障額 ${man(need)} に対して、現在の加入保障との差額を提案書に表示</b></div>`;
+  const rows=[
+   ['','A','B'],
+   ['1','会社名','サンプル工業株式会社'],
+   ['2','会社規模区分',R.sz.n],
+   ['3','L の割合',R.sz.L.toFixed(2)],
+   ['4','類似業種比準価額',yen(R.ruiji)],
+   ['5','純資産価額',yen(R.junshi)],
+   ['6','併用方式',yen(R.heiyo)],
+   ['7','採用評価額（1株）',yen(per)],
+   ['8','自社株評価額',yen(stock)],
+   ['9','必要保障額（目安）',yen(need)],
+  ];
+  $('#sheet').innerHTML=rows.map((r,i)=>`<tr>${r.map((c,j)=>`<td class="${j===0||i===0?'h':''} ${j===2&&i>3?'r':''}">${c}</td>`).join('')}</tr>`).join('');
+}
+$('#btnXls').onclick=()=>{
+  const t=document.getElementById('sheet').cloneNode(true);
+  t.querySelectorAll('tr').forEach((tr,i)=>{tr.firstElementChild.remove(); if(i===0)tr.remove()});
+  const html=`<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body><table border="1">${t.innerHTML}</table></body></html>`;
+  const blob=new Blob(['﻿'+html],{type:'application/vnd.ms-excel'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='自社株評価シート_サンプル工業.xls';
+  document.body.appendChild(a);a.click();a.remove();
+  toast('Excel を書き出しました（いつものセル位置で出力）');
+};
+$('#btnPdf').onclick=()=>toast('提案書テンプレートに評価額と必要保障額を差し込みました（モック）');
+$('#restart').onclick=()=>{reached=1;$('#btnSample').disabled=false;$('#files').style.display='none';['#b1','#b2','#b3'].forEach(s=>$(s).style.width='0');$('#log').textContent='';go(1)};
+</script>
+</body>
+</html>
