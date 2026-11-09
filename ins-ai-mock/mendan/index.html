@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>面談後の事務 自動化（モック）</title>
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--warn:#b54708;--card:#fff;--hl:#fff7e0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55}
+header{background:var(--navy);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:700}
+header .tag{font-size:11px;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:10px}
+.wrap{max-width:1280px;margin:0 auto;padding:16px 20px 40px}
+/* before/after */
+.ba{display:grid;grid-template-columns:1fr auto 1fr 220px;gap:12px;align-items:stretch;margin-bottom:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.before{border-left:5px solid #c4ccd6}
+.after{border-left:5px solid var(--ok)}
+.box h3{margin:0 0 6px;font-size:13px;color:var(--sub);font-weight:600}
+.flowtx{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.flowtx span{background:#eef1f5;border-radius:6px;padding:3px 8px}
+.after .flowtx span{background:#e3f3ec}
+.bh{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bh h3{margin:0}
+.t{font-size:24px;font-weight:800;margin-left:auto;white-space:nowrap}
+.before .t{color:#8a94a3}.after .t{color:var(--ok)}
+.arrow{display:flex;align-items:center;font-size:26px;color:var(--navy2);font-weight:800}
+.next{border-left:5px solid var(--navy2)}
+.next b{font-size:13px;display:block}
+.next .big{font-size:22px;font-weight:800;color:var(--navy)}
+/* pipeline */
+.pipe{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.pn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .3s}
+.pn i{font-style:normal;font-size:16px}
+.pn.ai{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pn.done{border-color:var(--ok);background:#e3f3ec;color:var(--ok)}
+.par{color:var(--navy2);font-weight:800;font-size:18px}
+.outs{display:flex;gap:6px;flex-wrap:wrap}
+/* layout */
+.main{display:grid;grid-template-columns:430px 1fr;gap:16px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h2 .no{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;align-items:center;justify-content:center;font-size:12px}
+.sub{font-size:12px;color:var(--sub);font-weight:400}
+label.l{display:block;font-size:12px;color:var(--sub);font-weight:600;margin:8px 0 3px}
+input,textarea{width:100%;font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--txt);transition:background .4s}
+textarea{resize:vertical}
+.memo{min-height:110px;background:#fbfcfd;font-size:13px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fld.flash input,.fld.flash textarea{background:var(--hl);border-color:#e7c66a}
+.formtitle{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px;font-weight:700}
+.formtitle small{font-weight:400;color:var(--sub)}
+.btn{border:none;border-radius:8px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--navy);color:#fff}
+.btn.sub2{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.ok{background:var(--ok)}
+.btn.wide{width:100%;margin-top:10px}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.doneb{background:#e3f3ec;color:var(--ok);cursor:default}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:r .8s linear infinite;vertical-align:-2px;margin-right:6px}
+.btn.sub2 .spin{border-color:rgba(31,58,95,.25);border-top-color:var(--navy)}
+@keyframes r{to{transform:rotate(360deg)}}
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{flex:1;min-width:0;border:none;background:#eef1f5;color:var(--sub);border-radius:8px;padding:9px 10px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:6px}
+.tab .st{margin-left:auto;font-size:11px;font-weight:600;background:#fff;border-radius:10px;padding:1px 7px;color:var(--sub);white-space:nowrap}
+.tab.on{background:var(--navy);color:#fff}
+.tab .st.ok{background:var(--ok);color:#fff}
+.pane{display:none}.pane.on{display:block}
+.empty{border:2px dashed var(--line);border-radius:10px;padding:34px 16px;text-align:center;color:var(--sub)}
+.empty b{display:block;font-size:15px;color:var(--txt);margin-bottom:4px}
+.bar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+.note{font-size:12px;color:var(--sub)}
+.res{display:none;margin-top:10px;background:#e3f3ec;border:1px solid #b7dfcd;color:var(--ok);border-radius:8px;padding:8px 12px;font-weight:700;font-size:13px}
+.res.on{display:block}
+/* schedule */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}
+.cal .dh{font-size:11px;color:var(--sub);text-align:center;font-weight:600}
+.cal .d{min-height:46px;background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:2px 4px;font-size:11px;color:var(--sub);overflow:hidden}
+.cal .d.today{border-color:var(--navy2);background:#eef4fb}
+.cal .d .ev{display:block;margin-top:2px;border-radius:3px;padding:0 3px;color:#fff;font-size:10px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev.c1{background:var(--navy2)}.ev.c2{background:var(--ok)}.ev.c3{background:#8a6d1f}.ev.c0{background:#8a94a3}
+.sl{list-style:none;margin:0;padding:0}
+.sl li{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:6px;background:#fff}
+.sl .dt{width:72px;flex:none;text-align:center;border-radius:6px;padding:3px 0;font-weight:800;font-size:13px;color:#fff}
+.sl .dt small{display:block;font-weight:600;font-size:10px;opacity:.85}
+.sl .tx{flex:1;min-width:0}
+.sl .tx b{display:block;font-size:14px}
+.sl .tx small{color:var(--sub);font-size:12px}
+.sl .why{font-size:11px;background:#eef1f5;border-radius:4px;padding:2px 6px;color:var(--sub);flex:none;max-width:160px}
+/* slides */
+.prem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px}
+.prem label{font-size:11px;color:var(--sub);font-weight:600}
+.prem input{padding:4px 7px;font-weight:700}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.th{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;transition:background .4s}
+.th.flash{background:var(--hl)}
+.th .pv{aspect-ratio:16/9;background:#fff;border-bottom:1px solid var(--line);padding:8px 10px;position:relative;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.pv .ttl{font-size:10px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv .ln{height:5px;background:#e4e9f0;border-radius:3px}
+.pv .bars{display:flex;align-items:flex-end;gap:4px;flex:1}
+.pv .bars span{flex:1;background:var(--navy2);border-radius:2px 2px 0 0}
+.pv .bars span.g{background:#c4ccd6}
+.pv .kp{font-size:15px;font-weight:800;color:var(--ok)}
+.pv.cover{background:var(--navy);color:#fff;justify-content:center}
+.pv.cover .ttl{color:#fff;border-color:#fff;font-size:11px}
+.pv .sm{font-size:9px;opacity:.85}
+.th .cap{padding:6px 8px;font-size:12px}
+.th .cap b{display:block;font-size:12px}
+.th .cap small{color:var(--sub);font-size:11px}
+.stock{margin-top:12px;border:1px solid #e7c66a;background:#fffbef;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stock b{font-size:13px}
+.stock .val{font-size:18px;font-weight:800;color:var(--navy)}
+/* weekly */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:12px;min-width:640px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#eef1f5;color:var(--sub);font-weight:700;white-space:nowrap}
+tr.new td{background:var(--hl);animation:fl 2s ease}
+@keyframes fl{from{background:#ffe9a8}to{background:var(--hl)}}
+.pill{display:inline-block;border-radius:10px;padding:0 7px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill.a{background:#e3f3ec;color:var(--ok)}.pill.b{background:#eef4fb;color:var(--navy2)}.pill.c{background:#eef1f5;color:var(--sub)}
+.wsum{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.wsum div{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--sub)}
+.wsum b{font-size:18px;color:var(--navy);margin-left:4px}
+.weekhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;font-size:13px}
+.weekhead b{color:var(--navy)}
+@media(max-width:1000px){
+ .ba{grid-template-columns:1fr}
+ .arrow{justify-content:center;transform:rotate(90deg);height:20px}
+ .main{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ .wrap{padding:12px 12px 32px}
+ header{padding:10px 12px}
+ .f2{grid-template-columns:1fr}
+ .prem{grid-template-columns:1fr 1fr}
+ .thumbs{grid-template-columns:1fr 1fr}
+ .tab{flex:1 1 100%}
+ .sl .why{display:none}
+ .cal .d{min-height:38px}
+ .cal .d .ev{font-size:9px}
+ .t{font-size:20px}
+}
+</style>
+</head>
+<body>
+<header>
+ <h1>面談後の事務 まとめて自動化</h1><span class="tag">保険営業向け・モック</span><span class="tag">データはすべてダミー</span>
+</header>
+<div class="wrap">
+
+<!-- 時間の箱 -->
+<div class="ba">
+ <div class="box before">
+  <div class="bh"><h3>今：面談 1 件あたりの事務</h3><span class="t">90 分</span></div>
+  <div class="flowtx"><span>面談記録を型に清書</span><span>週報に転記</span><span>予定を手で登録</span><span>Excel で試算→資料</span></div>
+ </div>
+ <div class="arrow">→</div>
+ <div class="box after">
+  <div class="bh"><h3>AI：メモを貼るだけ</h3><span class="t">15 分</span></div>
+  <div class="flowtx"><span>メモを貼る</span><span>型に自動振り分け</span><span>3 つ自動作成</span><span>確認して反映</span></div>
+ </div>
+ <div class="box next">
+  <b>月 20 面談なら</b>
+  <span class="big">約 25 時間/月</span>
+  <div class="note">浮いた時間を次の面談へ</div>
+ </div>
+</div>
+
+<!-- 流れ -->
+<div class="pipe" aria-label="処理の流れ">
+ <div class="pn" id="p1"><i>📝</i>① 面談記録（1 回だけ入力）</div>
+ <span class="par">→</span>
+ <div class="pn ai"><i>✨</i>AI</div>
+ <span class="par">→</span>
+ <div class="outs">
+  <div class="pn" id="p2a"><i>📅</i>(a) スケジュール</div>
+  <div class="pn" id="p2b"><i>📊</i>(b) 提案資料の下書き</div>
+  <div class="pn" id="p2c"><i>📋</i>(c) 週報</div>
+ </div>
+</div>
+
+<div class="main">
+ <!-- ① 面談記録 -->
+ <section class="card">
+  <h2><span class="no">1</span>面談記録<span class="sub">会社の型に沿って記録</span></h2>
+  <label class="l" for="memo">音声メモ・走り書きを貼り付け</label>
+  <textarea id="memo" class="memo">11/9 サンプル精工の社長。48。奥さん45、子ども高1と中1。今の保険は20年前の定期3000万、65で切れる。医療は日額5000。会社の株価が上がってて相続が心配と。借入3億。上の子は大学行かせたい。法人で退職金準備も興味あり。次は2週間後くらい、会社で。決算書3期分もらえそう。</textarea>
+  <button class="btn wide" id="bFill">✨ AI で型に流し込む</button>
+
+  <div class="formtitle">面談記録シート<small>（型の項目）</small></div>
+  <div class="fld" data-k="name"><label class="l">顧客名</label><input id="f_name" placeholder="—"></div>
+  <div class="fld" data-k="date"><label class="l">面談日</label><input id="f_date" placeholder="—"></div>
+  <div class="fld" data-k="job"><label class="l">年齢・職業</label><input id="f_job" placeholder="—"></div>
+  <div class="fld" data-k="fam"><label class="l">家族構成</label><input id="f_fam" placeholder="—"></div>
+  <div class="fld" data-k="cov"><label class="l">現在の保障</label><textarea id="f_cov" rows="2" placeholder="—"></textarea></div>
+  <div class="fld" data-k="iss"><label class="l">課題・不安</label><textarea id="f_iss" rows="3" placeholder="—"></textarea></div>
+  <div class="fld" data-k="dir"><label class="l">提案の方向</label><textarea id="f_dir" rows="3" placeholder="—"></textarea></div>
+  <div class="fld" data-k="nxt"><label class="l">次回予定</label><input id="f_nxt" placeholder="—"></div>
+  <button class="btn ok wide" id="bMake" disabled>→ 3 つをまとめて自動作成</button>
+ </section>
+
+ <!-- ② 3 つのアウトプット -->
+ <section class="card">
+  <h2><span class="no">2</span>AI が作る 3 つのアウトプット</h2>
+  <div class="tabs">
+   <button class="tab on" data-t="a">📅 スケジュール<span class="st" id="sa">未作成</span></button>
+   <button class="tab" data-t="b">📊 提案資料の下書き<span class="st" id="sb">未作成</span></button>
+   <button class="tab" data-t="c">📋 週報<span class="st" id="sc">未作成</span></button>
+  </div>
+
+  <!-- (a) -->
+  <div class="pane on" id="pa">
+   <div class="empty" id="ea"><b>面談記録から次の予定を自動で並べます</b>左の「AI で型に流し込む」→「3 つをまとめて自動作成」</div>
+   <div id="ca" style="display:none">
+    <div class="cal" id="cal"></div>
+    <ul class="sl" id="slist"></ul>
+    <div class="bar"><span class="note">日付は「次は 2 週間後」「決算書もらえそう」から逆算</span><button class="btn" id="bCal">予定に登録</button></div>
+    <div class="res" id="ra">✓ カレンダーに 5 件登録しました（前日リマインド付き）</div>
+   </div>
+  </div>
+
+  <!-- (b) -->
+  <div class="pane" id="pb">
+   <div class="empty" id="eb"><b>面談内容から保障を選び、試算の前提を自動で入れます</b>Excel への手打ちは不要</div>
+   <div id="cb" style="display:none">
+    <div class="prem">
+     <div><label>年齢</label><input id="pAge" value="48 歳"></div>
+     <div><label>必要保障額（試算）</label><input id="pAmt" value="6,800 万円"></div>
+     <div><label>保障期間</label><input id="pTerm" value="65 歳まで（17 年）"></div>
+     <div><label>末子の独立まで</label><input id="pKid" value="9 年"></div>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="stock" id="stockBox">
+     <b>🏢 法人オーナーのため 自社株評価が必要です</b>
+     <span class="note">決算書 3 期分から 1 株あたりの評価額を計算 → 6 枚目に反映</span>
+     <button class="btn sub2" id="bStock" style="margin-left:auto">自社株評価を実行</button>
+    </div>
+    <div class="bar"><span class="note">6 枚構成・会社の提案書テンプレに流し込み</span><button class="btn" id="bDoc">資料を書き出す</button></div>
+    <div class="res" id="rb">✓ 提案資料（6 枚）を書き出しました。送付予定日 11/20 にリマインドします</div>
+   </div>
+  </div>
+
+  <!-- (c) -->
+  <div class="pane" id="pc">
+   <div class="empty" id="ec"><b>今週の面談を会社の週報フォーマットに 1 行で転記します</b>二重入力をなくす</div>
+   <div id="cc" style="display:none">
+    <div class="weekhead"><span>営業週報 <b>2026 年 11 月 第 2 週（11/9〜11/13）</b></span><span class="note">担当：サンプル 担当者</span></div>
+    <div class="tw"><table>
+     <thead><tr><th>日付</th><th>顧客</th><th>区分</th><th>面談目的</th><th>内容の要約</th><th>次回アクション</th><th>見込み</th></tr></thead>
+     <tbody id="wbody">
+      <tr><td>11/9 午前</td><td>B 様</td><td><span class="pill c">既契約</span></td><td>保障の見直し</td><td>医療保険の更新時期。先進医療特約の追加を検討</td><td>11/16 見積り提示</td><td>B</td></tr>
+     </tbody>
+    </table></div>
+    <div class="wsum"><div>今週の面談<b id="wn">1</b> 件</div><div>新規<b id="wnew">0</b> 件</div><div>提案予定<b id="wpro">1</b> 件</div></div>
+    <div class="bar"><span class="note">黄色の行が今回の面談から自動で入った分</span><button class="btn" id="bWeek">週報に反映</button></div>
+    <div class="res" id="rc">✓ 会社の週報に反映しました（提出は金曜 17:00 にまとめて）</div>
+   </div>
+  </div>
+ </section>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const FILL={
+ name:"サンプル 太郎 様（サンプル精工株式会社 代表）",
+ date:"2026/11/9（月）初回面談",
+ job:"48 歳／製造業の会社経営者（法人オーナー）",
+ fam:"4 人：本人 48・配偶者 45・長男 16（高 1）・長女 13（中 1）",
+ cov:"個人：定期保険 3,000 万円（20 年前加入・65 歳満了）\n医療保険 入院日額 5,000 円",
+ iss:"自社株の評価が上がり相続・事業承継が不安／会社の借入 3 億円\n長男の大学進学資金",
+ dir:"①個人：収入保障保険で不足分を補う\n②法人：長期定期保険で退職金準備　③自社株評価→承継対策",
+ nxt:"2026/11/24（火）14:00 会社訪問／決算書 3 期分を受領予定"
+};
+const ORDER=["name","date","job","fam","cov","iss","dir","nxt"];
+function busy(b,label){b.disabled=true;b.dataset.l=b.innerHTML;b.innerHTML='<span class="spin"></span>'+label;}
+function finish(b,label){b.disabled=true;b.classList.add('doneb');b.innerHTML=label;}
+
+$('bFill').onclick=function(){
+ const b=this;busy(b,'AI がメモを読んでいます…');
+ setTimeout(()=>{
+  ORDER.forEach((k,i)=>setTimeout(()=>{
+   const el=$('f_'+k);el.value=FILL[k];
+   const f=el.closest('.fld');f.classList.add('flash');setTimeout(()=>f.classList.remove('flash'),1400);
+   if(i===ORDER.length-1){finish(b,'✓ 型に流し込みました（8 項目）');$('p1').classList.add('done');$('bMake').disabled=false;}
+  },i*140));
+ },1000);
+};
+
+/* schedule data */
+const EV=[
+ {d:10,dl:"11/10",w:"火",t:"お礼の連絡",s:"お礼メールの下書きを自動作成済み",c:"c0",why:"面談翌日"},
+ {d:13,dl:"11/13",w:"金",t:"決算書 3 期分の受領依頼",s:"自社株評価に使う",c:"c3",why:"「決算書もらえそう」"},
+ {d:20,dl:"11/20",w:"金",t:"提案資料を送付",s:"(b) の 6 枚を PDF で",c:"c2",why:"次回の 2 営業日前"},
+ {d:24,dl:"11/24",w:"火",t:"次回面談 14:00 会社訪問",s:"提案・自社株評価のご説明",c:"c1",why:"「2 週間後・会社で」"},
+ {d:1,m:12,dl:"12/1",w:"火",t:"フォロー連絡",s:"検討状況の確認",c:"c0",why:"次回の 1 週間後"}
+];
+function renderCal(){
+ const cal=$('cal');let h='';["日","月","火","水","木","金","土"].forEach(x=>h+='<div class="dh">'+x+'</div>');
+ // 2026/11/8(日) 〜 12/5(土) 4 週
+ for(let i=0;i<28;i++){
+  const dt=new Date(2026,10,8+i);const m=dt.getMonth()+1,d=dt.getDate();
+  const ev=EV.filter(e=>(e.m||11)===m&&e.d===d);
+  h+='<div class="d'+(m===11&&d===9?' today':'')+'">'+(d===1?m+'/':'')+d+ev.map(e=>'<span class="ev '+e.c+'">'+e.t+'</span>').join('')+'</div>';
+ }
+ cal.innerHTML=h;
+ $('slist').innerHTML=EV.map(e=>{
+  const col={c0:'#8a94a3',c1:'#2c5282',c2:'#1f7a5a',c3:'#8a6d1f'}[e.c];
+  return '<li><span class="dt" style="background:'+col+'">'+e.dl+'<small>'+e.w+'</small></span><span class="tx"><b>'+e.t+'</b><small>'+e.s+'</small></span><span class="why">根拠：'+e.why+'</span></li>';
+ }).join('');
+}
+
+/* slides */
+const SL=[
+ {t:"サンプル 太郎 様 ご提案書",s:"2026 年 11 月",type:"cover"},
+ {t:"現在の保障の整理",s:"定期 3,000 万円・65 歳満了",type:"bars",bars:[70,70,70,70,0,0],g:true},
+ {t:"必要保障額シミュレーション",s:"前提：48 歳・家族 4 人・末子独立まで 9 年",type:"kpi",k:"不足 約 3,800 万円"},
+ {t:"ご提案① 個人：収入保障保険",s:"月額 30 万円・65 歳まで",type:"bars",bars:[90,80,65,50,35,20]},
+ {t:"ご提案② 法人：長期定期保険",s:"保険金 1 億円・退職金の準備",type:"bars",bars:[20,40,60,80,95,100]},
+ {t:"事業承継：自社株評価と対策",s:"評価額は「自社株評価を実行」で反映",type:"kpi",k:"要計算",id:"s6"}
+];
+function pv(s){
+ if(s.type==='cover')return '<div class="pv cover"><div class="ttl">'+s.t+'</div><div class="sm">'+s.s+'</div><div class="sm">保険営業向け サンプル</div></div>';
+ let inner='<div class="ttl">'+s.t+'</div>';
+ if(s.type==='bars')inner+='<div class="bars">'+s.bars.map(v=>'<span class="'+(s.g?'g':'')+'" style="height:'+Math.max(v,4)+'%"></span>').join('')+'</div>';
+ else inner+='<div class="ln" style="width:80%"></div><div class="ln" style="width:60%"></div><div class="kp"'+(s.id?' id="'+s.id+'k"':'')+'>'+s.k+'</div>';
+ return '<div class="pv">'+inner+'</div>';
+}
+function renderSlides(){
+ $('thumbs').innerHTML=SL.map((s,i)=>'<div class="th"'+(s.id?' id="'+s.id+'"':'')+'>'+pv(s)+'<div class="cap"><b>'+(i+1)+'. '+s.t+'</b><small'+(s.id?' id="'+s.id+'c"':'')+'>'+s.s+'</small></div></div>').join('');
+}
+
+$('bMake').onclick=function(){
+ const b=this;busy(b,'3 つを作成中…');
+ setTimeout(()=>{
+  renderCal();renderSlides();
+  ['a','b','c'].forEach((x,i)=>setTimeout(()=>{
+   $('e'+x).style.display='none';$('c'+x).style.display='block';
+   $('s'+x).textContent='✓ 作成済み';$('s'+x).classList.add('ok');
+   $('p2'+x).classList.add('done');
+   if(x==='c'){
+    const tr=document.createElement('tr');tr.className='new';
+    tr.innerHTML='<td>11/9 午後</td><td>サンプル 太郎 様<br><small>法人オーナー 48 歳</small></td><td><span class="pill b">新規</span></td><td>初回ヒアリング</td><td>定期 3,000 万（65 歳満了）。自社株の相続・承継が不安、借入 3 億。法人で退職金準備に関心</td><td>11/20 資料送付<br>11/24 会社訪問</td><td><span class="pill a">A</span></td>';
+    $('wbody').appendChild(tr);$('wn').textContent='2';$('wnew').textContent='1';$('wpro').textContent='2';
+   }
+  },i*300));
+  setTimeout(()=>finish(b,'✓ 3 つ作成しました → 右のタブで確認'),900);
+ },1000);
+};
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+ ['a','b','c'].forEach(x=>$('p'+x).classList.toggle('on',x===t.dataset.t));
+});
+
+function act(id,res,label,done,cb){
+ $(id).onclick=function(){const b=this;busy(b,label);setTimeout(()=>{finish(b,done);$(res).classList.add('on');cb&&cb();},1000);};
+}
+act('bCal','ra','登録中…','✓ 登録済み');
+act('bDoc','rb','書き出し中…','✓ 書き出し済み');
+act('bWeek','rc','反映中…','✓ 反映済み');
+act('bStock','rb_dummy','決算書 3 期分から計算中…','✓ 評価済み',()=>{
+ $('s6k').textContent='1 株 12,400 円 × 1 万株 ≒ 1.24 億円';$('s6k').style.fontSize='11px';
+ $('s6c').textContent='評価額 約 1.24 億円 → 納税資金・株の移し方を提案';
+ $('s6').classList.add('flash');setTimeout(()=>$('s6').classList.remove('flash'),1600);
+ $('stockBox').querySelector('.note').innerHTML='<span class="val">約 1.24 億円</span>（類似業種比準・純資産の併用で試算）→ 6 枚目に反映済み';
+});
+</script>
+<div id="rb_dummy" hidden></div>
+</body>
+</html>
