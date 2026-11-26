@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>面談記録 → 予定・資料・週報（複数案件版・モック）</title>
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55}
+header{background:var(--navy);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:16px;margin:0;font-weight:700}
+header .tag{font-size:11px;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:10px}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav .in{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;gap:4px}
+nav button{border:none;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--sub);padding:11px 14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button.on{color:var(--navy);border-bottom-color:var(--navy)}
+nav .today{margin-left:auto;align-self:center;font-size:12px;color:var(--sub);white-space:nowrap}
+.wrap{max-width:1280px;margin:0 auto;padding:16px 20px 40px}
+.view{display:none}.view.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h2 .no{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;align-items:center;justify-content:center;font-size:12px}
+.sub{font-size:12px;color:var(--sub);font-weight:400}
+.note{font-size:12px;color:var(--sub)}
+.btn{border:none;border-radius:8px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.sub2{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.ok{background:var(--ok)}
+.btn.wide{width:100%;margin-top:10px}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.doneb{background:#e3f3ec;color:var(--ok);cursor:default;opacity:1}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:r .8s linear infinite;vertical-align:-2px;margin-right:6px}
+.btn.sub2 .spin{border-color:rgba(31,58,95,.25);border-top-color:var(--navy)}
+@keyframes r{to{transform:rotate(360deg)}}
+/* status pill */
+.pill{display:inline-block;border-radius:10px;padding:0 8px;font-size:11px;font-weight:700;white-space:nowrap;line-height:1.7}
+.s0{background:#eef1f5;color:#5f6b7a}.s1{background:#e8eff8;color:#2c5282}.s2{background:#f6efdc;color:#8a6d1f}.s3{background:#e3f3ec;color:#1f7a5a}.s4{background:none;color:#a3acb8;border:1px solid #dde3ea}
+.pill.k{background:#eef1f5;color:var(--sub)}.pill.y{background:#fff0c2;color:#8a6d1f}.pill.a{background:#e3f3ec;color:var(--ok)}.pill.b{background:#eef4fb;color:var(--navy2)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;flex:none;vertical-align:0}
+/* ===== list ===== */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;margin-bottom:12px;align-items:stretch}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:0}
+.kpi small{display:block;color:var(--sub);font-size:12px;font-weight:600}
+.kpi b{font-size:26px;color:var(--navy);font-weight:800}
+.kpi b span{font-size:13px;color:var(--sub);font-weight:600;margin-left:3px}
+.kpis .new{display:flex;align-items:center}
+.lbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:16px;padding:4px 12px;font:inherit;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#eef1f5;color:var(--sub);font-weight:700;white-space:nowrap;font-size:12px}
+tbody tr[data-cid]{cursor:pointer}
+tbody tr[data-cid]:hover td{background:#f4f7fb}
+.ltab{min-width:900px}
+.ltab td.nm b{display:block}
+.ltab td small{color:var(--sub);font-size:12px}
+.nx b{font-weight:700}
+.plus{display:inline-block;margin-left:4px;font-size:11px;color:var(--navy2);font-weight:700}
+.plus.new{background:var(--hl);border:1px solid #e7c66a;border-radius:8px;padding:0 6px;color:#8a6d1f}
+tr.fresh td{animation:fl 2.2s ease}
+@keyframes fl{from{background:#ffe9a8}to{background:transparent}}
+.lcards{display:none}
+.lc{background:#fff;border:1px solid var(--line);border-left:5px solid #ccc;border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.lc .top{display:flex;align-items:center;gap:8px}
+.lc .top b{flex:1;min-width:0;font-size:14px}
+.lc .mt{font-size:12px;color:var(--sub);margin-top:4px}
+.lc .nx{font-size:13px;margin-top:4px}
+.effect{margin-top:12px;font-size:12px;color:var(--sub);background:#fff;border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:8px;padding:7px 12px}
+.effect b{color:var(--ok)}
+/* ===== calendar ===== */
+.chead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chead .lbl{font-size:16px;font-weight:800;color:var(--navy);min-width:0}
+.seg{display:inline-flex;border:1px solid var(--navy);border-radius:8px;overflow:hidden;margin-left:auto}
+.seg button{border:none;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:13px;padding:5px 14px;cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff}
+.nb{border:1px solid var(--line);background:#fff;border-radius:6px;font:inherit;font-weight:700;padding:4px 10px;cursor:pointer;color:var(--navy)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--sub);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;cursor:pointer}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.mgrid .dh{font-size:11px;color:var(--sub);text-align:center;font-weight:700;padding:2px 0}
+.mgrid .d{min-height:92px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 4px;font-size:11px;color:var(--sub);overflow:hidden;min-width:0}
+.mgrid .d.out{background:#f3f5f8;color:#b3bbc6}
+.mgrid .d.today{border:2px solid var(--navy2);background:#eef4fb}
+.mgrid .d.today .dn{background:var(--navy2);color:#fff;border-radius:9px;padding:0 6px;font-weight:800}
+.ev{display:block;margin-top:2px;border-radius:3px;padding:0 4px;color:#fff;font-size:10.5px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.ev.past{opacity:.5}
+.ev.nw{outline:2px solid #f1c24b;outline-offset:-1px}
+.wgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{background:#fff;border:1px solid var(--line);border-radius:8px;min-height:240px;padding:6px;min-width:0}
+.wd.today{border:2px solid var(--navy2);background:#eef4fb}
+.wd .wh{font-size:12px;font-weight:800;color:var(--sub);margin-bottom:4px;display:flex;gap:6px;align-items:center}
+.wd.today .wh{color:var(--navy2)}
+.wd.today .wh::after{content:"今日";font-size:10px;background:var(--navy2);color:#fff;border-radius:8px;padding:0 6px}
+.we{border-radius:6px;padding:5px 7px;color:#fff;margin-bottom:5px;font-size:12px;cursor:pointer;min-width:0}
+.we b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.we small{display:block;font-size:11px;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.we.past{opacity:.5}
+.we.nw{outline:2px solid #f1c24b;outline-offset:-2px}
+.wd .none{font-size:11px;color:#b3bbc6}
+/* ===== detail ===== */
+.dtop{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;align-items:start}
+.back{border:none;background:none;color:var(--navy2);font:inherit;font-weight:700;cursor:pointer;padding:0;margin-bottom:6px}
+.cname{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.cname b{font-size:18px}
+.info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.info div{background:#f8fafc;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:12px;min-width:0}
+.info small{display:block;color:var(--sub);font-size:11px}
+.steps{display:flex;gap:4px;margin-top:4px}
+.stp{flex:1;min-width:0;text-align:center;font-size:12px;font-weight:700;color:#9aa4b2;background:#eef1f5;padding:8px 2px;position:relative;transition:all .5s;word-break:keep-all;overflow-wrap:anywhere}
+.stp:first-child{border-radius:8px 0 0 8px}.stp:last-child{border-radius:0 8px 8px 0}
+.stp i{display:block;font-style:normal;font-size:11px;font-weight:800}
+.stp.past{background:#dbe5f1;color:var(--navy2)}
+.stp.cur{background:var(--navy);color:#fff}
+.stp.pop{animation:pop 1.2s ease}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.08);background:#f1c24b;color:#1d2733}100%{transform:scale(1)}}
+.main{display:grid;grid-template-columns:430px minmax(0,1fr);gap:16px;align-items:start}
+details.rec{border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:#fbfcfd}
+details.rec summary{cursor:pointer;padding:7px 10px;font-size:13px;font-weight:700;display:flex;gap:8px;align-items:center;list-style:none}
+details.rec summary::-webkit-details-marker{display:none}
+details.rec summary::before{content:"▸";color:var(--sub);transition:transform .2s}
+details.rec[open] summary::before{transform:rotate(90deg)}
+details.rec summary small{margin-left:auto;color:var(--sub);font-weight:400;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+details.rec summary span{white-space:nowrap;flex:none}
+details.rec.fresh{border-color:#e7c66a;background:var(--hl)}
+.sheet{padding:0 10px 8px;display:grid;grid-template-columns:88px minmax(0,1fr);gap:3px 8px;font-size:12px}
+.sheet dt{color:var(--sub);font-weight:600}
+.sheet dd{margin:0;white-space:pre-line}
+.norec{font-size:12px;color:var(--sub);border:1px dashed var(--line);border-radius:8px;padding:10px;text-align:center}
+label.l{display:block;font-size:12px;color:var(--sub);font-weight:600;margin:8px 0 3px}
+input,textarea{width:100%;font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--txt);transition:background .4s}
+textarea{resize:vertical}
+.memo{min-height:110px;background:#fbfcfd;font-size:13px}
+.fld.flash input,.fld.flash textarea{background:var(--hl);border-color:#e7c66a}
+.formtitle{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px;font-weight:700}
+.formtitle small{font-weight:400;color:var(--sub)}
+.hint{display:none;margin-top:8px;font-size:12px;color:var(--warn);background:#fff4ea;border-radius:6px;padding:6px 9px}
+.hint.on{display:block}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{flex:1;min-width:0;border:none;background:#eef1f5;color:var(--sub);border-radius:8px;padding:9px 10px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:6px}
+.tab .st{margin-left:auto;font-size:11px;font-weight:600;background:#fff;border-radius:10px;padding:1px 7px;color:var(--sub);white-space:nowrap}
+.tab.on{background:var(--navy);color:#fff}
+.tab .st.ok{background:var(--ok);color:#fff}
+.pane{display:none}.pane.on{display:block}
+.empty{border:2px dashed var(--line);border-radius:10px;padding:30px 16px;text-align:center;color:var(--sub)}
+.empty b{display:block;font-size:15px;color:var(--txt);margin-bottom:4px}
+.bar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+.res{display:none;margin-top:10px;background:#e3f3ec;border:1px solid #b7dfcd;color:var(--ok);border-radius:8px;padding:8px 12px;font-weight:700;font-size:13px}
+.res.on{display:block}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:12px}
+.cal .dh{font-size:11px;color:var(--sub);text-align:center;font-weight:600}
+.cal .d{min-height:46px;background:#f8fafc;border:1px solid var(--line);border-radius:5px;padding:2px 4px;font-size:11px;color:var(--sub);overflow:hidden;min-width:0}
+.cal .d.today{border:2px solid var(--navy2);background:#eef4fb}
+.cal .d .ev{font-size:10px}
+.cal .ev.prop{background:#fff!important;color:#8a6d1f;border:1px dashed #d4a72c}
+.sl{list-style:none;margin:0;padding:0}
+.sl li{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:6px;background:#fff}
+.sl li.prop{background:var(--hl);border-color:#e7c66a}
+.sl li.past{opacity:.6}
+.sl .dt{width:72px;flex:none;text-align:center;border-radius:6px;padding:3px 0;font-weight:800;font-size:13px;color:#fff}
+.sl .dt small{display:block;font-weight:600;font-size:10px;opacity:.85}
+.sl .tx{flex:1;min-width:0}
+.sl .tx b{display:block;font-size:14px}
+.sl .tx small{color:var(--sub);font-size:12px}
+.sl .why{font-size:11px;background:#eef1f5;border-radius:4px;padding:2px 6px;color:var(--sub);flex:none;max-width:170px}
+.prem{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px}
+.prem label{font-size:11px;color:var(--sub);font-weight:600}
+.prem input{padding:4px 7px;font-weight:700}
+.thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.th{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;transition:background .4s;min-width:0}
+.th.flash{background:var(--hl)}
+.th .pv{aspect-ratio:16/9;background:#fff;border-bottom:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.pv .ttl{font-size:10px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv .ln{height:5px;background:#e4e9f0;border-radius:3px}
+.pv .bars{display:flex;align-items:flex-end;gap:4px;flex:1}
+.pv .bars span{flex:1;background:var(--navy2);border-radius:2px 2px 0 0}
+.pv .bars span.g{background:#c4ccd6}
+.pv .kp{font-size:15px;font-weight:800;color:var(--ok)}
+.pv.cover{background:var(--navy);color:#fff;justify-content:center}
+.pv.cover .ttl{color:#fff;border-color:#fff;font-size:11px}
+.pv .sm{font-size:9px;opacity:.85}
+.th .cap{padding:6px 8px;font-size:12px}
+.th .cap b{display:block;font-size:12px}
+.th .cap small{color:var(--sub);font-size:11px}
+.stock{margin-top:12px;border:1px solid #e7c66a;background:#fffbef;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stock b{font-size:13px}
+.stock .val{font-size:18px;font-weight:800;color:var(--navy)}
+.wtab{min-width:720px;font-size:12px}
+tr.new td{background:var(--hl)}
+tr.new.anim td{animation:fl2 2s ease}
+@keyframes fl2{from{background:#ffe9a8}to{background:var(--hl)}}
+.wsum{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.wsum div{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--sub)}
+.wsum b{font-size:18px;color:var(--navy);margin-left:4px}
+.weekhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:13px}
+.weekhead .lbl{font-weight:800;color:var(--navy);font-size:15px}
+.wnav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:var(--ok);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.18);transition:all .35s;max-width:calc(100vw - 32px);z-index:20}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1000px){
+ .main,.dtop{grid-template-columns:minmax(0,1fr)}
+ .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .kpis .new{grid-column:1/-1}
+ .kpis .new .btn{width:100%}
+}
+@media(max-width:600px){
+ header{padding:9px 16px}
+ header h1{font-size:14px}
+ nav .in{padding:0 8px;gap:0}
+ nav button{padding:10px 8px;font-size:12px;flex:1}
+ nav .today{display:none}
+ .wrap{padding:12px 16px 32px}
+ .card{padding:12px}
+ .kpi{padding:8px 10px}.kpi b{font-size:21px}
+ .ltabw{display:none}
+ .lcards{display:block}
+ .info{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .stp{font-size:10px;padding:7px 1px}
+ .stp i{font-size:10px}
+ .wgrid{grid-template-columns:minmax(0,1fr);gap:5px}
+ .wd{min-height:0;display:grid;grid-template-columns:54px minmax(0,1fr);gap:6px;align-items:start}
+ .wd .wh{flex-direction:column;align-items:flex-start;gap:2px;margin:0}
+ .wd.today .wh::after{font-size:9px}
+ .we{margin-bottom:4px}
+ .mgrid{gap:2px}
+ .mgrid .d{min-height:58px;padding:2px}
+ .mgrid .ev{font-size:8.5px;padding:0 2px}
+ .seg{margin-left:0}
+ .prem{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tab{flex:1 1 100%}
+ .sl .why{display:none}
+ .cal .d{min-height:38px}
+ .cal .d .ev{font-size:8.5px}
+ .sheet{grid-template-columns:74px minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<header>
+ <h1>面談記録 → 予定・資料・週報（複数案件版）</h1><span class="tag">保険営業向け・モック</span><span class="tag">データはすべてダミー</span>
+</header>
+<nav><div class="in">
+ <button data-v="list" class="on">📁 案件一覧</button>
+ <button data-v="cal">📅 カレンダー</button>
+ <button data-v="detail">📝 案件詳細</button>
+ <button data-v="week">📋 週報</button>
+ <span class="today">今日 2026/11/26（木）</span>
+</div></nav>
+
+<div class="wrap">
+ <!-- ① 案件一覧 -->
+ <section class="view on" id="vList">
+  <div class="kpis">
+   <div class="kpi"><small>進行中の案件</small><b id="kAct">0<span>件</span></b></div>
+   <div class="kpi"><small>今週の予定</small><b id="kWeek">0<span>件</span></b></div>
+   <div class="kpi"><small>提案待ち</small><b id="kPro">0<span>件</span></b></div>
+   <div class="new"><button class="btn" id="bNew">＋ 新規案件</button></div>
+  </div>
+  <div class="lbar" id="filters"></div>
+  <div class="tw ltabw"><table class="ltab">
+   <thead><tr><th>顧客名</th><th>区分</th><th>ステータス</th><th>最終面談</th><th>次回予定</th><th>担当メモ</th></tr></thead>
+   <tbody id="lbody"></tbody>
+  </table></div>
+  <div class="lcards" id="lcards"></div>
+  <div class="effect">⏱ 面談 1 件あたりの事務 <b>90 分 → 15 分</b>　｜　月 20 面談なら <b>約 25 時間/月</b> を次の面談へ</div>
+ </section>
+
+ <!-- ② カレンダー -->
+ <section class="view" id="vCal">
+  <div class="chead">
+   <button class="nb" id="cPrev" aria-label="前へ">◀</button>
+   <button class="nb" id="cToday">今日</button>
+   <button class="nb" id="cNext" aria-label="次へ">▶</button>
+   <span class="lbl" id="cLbl"></span>
+   <div class="seg"><button data-m="week">週</button><button data-m="month">月</button></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div id="calBody"></div>
+ </section>
+
+ <!-- ③ 案件詳細 -->
+ <section class="view" id="vDetail"></section>
+
+ <!-- ④ 週報 -->
+ <section class="view" id="vWeek">
+  <div class="card">
+   <div class="weekhead">
+    <div class="wnav"><button class="nb" id="wPrev" aria-label="前の週">◀</button><span class="lbl" id="wLbl"></span><button class="nb" id="wNext" aria-label="次の週">▶</button></div>
+    <span class="note">担当：サンプル 担当者</span>
+   </div>
+   <div class="tw"><table class="wtab">
+    <thead><tr><th>日付</th><th>顧客</th><th>区分</th><th>面談目的</th><th>内容の要約</th><th>次回アクション</th><th>見込み</th></tr></thead>
+    <tbody id="gwbody"></tbody>
+   </table></div>
+   <div class="wsum"><div>面談件数<b id="gwn">0</b> 件</div><div>新規<b id="gwnew">0</b> 件</div><div>提案予定<b id="gwpro">0</b> 件</div></div>
+   <div class="bar"><span class="note">黄色の行は面談記録から AI が入れた分</span><button class="btn" id="bSubmit">週報を提出</button></div>
+   <div class="res" id="rSubmit">✓ 会社の週報フォーマットで提出しました（ダミー）</div>
+  </div>
+ </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const TODAY='2026-11-26';
+const WD=["日","月","火","水","木","金","土"];
+const STATUS=["初回面談前","提案準備中","提案済み","契約手続き中","完了"];
+const COL={C1:"#2c5282",C2:"#1f7a5a",C3:"#8a6d1f",C4:"#6b4fa0",C5:"#1f6f7a",C6:"#7a4a1f",C7:"#a0403a",C8:"#8a94a3"};
+const pd=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const fd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const md=s=>{const d=pd(s);return (d.getMonth()+1)+'/'+d.getDate()};
+const mdw=s=>md(s)+'（'+WD[pd(s).getDay()]+'）';
+const addD=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+const monday=d=>addD(d,-((d.getDay()+6)%7));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- ダミーデータ ---------- */
+const R=(date,label,o)=>Object.assign({date,label},o);
+const CASES=[
+ {id:"C1",name:"サンプル精工 A 社長",short:"A 社長",age:"48",job:"製造業の会社経営者",type:"法人",status:1,fam:"本人 48・配偶者 45・長男 16・長女 13",memo:"決算書待ち。自社株評価が鍵",
+  records:[
+   R("2026-11-09","初回面談",{name:"サンプル精工 A 社長",job:"48 歳／製造業の会社経営者（法人オーナー）",fam:"4 人：本人 48・配偶者 45・長男 16（高 1）・長女 13（中 1）",cov:"個人：定期保険 3,000 万円（20 年前加入・65 歳満了）\n医療保険 入院日額 5,000 円",iss:"自社株の評価が上がり相続・事業承継が不安／借入 3 億円\n長男の大学進学資金",dir:"①個人：収入保障保険で不足分を補う\n②法人：長期定期保険で退職金準備　③自社株評価→承継対策",nxt:"11/20 会社訪問"}),
+   R("2026-11-20","第 2 回面談",{name:"サンプル精工 A 社長",job:"48 歳／製造業の会社経営者",fam:"変更なし",cov:"変更なし",iss:"決算書の取りまとめが遅れている\n退職金の目安額を知りたい",dir:"個人分の提案を先に説明、法人分は決算書受領後",nxt:"11/27 14:00 提案資料の説明（会社）"})
+  ],
+  newMemo:"11/26 A社長と電話。明日の説明は個人分だけでOK。法人分は決算書3期分を12/4にもらえる、税理士も同席で12/11に聞きたいと。年内に申し込みたいので12/18あたり、奥さんも同席希望。借入は3億→2.8億に減った。退職金は5000万くらい用意したい。"},
+ {id:"C2",name:"B 様",short:"B 様",age:"52",job:"会社員",type:"個人",status:2,fam:"本人 52・配偶者 50・長女 22",memo:"保険料の上限 月 2.5 万",
+  records:[
+   R("2026-10-28","初回面談",{name:"B 様",job:"52 歳／会社員",fam:"3 人：本人 52・配偶者 50・長女 22（社会人）",cov:"医療保険 入院日額 1 万円（更新型）\n終身 500 万円",iss:"医療保険の更新で保険料が上がる",dir:"医療保険の見直し・先進医療の追加",nxt:"11/18 見積り提示"}),
+   R("2026-11-18","提案",{name:"B 様",job:"52 歳／会社員",fam:"変更なし",cov:"変更なし",iss:"見積りが予算より月 3 千円高い",dir:"入院日額を 8 千円に下げた案を再提示",nxt:"11/28 10:00 見積り再提示"})
+  ]},
+ {id:"C3",name:"C 商店 店主",short:"C 商店",age:"61",job:"小売店の店主",type:"法人",status:3,fam:"本人 61・配偶者 58",memo:"告知書の受け取り待ち",
+  records:[
+   R("2026-10-15","初回面談",{name:"C 商店 店主",job:"61 歳／小売店の店主",fam:"2 人：本人 61・配偶者 58",cov:"個人の終身 300 万円のみ",iss:"店を畳むときの資金・葬儀費用",dir:"法人で養老保険、個人は医療を追加",nxt:"11/5 提案"}),
+   R("2026-11-05","提案",{name:"C 商店 店主",job:"61 歳／小売店の店主",fam:"変更なし",cov:"変更なし",iss:"告知できるか不安（通院あり）",dir:"告知の範囲を確認して申込へ",nxt:"11/21 申込内容の確認"}),
+   R("2026-11-21","申込内容の確認",{name:"C 商店 店主",job:"61 歳／小売店の店主",fam:"変更なし",cov:"変更なし",iss:"通院歴の書き方",dir:"告知書を記入いただく",nxt:"12/2 告知書の受け取り"})
+  ]},
+ {id:"C4",name:"D 様",short:"D 様",age:"35",job:"看護師",type:"個人",status:0,fam:"未確認",memo:"紹介（C2 様から）",records:[]},
+ {id:"C5",name:"E 歯科クリニック 院長",short:"E 歯科",age:"44",job:"歯科医院の院長",type:"法人",status:1,fam:"本人 44・配偶者 42・長男 10",memo:"医療法人化を検討中",
+  records:[
+   R("2026-11-14","初回面談",{name:"E 歯科クリニック 院長",job:"44 歳／歯科医院の院長",fam:"3 人：本人 44・配偶者 42・長男 10",cov:"個人：収入保障 月 20 万円",iss:"休業時の固定費・医療法人化",dir:"休業補償と法人での退職金準備",nxt:"12/4 15:00 決算書 3 期分の受け取り"})
+  ]},
+ {id:"C6",name:"F 様",short:"F 様",age:"67",job:"年金受給",type:"個人",status:2,fam:"本人 67・長男 40・長女 37",memo:"相続税の試算を希望",
+  records:[
+   R("2026-11-10","相続の相談",{name:"F 様",job:"67 歳／年金受給",fam:"本人 67・長男 40・長女 37（別居）",cov:"終身 1,000 万円",iss:"自宅と預金の分け方・相続税",dir:"一時払終身で非課税枠を活用",nxt:"12/9 ご自宅で相続の相談"})
+  ]},
+ {id:"C7",name:"G 運送 専務",short:"G 運送",age:"39",job:"運送会社の専務",type:"法人",status:0,fam:"未確認",memo:"役員保険の見直し",records:[]},
+ {id:"C8",name:"H 様",short:"H 様",age:"29",job:"公務員",type:"個人",status:4,fam:"本人 29・配偶者 28",memo:"契約済み。1 年後に見直し",
+  records:[
+   R("2026-10-20","初回面談",{name:"H 様",job:"29 歳／公務員",fam:"2 人：本人 29・配偶者 28",cov:"なし",iss:"結婚を機に保障を準備",dir:"収入保障＋医療",nxt:"11/5 申込"}),
+   R("2026-11-05","契約手続き",{name:"H 様",job:"29 歳／公務員",fam:"変更なし",cov:"収入保障・医療（申込済み）",iss:"なし",dir:"1 年後に見直し",nxt:"—"})
+  ]}
+];
+const CMAP={};CASES.forEach(c=>CMAP[c.id]=c);
+const E=(cid,date,time,title,sub)=>({cid,date,time,title,sub:sub||""});
+const EVENTS=[
+ E("C8","2026-11-05","10:00","契約手続き"),E("C1","2026-11-09","10:00","初回面談"),E("C6","2026-11-10","14:00","相続の相談"),
+ E("C5","2026-11-14","13:00","初回面談"),E("C2","2026-11-18","10:00","提案"),E("C1","2026-11-20","14:00","第 2 回面談"),
+ E("C3","2026-11-21","11:00","申込内容の確認"),E("C3","2026-11-24","16:00","告知書の説明（電話）"),E("C5","2026-11-25","12:30","決算書の依頼（電話）"),
+ E("C1","2026-11-27","14:00","提案資料の説明（会社）","個人分の提案"),E("C2","2026-11-28","10:00","見積り再提示"),
+ E("C4","2026-11-29","11:00","初回面談（カフェ）"),E("C7","2026-12-01","13:00","初回面談（会社）"),
+ E("C3","2026-12-02","","告知書の受け取り"),E("C5","2026-12-04","15:00","決算書 3 期分の受け取り"),E("C6","2026-12-09","","相続の相談（ご自宅）")
+];
+const A=(cid,date,kind,purpose,sum,next,pros,o)=>Object.assign({cid,date,kind,purpose,sum,next,pros},o||{});
+const ACTS=[
+ A("C8","2026-11-05","契約","契約手続き","収入保障＋医療で申込完了","1 年後に見直し","済"),
+ A("C1","2026-11-09","新規","初回ヒアリング","定期 3,000 万（65 歳満了）。自社株の承継が不安、借入 3 億","11/20 会社訪問","A",{nw:1}),
+ A("C6","2026-11-10","既存","相続の相談","自宅と預金の分け方。一時払終身を検討","12/9 ご自宅で相談","B",{pro:1}),
+ A("C5","2026-11-14","新規","初回ヒアリング","休業時の固定費が不安。医療法人化を検討","12/4 決算書受領","B",{nw:1}),
+ A("C2","2026-11-18","既存","提案","医療保険の見直し案。予算より月 3 千円高い","11/28 見積り再提示","B",{pro:1}),
+ A("C1","2026-11-20","新規","第 2 回面談","決算書が遅れ気味。個人分を先に説明","11/27 提案資料の説明","A",{pro:1}),
+ A("C3","2026-11-21","既存","申込内容の確認","通院歴の書き方を確認","12/2 告知書の受け取り","A"),
+ A("C3","2026-11-24","既存","告知書の説明（電話）","記入例を送付。書き方の不安は解消","12/2 告知書の受け取り","A"),
+ A("C5","2026-11-25","新規","決算書の依頼（電話）","税理士経由で 3 期分を準備中","12/4 決算書受領","B"),
+ A("C1","2026-11-27","新規","提案資料の説明（予定）","個人分：収入保障の提案","法人分は決算書受領後","A",{pro:1,plan:1}),
+ A("C2","2026-11-28","既存","見積り再提示（予定）","入院日額 8 千円案","申込の意思確認","B",{pro:1,plan:1})
+];
+/* C1 の生成内容 */
+const FILL={name:"サンプル精工 A 社長",date:"2026/11/26（木）第 3 回（電話）",job:"48 歳／製造業の会社経営者（法人オーナー）",fam:"4 人：本人 48・配偶者 45・長男 16・長女 13",
+ cov:"個人：定期保険 3,000 万円（65 歳満了）／医療 日額 5,000 円",iss:"借入 3 億 → 2.8 億円に減少\n退職金を 5,000 万円程度用意したい",
+ dir:"①11/27 は個人分（収入保障）のみ説明\n②法人分は決算書受領後、税理士同席で説明　③年内申込",nxt:"12/4 決算書受領 → 12/11 提案説明 → 12/18 申込手続き"};
+const ORDER=["name","date","job","fam","cov","iss","dir","nxt"];
+const LBL={name:"顧客名",date:"面談日",job:"年齢・職業",fam:"家族構成",cov:"現在の保障",iss:"課題・不安",dir:"提案の方向",nxt:"次回予定"};
+const PROP=[
+ {date:"2026-12-04",time:"10:00",title:"決算書 3 期分の受領",sub:"自社株評価に使う",why:"「12/4 にもらえる」"},
+ {date:"2026-12-11",time:"14:00",title:"提案説明（法人分・税理士同席）",sub:"長期定期・自社株評価のご説明",why:"「税理士同席で 12/11」"},
+ {date:"2026-12-18",time:"14:00",title:"申込手続き（奥様同席）",sub:"申込書・告知書を持参",why:"「年内・12/18 あたり」"}
+];
+const SL=[
+ {t:"サンプル精工 A 社長 ご提案書",s:"2026 年 12 月",type:"cover"},
+ {t:"現在の保障の整理",s:"定期 3,000 万円・65 歳満了",type:"bars",bars:[70,70,70,70,0,0],g:true},
+ {t:"必要保障額シミュレーション",s:"前提：48 歳・家族 4 人・末子独立まで 9 年",type:"kpi",k:"不足 約 3,800 万円"},
+ {t:"ご提案① 個人：収入保障保険",s:"月額 30 万円・65 歳まで",type:"bars",bars:[90,80,65,50,35,20]},
+ {t:"ご提案② 法人：長期定期保険",s:"保険金 1 億円・退職金 5,000 万円の準備",type:"bars",bars:[20,40,60,80,95,100]},
+ {t:"事業承継：自社株評価と対策",s:"評価額は「自社株評価を実行」で反映",type:"kpi",k:"要計算",id:"s6"}
+];
+
+/* ---------- 共通 ---------- */
+const st={view:"list",cid:"C1",filter:"all",calMode:(innerWidth<=600?"week":"month"),calRef:pd(TODAY),wkRef:monday(pd(TODAY)),lastNew:0};
+let newSeq=0;
+function show(v){
+ st.view=v;
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ ['list','cal','detail','week'].forEach(x=>$('v'+x[0].toUpperCase()+x.slice(1)).classList.toggle('on',x===v));
+ if(v==='list')renderList();if(v==='cal')renderCal();if(v==='detail')renderDetail();if(v==='week')renderWeek();
+ window.scrollTo(0,0);
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+function openCase(cid){st.cid=cid;show('detail');}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-cid]');if(t&&!t.closest('#vDetail'))openCase(t.dataset.cid);});
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600);}
+function busy(b,label){b.disabled=true;b.innerHTML='<span class="spin"></span>'+label;}
+function finish(b,label){b.disabled=true;b.classList.add('doneb');b.innerHTML=label;}
+const spill=s=>'<span class="pill s'+s+'">'+STATUS[s]+'</span>';
+const evOf=cid=>EVENTS.filter(e=>e.cid===cid).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+const upcoming=cid=>evOf(cid).filter(e=>e.date>=TODAY);
+const lastMeet=c=>c.records.length?c.records.map(r=>r.date).sort().pop():null;
+
+/* ---------- ① 一覧 ---------- */
+function renderList(){
+ const wk0=fd(monday(pd(TODAY))),wk1=fd(addD(monday(pd(TODAY)),6));
+ $('kAct').innerHTML=CASES.filter(c=>c.status<4).length+'<span>件</span>';
+ $('kWeek').innerHTML=EVENTS.filter(e=>e.date>=wk0&&e.date<=wk1).length+'<span>件</span>';
+ $('kPro').innerHTML=CASES.filter(c=>c.status===1).length+'<span>件</span>';
+ const fs=[["all","すべて"]].concat(STATUS.map((s,i)=>[String(i),s]));
+ $('filters').innerHTML=fs.map(([k,l])=>{const n=k==='all'?CASES.length:CASES.filter(c=>String(c.status)===k).length;return '<button class="chip'+(st.filter===k?' on':'')+'" data-f="'+k+'">'+l+' '+n+'</button>';}).join('');
+ $('filters').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{st.filter=b.dataset.f;renderList();});
+ const list=CASES.filter(c=>st.filter==='all'||String(c.status)===st.filter);
+ const nxt=c=>{const u=upcoming(c.id);if(!u.length)return '<span class="note">—</span>';const f=u[0];const nNew=u.filter(e=>e.nw).length;
+  return '<b>'+mdw(f.date)+(f.time?' '+f.time:'')+'</b> '+esc(f.title)+(u.length>1?'<span class="plus'+(nNew?' new':'')+'">＋'+(u.length-1)+' 件'+(nNew?'（新規 '+nNew+'）':'')+'</span>':'');};
+ $('lbody').innerHTML=list.map(c=>{const lm=lastMeet(c);return '<tr data-cid="'+c.id+'"'+(c.fresh?' class="fresh"':'')+'><td class="nm"><b><span class="dot" style="background:'+COL[c.id]+'"></span>'+esc(c.name)+'</b><small>'+(c.age?c.age+' 歳・':'')+esc(c.job)+'</small></td><td>'+c.type+'</td><td>'+spill(c.status)+'</td><td>'+(lm?md(lm):'—')+'</td><td class="nx">'+nxt(c)+'</td><td><small>'+esc(c.memo)+'</small></td></tr>';}).join('')||'<tr><td colspan="6" class="note">該当する案件はありません</td></tr>';
+ $('lcards').innerHTML=list.map(c=>{const lm=lastMeet(c);return '<div class="lc" data-cid="'+c.id+'" style="border-left-color:'+COL[c.id]+'"><div class="top"><b>'+esc(c.name)+'</b>'+spill(c.status)+'</div><div class="mt">'+c.type+'・'+(c.age?c.age+' 歳・':'')+esc(c.job)+'　最終面談 '+(lm?md(lm):'—')+'</div><div class="nx">📅 '+nxt(c)+'</div></div>';}).join('')||'<div class="note">該当する案件はありません</div>';
+ CASES.forEach(c=>delete c.fresh);
+}
+$('bNew').onclick=()=>{newSeq++;const id="N"+newSeq;const c={id,name:"新規案件 "+newSeq,short:"新規",age:"",job:"未入力",type:"—",status:0,fam:"—",memo:"",records:[],isNew:1};CASES.push(c);CMAP[id]=c;COL[id]="#8a94a3";openCase(id);};
+
+/* ---------- ② カレンダー ---------- */
+function evHtml(e,cls){const c=CMAP[e.cid];return '<span class="'+cls+(e.date<TODAY?' past':'')+(e.nw?' nw':'')+'" data-cid="'+e.cid+'" style="background:'+COL[e.cid]+'" title="'+esc(c.name+' '+e.title)+'">';}
+function renderCal(){
+ document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===st.calMode));
+ $('legend').innerHTML=CASES.filter(c=>!c.isNew).map(c=>'<span data-cid="'+c.id+'"><span class="dot" style="background:'+COL[c.id]+'"></span>'+esc(c.short)+'</span>').join('');
+ let h='';
+ if(st.calMode==='month'){
+  const r=st.calRef,first=new Date(r.getFullYear(),r.getMonth(),1),start=addD(first,-first.getDay());
+  $('cLbl').textContent=r.getFullYear()+' 年 '+(r.getMonth()+1)+' 月';
+  h='<div class="mgrid">'+WD.map(w=>'<div class="dh">'+w+'</div>').join('');
+  for(let i=0;i<42;i++){const d=addD(start,i),k=fd(d);const ev=EVENTS.filter(e=>e.date===k).sort((a,b)=>a.time.localeCompare(b.time));
+   h+='<div class="d'+(d.getMonth()!==r.getMonth()?' out':'')+(k===TODAY?' today':'')+'"><span class="dn">'+d.getDate()+'</span>'+ev.map(e=>evHtml(e,'ev')+(e.time?e.time+' ':'')+esc(CMAP[e.cid].short)+' '+esc(e.title)+'</span>').join('')+'</div>';}
+  h+='</div>';
+ }else{
+  const s=st.wkRef;$('cLbl').textContent=mdw(fd(s))+' 〜 '+mdw(fd(addD(s,6)));
+  h='<div class="wgrid">';
+  for(let i=0;i<7;i++){const d=addD(s,i),k=fd(d);const ev=EVENTS.filter(e=>e.date===k).sort((a,b)=>a.time.localeCompare(b.time));
+   h+='<div class="wd'+(k===TODAY?' today':'')+'"><div class="wh">'+mdw(k)+'</div><div>'+(ev.length?ev.map(e=>evHtml(e,'we').replace('<span','<div').replace(/<\/span>$/,'')+'<b>'+(e.time||'終日')+' '+esc(CMAP[e.cid].short)+'</b><small>'+esc(e.title)+'</small></div>').join(''):'<span class="none">予定なし</span>')+'</div></div>';}
+  h+='</div>';
+ }
+ $('calBody').innerHTML=h;
+}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{st.calMode=b.dataset.m;renderCal();});
+$('cPrev').onclick=()=>{if(st.calMode==='month')st.calRef=new Date(st.calRef.getFullYear(),st.calRef.getMonth()-1,1);else st.wkRef=addD(st.wkRef,-7);renderCal();};
+$('cNext').onclick=()=>{if(st.calMode==='month')st.calRef=new Date(st.calRef.getFullYear(),st.calRef.getMonth()+1,1);else st.wkRef=addD(st.wkRef,7);renderCal();};
+$('cToday').onclick=()=>{st.calRef=pd(TODAY);st.wkRef=monday(pd(TODAY));renderCal();};
+
+/* ---------- ④ 週報（横断） ---------- */
+const prosPill=p=>p==='A'?'<span class="pill a">A</span>':p==='B'?'<span class="pill b">B</span>':'<span class="pill k">'+p+'</span>';
+const kindPill=k=>'<span class="pill '+(k==='新規'?'b':k==='契約'?'a':'k')+'">'+k+'</span>';
+function weekRows(from,to,cid){return ACTS.filter(a=>a.date>=from&&a.date<=to&&(!cid||a.cid===cid)).sort((a,b)=>a.date.localeCompare(b.date));}
+function rowHtml(a,link){const c=CMAP[a.cid];return '<tr'+(link?' data-cid="'+a.cid+'"':'')+(a.nw2?' class="new'+(a.anim?' anim':'')+'"':'')+'><td>'+mdw(a.date)+'</td><td><span class="dot" style="background:'+COL[a.cid]+'"></span>'+esc(c.name)+'<br><small class="note">'+c.type+'・'+c.age+' 歳</small></td><td>'+kindPill(a.kind)+'</td><td>'+esc(a.purpose)+(a.plan?' <span class="pill k">予定</span>':'')+'</td><td>'+esc(a.sum)+'</td><td>'+esc(a.next).replace(/\n/g,'<br>')+'</td><td>'+prosPill(a.pros)+'</td></tr>';}
+function renderWeek(){
+ const s=st.wkRefW||monday(pd(TODAY));st.wkRefW=s;const from=fd(s),to=fd(addD(s,6));
+ $('wLbl').textContent='営業週報 '+mdw(from)+' 〜 '+mdw(to)+(from===fd(monday(pd(TODAY)))?'（今週）':'');
+ const rows=weekRows(from,to);
+ $('gwbody').innerHTML=rows.map(a=>rowHtml(a,true)).join('')||'<tr><td colspan="7" class="note">この週の記録はまだありません</td></tr>';
+ rows.forEach(a=>delete a.anim);
+ $('gwn').textContent=rows.filter(a=>!a.plan).length;$('gwnew').textContent=rows.filter(a=>a.nw).length;$('gwpro').textContent=rows.filter(a=>a.pro).length;
+}
+$('wPrev').onclick=()=>{st.wkRefW=addD(st.wkRefW,-7);renderWeek();};
+$('wNext').onclick=()=>{st.wkRefW=addD(st.wkRefW,7);renderWeek();};
+$('bSubmit').onclick=function(){const b=this;busy(b,'提出中…');setTimeout(()=>{finish(b,'✓ 提出済み');$('rSubmit').classList.add('on');},1000);};
+
+/* ---------- ③ 案件詳細 ---------- */
+function stepsHtml(c){return '<div class="steps" id="steps">'+STATUS.map((s,i)=>'<div class="stp'+(i<c.status?' past':i===c.status?' cur':'')+'"><i>'+(i<c.status?'✓':i+1)+'</i>'+s+'</div>').join('')+'</div>';}
+function recHtml(r,open,fresh){return '<details class="rec'+(fresh?' fresh':'')+'"'+(open?' open':'')+'><summary>'+md(r.date)+' '+esc(r.label)+'<small>'+esc(r.nxt)+'</small></summary><dl class="sheet">'+ORDER.filter(k=>k!=='date').map(k=>'<dt>'+LBL[k]+'</dt><dd>'+esc(r[k]||'—')+'</dd>').join('')+'</dl></details>';}
+function renderDetail(){
+ const c=CMAP[st.cid]||CASES[0];const g=c.gen||(c.gen={});
+ const recs=c.records.slice().sort((a,b)=>b.date.localeCompare(a.date));
+ const u=upcoming(c.id);
+ $('vDetail').innerHTML=
+ '<div class="dtop"><div class="card"><button class="back" id="dBack">← 案件一覧</button>'+
+  '<div class="cname"><span class="dot" style="background:'+COL[c.id]+';width:12px;height:12px"></span><b>'+esc(c.name)+'</b><span id="dPill">'+spill(c.status)+'</span></div>'+
+  '<div class="info"><div><small>区分</small>'+c.type+'</div><div><small>年齢・職業</small>'+(c.age?c.age+' 歳・':'')+esc(c.job)+'</div><div><small>家族</small>'+esc(c.fam)+'</div><div><small>次回</small>'+(u.length?mdw(u[0].date)+' '+u[0].time:'—')+'</div></div></div>'+
+  '<div class="card"><h2 style="font-size:14px">進捗<span class="sub">5 段階</span></h2>'+stepsHtml(c)+'<div class="note" style="margin-top:8px">面談記録 '+c.records.length+' 件・登録済みの予定 '+evOf(c.id).length+' 件</div></div></div>'+
+ '<div class="main"><section class="card">'+
+  '<h2><span class="no">1</span>面談記録<span class="sub">過去の記録シート</span></h2><div id="hist">'+(recs.length?recs.map((r,i)=>recHtml(r,false,r.fresh)).join(''):'<div class="norec">まだ面談記録はありません</div>')+'</div>'+
+  '<div class="formtitle">＋ 新しいメモ<small>音声メモ・走り書きを貼り付け</small></div>'+
+  '<textarea id="memo" class="memo" placeholder="例）12/1 初回。39歳、専務。役員保険を見直したい…">'+esc(g.fill?(c.newMemo||''):(c.newMemo||''))+'</textarea>'+
+  '<button class="btn wide" id="bFill">✨ AI で型に流し込む</button><div class="hint" id="hint"></div>'+
+  '<div class="formtitle">面談記録シート<small>（会社の型の項目）</small></div>'+
+  ORDER.map(k=>'<div class="fld"><label class="l">'+LBL[k]+'</label>'+(['cov','iss','dir'].includes(k)?'<textarea id="f_'+k+'" rows="'+(k==='cov'?2:3)+'" placeholder="—">'+(g.fill?esc(FILL[k]):'')+'</textarea>':'<input id="f_'+k+'" placeholder="—" value="'+(g.fill?esc(FILL[k]):'')+'">')+'</div>').join('')+
+  '<button class="btn ok wide" id="bMake" disabled>→ 3 つをまとめて自動作成</button>'+
+ '</section><section class="card" id="right"></section></div>';
+ $('dBack').onclick=()=>show('list');
+ if(g.fill)finish($('bFill'),'✓ 型に流し込みました（8 項目）');
+ if(g.made)finish($('bMake'),'✓ 3 つ作成しました → 右のタブで確認');else if(g.fill)$('bMake').disabled=false;
+ $('bFill').onclick=()=>doFill(c);
+ $('bMake').onclick=()=>doMake(c);
+ renderRight(c);
+ c.records.forEach(r=>delete r.fresh);
+}
+function doFill(c){
+ const b=$('bFill');const txt=$('memo').value.trim();
+ if(c.id!=='C1'){const h=$('hint');h.textContent=txt?'このモックでは「サンプル精工 A 社長」の案件で生成を体験できます':'先にメモを貼り付けてください';h.classList.add('on');return;}
+ busy(b,'AI がメモを読んでいます…');
+ setTimeout(()=>{ORDER.forEach((k,i)=>setTimeout(()=>{const el=$('f_'+k);if(!el)return;el.value=FILL[k];const f=el.closest('.fld');f.classList.add('flash');setTimeout(()=>f.classList.remove('flash'),1400);
+  if(i===ORDER.length-1){c.gen.fill=true;finish(b,'✓ 型に流し込みました（8 項目）');$('bMake').disabled=false;}},i*140));},1000);
+}
+function doMake(c){
+ const b=$('bMake');busy(b,'3 つを作成中…');
+ setTimeout(()=>{
+  c.gen.made=true;
+  c.records.push(Object.assign({},FILL,{date:"2026-11-26",label:"第 3 回（電話）",fresh:1}));
+  ACTS.push(A("C1","2026-11-26","新規","第 3 回（電話）","借入 2.8 億に減少。退職金 5,000 万円の準備を希望。法人分は税理士同席で説明","12/4 決算書受領\n12/11 提案説明\n12/18 申込手続き","A",{pro:1,nw2:1,anim:1}));
+  c.fresh=1;
+  const sc=window.scrollY;renderDetail();window.scrollTo(0,sc);
+  ['a','b','c'].forEach((x,i)=>{const s=$('s'+x);if(!s)return;s.textContent='作成中…';s.classList.remove('ok');setTimeout(()=>{s.textContent='✓ 作成済み';s.classList.add('ok');},300+i*300);});
+  toast('✓ 面談記録を履歴に追加・週報に 1 行追加しました');
+ },1000);
+}
+function pv(s){
+ if(s.type==='cover')return '<div class="pv cover"><div class="ttl">'+s.t+'</div><div class="sm">'+s.s+'</div><div class="sm">保険営業向け サンプル</div></div>';
+ let inner='<div class="ttl">'+s.t+'</div>';
+ if(s.type==='bars')inner+='<div class="bars">'+s.bars.map(v=>'<span class="'+(s.g?'g':'')+'" style="height:'+Math.max(v,4)+'%"></span>').join('')+'</div>';
+ else inner+='<div class="ln" style="width:80%"></div><div class="ln" style="width:60%"></div><div class="kp"'+(s.id?' id="'+s.id+'k"':'')+'>'+s.k+'</div>';
+ return '<div class="pv">'+inner+'</div>';
+}
+function miniCal(c,props){
+ const start=monday(pd(TODAY));let h=['月','火','水','木','金','土','日'].map(x=>'<div class="dh">'+x+'</div>').join('');
+ for(let i=0;i<28;i++){const d=addD(start,i),k=fd(d);
+  const ev=evOf(c.id).filter(e=>e.date===k),pr=props.filter(p=>p.date===k);
+  h+='<div class="d'+(k===TODAY?' today':'')+'">'+(d.getDate()===1?(d.getMonth()+1)+'/':'')+d.getDate()+ev.map(e=>'<span class="ev'+(e.nw?' nw':'')+'" style="background:'+COL[c.id]+'">'+esc(e.title)+'</span>').join('')+pr.map(p=>'<span class="ev prop">'+esc(p.title)+'</span>').join('')+'</div>';}
+ return '<div class="cal">'+h+'</div>';
+}
+function renderRight(c){
+ const g=c.gen,C1=c.id==='C1';const tab=g.tab||'a';
+ const evs=evOf(c.id);const props=(C1&&g.made&&!g.reg)?PROP:[];
+ const li=(e,cls,why)=>'<li class="'+cls+'"><span class="dt" style="background:'+(cls==='prop'?'#d4a72c':COL[c.id])+'">'+md(e.date)+'<small>'+WD[pd(e.date).getDay()]+(e.time?' '+e.time:'')+'</small></span><span class="tx"><b>'+esc(e.title)+'</b><small>'+esc(e.sub||'')+'</small></span>'+(why?'<span class="why">根拠：'+why+'</span>':'')+'</li>';
+ // schedule
+ let pa='';
+ if(!evs.length&&!props.length)pa='<div class="empty"><b>面談記録から次の予定を自動で並べます</b>左にメモを貼って「AI で型に流し込む」</div>';
+ else{
+  pa=miniCal(c,props)+'<ul class="sl">'+props.map(p=>li(p,'prop',p.why)).join('')+evs.slice().reverse().filter((e,i)=>i<6).reverse().map(e=>li(e,e.date<TODAY?'past':'',e.nw?'「'+md(e.date)+'」メモより':'')).join('')+'</ul>';
+  if(C1&&g.made)pa+='<div class="bar"><span class="note">黄色は AI が「12/4」「12/11」「12/18」から作った案</span><button class="btn" id="bCal"'+(g.reg?' disabled':'')+'>'+(g.reg?'✓ 登録済み':'予定に登録')+'</button></div><div class="res'+(g.reg?' on':'')+'" id="ra">✓ 3 件を登録 → 一覧・カレンダー・週報に反映、ステータスを「提案済み」に</div>';
+ }
+ // slides
+ let pb='';
+ if(!(C1&&g.made))pb='<div class="empty"><b>面談内容から保障を選び、試算の前提を自動で入れます</b>Excel への手打ちは不要</div>';
+ else pb='<div class="prem"><div><label>年齢</label><input value="48 歳"></div><div><label>必要保障額（試算）</label><input value="6,800 万円"></div><div><label>保障期間</label><input value="65 歳まで（17 年）"></div><div><label>退職金の目標</label><input value="5,000 万円"></div></div>'+
+  '<div class="thumbs">'+SL.map((s,i)=>'<div class="th"'+(s.id?' id="'+s.id+'"':'')+'>'+pv(s)+'<div class="cap"><b>'+(i+1)+'. '+s.t+'</b><small'+(s.id?' id="'+s.id+'c"':'')+'>'+s.s+'</small></div></div>').join('')+'</div>'+
+  '<div class="stock" id="stockBox"><b>🏢 法人オーナーのため 自社株評価が必要です</b><span class="note">決算書 3 期分（12/4 受領予定）から 1 株あたりの評価額を計算 → 6 枚目に反映</span><button class="btn sub2" id="bStock" style="margin-left:auto">自社株評価を実行</button></div>'+
+  '<div class="bar"><span class="note">6 枚構成・会社の提案書テンプレに流し込み</span><button class="btn" id="bDoc">資料を書き出す</button></div><div class="res" id="rb">✓ 提案資料（6 枚）を書き出しました。12/11 の 2 日前にリマインドします</div>';
+ // weekly
+ const wr=ACTS.filter(a=>a.cid===c.id).sort((a,b)=>a.date.localeCompare(b.date));
+ let pc=wr.length?'<div class="weekhead"><span>この案件の週報の行 <b>'+wr.length+' 件</b></span><span class="note">全案件の週報は上の「週報」へ</span></div><div class="tw"><table class="wtab"><thead><tr><th>日付</th><th>顧客</th><th>区分</th><th>面談目的</th><th>内容の要約</th><th>次回アクション</th><th>見込み</th></tr></thead><tbody>'+wr.map(a=>rowHtml(a,false)).join('')+'</tbody></table></div>'+
+  (C1&&g.made?'<div class="bar"><span class="note">黄色の行が今回の面談から自動で入った分</span><button class="btn" id="bWeek">週報を開く</button></div>':''):
+  '<div class="empty"><b>面談を会社の週報フォーマットに 1 行で転記します</b>二重入力をなくす</div>';
+ const done=x=>C1&&g.made?'<span class="st ok" id="s'+x+'">✓ 作成済み</span>':'<span class="st" id="s'+x+'">'+(x==='a'&&evs.length?evs.length+' 件':x==='c'&&wr.length?wr.length+' 行':'未作成')+'</span>';
+ $('right').innerHTML='<h2><span class="no">2</span>AI が作る 3 つのアウトプット</h2><div class="tabs">'+
+  [['a','📅 スケジュール'],['b','📊 提案資料の下書き'],['c','📋 週報']].map(([x,l])=>'<button class="tab'+(tab===x?' on':'')+'" data-t="'+x+'">'+l+done(x)+'</button>').join('')+'</div>'+
+  '<div class="pane'+(tab==='a'?' on':'')+'" id="pa">'+pa+'</div><div class="pane'+(tab==='b'?' on':'')+'" id="pb">'+pb+'</div><div class="pane'+(tab==='c'?' on':'')+'" id="pc">'+pc+'</div>';
+ $('right').querySelectorAll('.tab').forEach(t=>t.onclick=()=>{g.tab=t.dataset.t;$('right').querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));['a','b','c'].forEach(x=>$('p'+x).classList.toggle('on',x===t.dataset.t));});
+ if($('bCal')&&!g.reg)$('bCal').onclick=function(){const b=this;busy(b,'登録中…');setTimeout(()=>doRegister(c),1000);};
+ if($('bDoc'))$('bDoc').onclick=function(){const b=this;busy(b,'書き出し中…');setTimeout(()=>{finish(b,'✓ 書き出し済み');$('rb').classList.add('on');},1000);};
+ if($('bWeek'))$('bWeek').onclick=()=>{st.wkRefW=monday(pd(TODAY));show('week');};
+ if($('bStock'))$('bStock').onclick=function(){const b=this;busy(b,'決算書 3 期分から計算中…');setTimeout(()=>{finish(b,'✓ 評価済み');
+  $('s6k').textContent='1 株 12,400 円 × 1 万株 ≒ 1.24 億円';$('s6k').style.fontSize='11px';
+  $('s6c').textContent='評価額 約 1.24 億円 → 納税資金・株の移し方を提案';
+  $('s6').classList.add('flash');setTimeout(()=>$('s6').classList.remove('flash'),1600);
+  $('stockBox').querySelector('.note').innerHTML='<span class="val">約 1.24 億円</span>（類似業種比準・純資産の併用で試算）→ 6 枚目に反映済み';},1000);};
+}
+function doRegister(c){
+ PROP.forEach(p=>EVENTS.push(Object.assign(E(c.id,p.date,p.time,p.title,p.sub),{nw:1})));
+ c.gen.reg=true;c.status=2;c.memo="12/11 税理士同席で法人分を説明";c.fresh=1;
+ const sc=window.scrollY;renderDetail();window.scrollTo(0,sc);
+ const cur=document.querySelector('#steps .stp.cur');if(cur)cur.classList.add('pop');
+ const p=$('dPill');if(p){p.style.transition='transform .4s';p.style.display='inline-block';p.style.transform='scale(1.25)';setTimeout(()=>p.style.transform='',500);}
+ toast('✓ 予定 3 件を登録・ステータス「提案済み」→ 一覧・カレンダー・週報に反映');
+}
+
+renderList();
+</script>
+</body>
+</html>
