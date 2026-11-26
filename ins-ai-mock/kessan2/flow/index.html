@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>決算書ツール モック v1 | 数字を取り出す・資料を作る</title>
+<title>決算書ツール モック v2 | 数字を取り出す・資料を作る</title>
 <style>
 :root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
 *{box-sizing:border-box}
@@ -488,6 +488,79 @@ details.olds[open] summary{margin-bottom:12px}
  .detour .btn{margin-left:0;width:100%}
  .seg2{margin-left:0}
 }
+/* ===== S5 修正（W6）===== */
+.cnts{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;margin-bottom:12px}
+.cnt1{display:inline-flex;align-items:baseline;gap:6px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap}
+.cnt1 b{font-size:20px;line-height:1;color:var(--navy)}
+.cnt1.n{border-color:#f3c9a6}.cnt1.n b{color:var(--warn)}
+.cnt1.z b{color:var(--ok)}
+.band{flex:1;min-width:0;display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;background:#fff4ea;border:1px solid #f3c9a6;color:var(--warn);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700}
+.band.okb{background:#e3f3ec;border-color:#b7dfcd;color:var(--ok)}
+.band .btn{margin-left:auto}
+.unf{display:block;font-size:11px;font-weight:700;color:var(--warn);margin-top:3px;white-space:nowrap}
+.lnk{border:none;background:none;color:var(--navy2);font:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:0;margin-left:4px}
+.vt span.v.e{color:#a3acb8;border-bottom-color:#f3c9a6}
+.vt span.v .un{font-size:10px;font-weight:800;color:var(--warn);margin-left:4px}
+.vt span.v.bad{border-bottom:2px solid #c0392b}
+.vt span.v .df{display:block;font-size:10.5px;font-weight:800;color:#c0392b;line-height:1.3}
+.vt span.v.sel{outline:2px solid var(--navy);outline-offset:1px}
+.vt span.v .mk{display:inline-flex;margin-left:3px;color:var(--navy2);vertical-align:-1px}
+.vt span.v .mk .ic{width:12px;height:12px;stroke-width:2}
+.vt tr.xr td.k{color:var(--navy2)}
+.addr{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.edp{margin-top:12px;border:2px solid var(--navy);border-radius:10px;background:#fff;padding:12px}
+.edh{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap}
+.edh b{font-size:15px}
+.edh .cur{font-size:20px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.edh .xb{margin-left:auto}
+.crop{margin-top:8px;padding:6px}
+.bin{display:flex;gap:8px;align-items:center;margin-top:8px}
+.bin input{flex:1;min-width:0;font:inherit;font-size:18px;font-weight:700;text-align:right;padding:7px 10px;border:2px solid var(--navy2);border-radius:8px;font-variant-numeric:tabular-nums}
+.bin .note{white-space:nowrap}
+.edb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:10px}
+.edb .btn.on{background:var(--navy);color:#fff}
+.cands{display:grid;gap:6px;margin-top:6px}
+.cand{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:7px 12px;background:#fff;font:inherit;cursor:pointer;text-align:left;color:var(--txt);min-width:0}
+.cand:hover{border-color:var(--navy2)}
+.cand b{font-size:16px;font-variant-numeric:tabular-nums;min-width:96px}
+.cand small{color:var(--sub);font-size:12px}
+.cand .vo{margin-left:auto}
+.cand.cur{border-color:#d4a72c;background:#fffbef}
+.sub3{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.edm{font-size:12px;color:var(--sub);margin-top:6px}
+.ederr{font-size:12px;color:#c0392b;font-weight:700;margin-top:6px}
+.hist{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin-top:10px;background:#f5f7fa;border-radius:8px;padding:8px 10px;font-size:13px}
+.hist .ic{color:var(--navy2)}
+.hist .btn{margin-left:auto}
+.dfx{margin-top:8px;font-size:12px;color:#c0392b;font-weight:700}
+.rres{margin-top:10px;display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;border:1px solid #b7dfcd;background:#f1faf6;border-radius:8px;padding:8px 12px;font-size:13px}
+.rres b{font-size:18px;font-variant-numeric:tabular-nums}
+.rres.ng{border-color:#f3c9a6;background:#fff4ea;color:var(--warn);font-weight:700}
+.rres .btn{margin-left:auto}
+.edbg{display:none}
+svg.edsvg{touch-action:none;cursor:crosshair}
+.edr{fill:rgba(31,122,90,.14);stroke:var(--ok);stroke-width:1.6;cursor:move}
+.edk{fill:#fff;stroke:var(--ok);stroke-width:1.4;pointer-events:none}
+.edhit{fill:transparent;cursor:nwse-resize}
+.edhit.ne,.edhit.sw{cursor:nesw-resize}
+.btn.ok.pulse{box-shadow:0 0 0 4px rgba(31,122,90,.22)}
+.rlist{margin:0 0 12px;padding-left:18px;font-size:13px}
+.rlist li{margin-bottom:4px}
+.lbbtn{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:600px){
+ .edbg{display:block;position:fixed;inset:0;background:rgba(15,25,40,.55);z-index:24}
+ .edp{position:fixed;left:0;right:0;bottom:0;margin:0;max-height:86vh;overflow:auto;border:none;border-radius:14px 14px 0 0;z-index:25;box-shadow:0 -6px 24px rgba(0,0,0,.25);padding:12px 16px 20px}
+ .edp::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:#cfd6df;margin:0 auto 10px}
+ .cnt1{padding:5px 9px;flex:1;justify-content:center}.cnt1 b{font-size:17px}
+ .band{flex-basis:100%}
+ .chk .vt td.k,.chk .vt th:first-child{position:sticky;left:0;z-index:1}
+ .chk .vt td.sec2 span{position:sticky;left:10px}
+ .chk .vt td.k{background:#fff;box-shadow:1px 0 0 var(--line);min-width:108px;max-width:108px;white-space:normal;line-height:1.3;font-size:12px}
+ .chk .vt th:first-child{background:#eef1f5}
+ .band .btn{margin-left:auto}
+ .sub3 .btn{flex:1}
+ .rres .btn{margin-left:0;width:100%}
+}
 </style>
 </head>
 <body>
@@ -516,9 +589,11 @@ details.olds[open] summary{margin-bottom:12px}
  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16M7 16v-4M12 16V7M17 16v-6"/></symbol>
  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.2v.3"/></symbol>
+ <symbol id="i-redo" viewBox="0 0 24 24"><path d="M19 12a7 7 0 11-2.05-4.95"/><path d="M19.5 4v4h-4"/></symbol>
+ <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M5 19l1-4.5L15.5 5a2 2 0 012.8 0l.7.7a2 2 0 010 2.8L9.5 18z"/><path d="M13.5 7l3.5 3.5"/></symbol>
 </svg>
 <header>
- <h1>決算書ツール</h1><span class="tag">モック v1</span>
+ <h1>決算書ツール</h1><span class="tag">モック v2</span>
  <span class="hcl" id="hcl"></span>
  <a class="hback" id="hback" href="../index.html#clients"><svg class="ic sm"><use href="#i-back"/></svg>クライアントに戻る</a>
 </header>
@@ -554,6 +629,14 @@ function fin(c,p){const mx=Math.max(...CLIENTS[c].docs.map(d=>d.p),p),b=BASE[Mat
  o.gp=o.sales-o.cogs;o.op=o.gp-o.sga;o.ord=o.op+o.nonop;return o}
 const ROWS=[['sec','損益計算書'],['sales','売上高','pl'],['cogs','売上原価','pl'],['gp','売上総利益','pl'],['sga','販売費及び一般管理費','pl'],['op','営業利益','pl'],['ord','経常利益','pl'],['ni','当期純利益','pl'],['sec','貸借対照表'],['ta','資産合計','bs'],['na','純資産合計','bs']];
 const WARN={C1:{18:'sga'},C2:{17:'ord'},C5:{24:'na'}}; // 読み取りの自信が低いセル（ダミー）
+// fin() は原本に書かれた正しい値。READ は OCR が読んだ値の上書き（null＝読めていない）
+const READ={C1:{18:{sga:213900,ord:null,na:null}}};
+// 3 エンジンの候補（票が割れた＝自信が低い）。無いセルは cands() が作る
+const CAND={'C1:18:sga':[{v:213900,e:'エンジン A',n:1},{v:218900,e:'エンジン B',n:1},{v:2189000,e:'エンジン C',n:1}]};
+const ED={};   // 直した値 'C1:18:sga' → {v,how:'reread'|'input'|'empty',from,fromSt,at,box}
+const EXTRA={}; // 手で足した行 C1 → [{k:'x1',name,vals:{18:1200}}]
+const NAMES=['役員報酬','給料手当','減価償却費','地代家賃','支払利息','受取利息','雑収入','特別利益','特別損失','法人税等'];
+const TODAY='11/27';
 
 // ===== 状態 =====
 const Q=new URLSearchParams(location.search);
@@ -581,11 +664,14 @@ function pageSVG(d,i,boxes){
  else if(k==='sga'){const g=f.sga;rows=[['役員報酬',g*.14],['給料手当',g*.36],['法定福利費',g*.07],['地代家賃',g*.09],['減価償却費',g*.06],['旅費交通費',g*.05],['通信費',g*.02],['支払手数料',g*.04],['広告宣伝費',g*.05],['その他',g*.12],['販売費及び一般管理費 合計',g,1,'sga']]}
  else if(k==='mfg'){const m=f.cogs*.92;rows=[['材料費',m*.48],['労務費',m*.31],['経費',m*.21],['当期総製造費用',m,1],['期首仕掛品棚卸高',m*.04],['期末仕掛品棚卸高',m*.05],['当期製品製造原価',m*.99,1]]}
  else if(k==='uw'){rows=[['A銀行 本店 普通',f.ta*.08],['A銀行 本店 定期',f.ta*.05],['B信用金庫 駅前 当座',f.ta*.04],['C銀行 支店 普通',f.ta*.03],['その他',f.ta*.02],['合計',f.ta*.22,1]]}
+ if(boxes)ROWL=[];
  if(rows.length){let y=78;const rh=k==='bs'?19:k==='pl'?22:24;
   rows.forEach(r=>{const [lb,v,b,key]=r;
    s+=`<line x1="20" y1="${y+6}" x2="280" y2="${y+6}" stroke="#ddd"/>`+T(24,y,lb,{b,fs:8.5});
    if(v!=null){const t=fmt(Math.round(v));s+=T(274,y,t,{a:'end',b,fs:8.5});
-    if(boxes&&key)s+=`<rect class="bx${WARN[S.c]&&WARN[S.c][d.p]===key?' warn':''}" data-k="${key}" x="200" y="${y-10}" width="78" height="14" rx="1.5"/>`;}
+    if(boxes){const row={key,lb,v:Math.round(v),y0:y-10,y1:y+4};ROWL.push(row);
+     if(key&&!(S.ed&&S.ed.mode==='frame'&&S.ed.p===d.p&&S.ed.k===key)){const x=cell(d.p,key),bb=boxOf(d.p,key,row);
+      if(bb)s+=`<rect class="bx${x.st==='warn'?' warn':''}" data-k="${key}" x="${bb.x}" y="${bb.y}" width="${bb.w}" height="${bb.h}" rx="1.5"/>`}}}
    y+=rh});
   s+=`<rect x="20" y="66" width="260" height="${y-66-10}" fill="none" stroke="#999"/><line x1="190" y1="66" x2="190" y2="${y-10}" stroke="#bbb"/>`;}
  else{let y=78;for(let j=0;j<20;j++){const w=j%5===4?140:240;s+=`<rect x="24" y="${y}" width="${w}" height="5" rx="2" fill="#e3e7ec"/>`;y+=14}
@@ -608,14 +694,14 @@ function detourBar(){if(!S.detour)return'';
  return `<div class="detour">${ic('arrow','sm')}資料の作成の途中（${S.detour}）。終わると「データの状態」に戻ります<button class="btn ghost" data-act="todoc">資料の作成に戻る</button></div>`}
 function render(){head();const a=$('app');
  if(S.view==='s4sel')a.innerHTML=vSel();else if(S.view==='s4run')a.innerHTML=vRun();else if(S.view==='s4done')a.innerHTML=vDone();else if(S.view==='s5')a.innerHTML=vChk();else a.innerHTML=vDoc();
- bind();window.scrollTo(0,0)}
+ bind();window.scrollTo(0,0);tabRight()}
 
 // ===== S4① =====
 function defaults(){S.sel={};C().docs.forEach(d=>PAGES[d.kind].forEach((p,i)=>{if(!isDone(d,i)&&(S.all||NUMERIC.includes(p[0])))S.sel[d.id+':'+i]=1}))}
 function selCount(){return Object.keys(S.sel).length}
 function pgCard(d,i){const [k,t]=PAGES[d.kind][i],id=d.id+':'+i,dn=isDone(d,i),on=!!S.sel[id];
- return `<div class="pg ${dn?'done':''} ${on?'on':''}" data-pg="${id}"><button class="pgimg" data-zoom="${id}" aria-label="拡大">${pageSVG(d,i)}<span class="zm">${ic('zoom','sm')}拡大</span></button>
- <div class="pgf"><span class="lab ${k}">${LAB[k]}</span><span class="pno">p.${i+1}</span>${dn?`<span class="donem">${ic('check','sm')}済</span>`:`<label class="ck"><input type="checkbox" data-ck="${id}" ${on?'checked':''}>OCR する</label>`}</div></div>`}
+ return `<div class="pg ${dn&&!on?'done':''} ${on?'on':''}" data-pg="${id}"><button class="pgimg" data-zoom="${id}" aria-label="拡大">${pageSVG(d,i)}<span class="zm">${ic('zoom','sm')}拡大</span></button>
+ <div class="pgf"><span class="lab ${k}">${LAB[k]}</span><span class="pno">p.${i+1}</span>${dn&&!on?`<span class="donem">${ic('check','sm')}済</span>`:`<label class="ck"><input type="checkbox" data-ck="${id}" ${on?'checked':''}>${dn?'読み直す':'OCR する'}</label>`}</div></div>`}
 function docSec(d){const n=PAGES[d.kind].length,dn=PAGES[d.kind].filter((_,i)=>isDone(d,i)).length;
  return `<div class="dsec"><h3>${ic('doc')}${d.kind} 第${d.p}期<small>${n} 面 ・ 追加 ${d.date}${dn?` ・ 済 ${dn} 面`:''}</small></h3><div class="pgs">${PAGES[d.kind].map((_,i)=>pgCard(d,i)).join('')}</div></div>`}
 function vSel(){const docs=C().docs;
@@ -627,7 +713,7 @@ function vSel(){const docs=C().docs;
   <span class="cnt">選択<b>${n}</b>面 ・ 目安 約 ${Math.max(1,Math.round(n*8/60*10)/10)} 分</span>
   <button class="btn go" data-act="run" ${n?'':'disabled'}>${ic('scan')}OCR を実行</button></div>`+
  (todo.length?todo.map(docSec).join(''):`<div class="empty">すべてのページが OCR 済みです</div>`)+
- (fin_.length?`<details class="olds"><summary>OCR 済みの書類（${fin_.length} 冊）</summary>${fin_.map(docSec).join('')}</details>`:'')}
+ (fin_.length?`<details class="olds" ${fin_.some(d=>PAGES[d.kind].some((_,i)=>S.sel[d.id+':'+i]))?'open':''}><summary>OCR 済みの書類（${fin_.length} 冊）</summary>${fin_.map(docSec).join('')}</details>`:'')}
 function mh(){const doc=S.detour;return `<div class="mh"><h2>${ic(doc?'doc':'scan','lg')}${doc?'資料を作る':'数字を取り出す'}</h2></div>`}
 
 // ===== S4② =====
@@ -662,15 +748,152 @@ function vChk(){const ps=periods();
  if(!S.face)S.face={p:ps[ps.length-1],st:'pl'};
  const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===S.face.p),pi=S.face.st==='bs'?1:2;
  const un=ps.filter(p=>C().data[p]==='un');
- const fs=ps.map(p=>fin(S.c,p));
- let tb='';ROWS.forEach(r=>{if(r[0]==='sec'){tb+=`<tr><td class="sec2" colspan="${ps.length+1}">${r[1]}</td></tr>`;return}
-  tb+=`<tr><td class="k">${r[1]}</td>`+ps.map((p,j)=>{const w=WARN[S.c]&&WARN[S.c][p]===r[0]&&C().data[p]==='un';return `<td class="num"><span class="v ${w?'w':''}" data-p="${p}" data-k="${r[0]}" data-st="${r[2]}">${fmt(fs[j][r[0]])}</span></td>`}).join('')+`</tr>`});
- return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2><div class="mtools"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物の確認画面を開く（既存モック）</a><button class="btn ok" data-act="confirm">${ic('check')}確認済みにする</button></div></div>`+detourBar()+
+ const faceStr=kd?pageSVG(kd,pi,true):'';
+ const dfs=ps.map(diffs),stt=stats(),zero=!stt.un&&!stt.w&&!stt.df;
+ const cellTd=(p,j,k,st)=>{const x=cell(p,k),d=dfs[j][k],sel=S.ed&&S.ed.p===p&&S.ed.k===k;
+  return `<td class="num"><span class="v${x.st==='warn'?' w':''}${x.st==='blank'?' e':''}${d?' bad':''}${sel?' sel':''}" data-p="${p}" data-k="${k}" ${st?`data-st="${st}"`:''} role="button" tabindex="0">${x.v==null?'—':fmtv(x.v)}${x.st==='blank'?'<span class="un">未読</span>':''}${mark(x)}${d?`<span class="df">差 ${fmt(Math.abs(d.d))}</span>`:''}</span></td>`};
+ let tb='';ROWS.forEach(r=>{if(r[0]==='sec'){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>${r[1]}</span></td></tr>`;return}
+  tb+=`<tr><td class="k">${r[1]}</td>`+ps.map((p,j)=>cellTd(p,j,r[0],r[2])).join('')+`</tr>`});
+ const xs=EXTRA[S.c]||[];
+ if(xs.length){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>手で足した行</span></td></tr>`;xs.forEach(r=>{tb+=`<tr class="xr"><td class="k">${esc(r.name)}</td>`+ps.map((p,j)=>cellTd(p,j,r.k,'')).join('')+`</tr>`})}
+ const th=p=>{const mf=missFaces(p);return `<th class="num">第${p}期<span class="pill ${C().data[p]==='ok'?'a':'y'}">${C().data[p]==='ok'?'確認済':'未確認'}</span>${mf.length?`<span class="unf">${mf.map(o=>LAB[o.k]).join('・')} 面が未読<button class="lnk" data-act="reocr" data-doc="${mf[0].d.id}" data-i="${mf.map(o=>o.i).join(',')}">S4 で読む</button></span>`:''}</th>`};
+ const bp=ps.map(p=>[p,stt.list.filter(o=>o.p===p&&o.t==='未読').length]).filter(a=>a[1]);
+ const cnts=`<div class="cnts"><span class="cnt1 ${stt.un?'n':'z'}">未読<b>${stt.un}</b></span><span class="cnt1 ${stt.w?'n':'z'}">要確認<b>${stt.w}</b></span><span class="cnt1 ${stt.df?'n':'z'}">合計ずれ<b>${stt.df}</b></span>`+
+  (bp.length?`<span class="band">${ic('warn','sm')}${bp.map(a=>`第 ${a[0]} 期に空が ${a[1]} つ`).join('、')}<button class="btn ghost" data-act="edfirst">空の項目へ${ic('arrow','sm')}</button></span>`:zero?`<span class="band okb">${ic('check','sm')}直すところはありません</span>`:'')+`</div>`;
+ return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2><div class="mtools"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物の確認画面を開く（既存モック）</a><button class="btn ${zero?'ok pulse':'line'}" data-act="confirm">${ic('check')}確認済みにする</button></div></div>`+detourBar()+cnts+
  `<div class="chk"><div class="card"><div class="faceh"><b>原本　第${S.face.p}期 ${LAB[S.face.st]}</b><div class="seg2">${ps.map(p=>`<button class="${p===S.face.p?'on':''}" data-fp="${p}">${p}期</button>`).join('')}</div><div class="seg2"><button class="${S.face.st==='pl'?'on':''}" data-fs="pl">PL</button><button class="${S.face.st==='bs'?'on':''}" data-fs="bs">BS</button></div></div>
- <div class="facew" id="face">${kd?pageSVG(kd,pi,true):''}</div></div>
- <div class="card"><div class="faceh"><b>読み取った数字</b><span class="note">（単位：千円）</span></div><div class="tw"><table class="vt"><thead><tr><th>科目</th>${ps.map(p=>`<th class="num">第${p}期<span class="pill ${C().data[p]==='ok'?'a':'y'}">${C().data[p]==='ok'?'確認済':'未確認'}</span></th>`).join('')}</tr></thead><tbody>${tb}</tbody></table></div>
- <div class="legend2"><span><i style="background:#fff1c7;border:1px solid #e2c770"></i>乗せると原本の枠が光る</span>${WARN[S.c]?`<span><i style="background:#fff4d6;border:1px solid #d4a72c"></i>読み取りの自信が低い</span>`:''}<span>未確認 ${un.length} 期</span></div></div></div>`}
+ <div class="facew" id="face">${frameMode(S.face.p,S.face.st)?withOv(faceStr,true):faceStr}</div></div>
+ <div class="card"><div class="faceh"><b>読み取った数字</b><span class="note">（単位：千円・数字を押すと直せる）</span></div><div class="tw"><table class="vt"><thead><tr><th>科目</th>${ps.map(th).join('')}</tr></thead><tbody>${tb}</tbody></table></div>
+ <div class="addr"><button class="btn ghost" data-act="edadd">${ic('plus','sm')}行を足す</button></div>
+ <div class="legend2"><span><i style="background:#fff1c7;border:1px solid #e2c770"></i>乗せると原本の枠が光る</span><span><i style="background:#fff4d6;border:1px solid #d4a72c"></i>自信が低い</span><span><i style="background:#fff;border-bottom:2px solid #c0392b"></i>合計が合わない</span><span>${ic('redo','sm')}読み直し</span><span>${ic('pencil','sm')}手入力</span><span>未確認 ${un.length} 期</span></div>
+ ${vEd(faceStr)}</div></div>`}
 function hl(k,on){document.querySelectorAll('#face .bx').forEach(b=>b.classList.toggle('hl',on&&b.dataset.k===k))}
+
+// ===== S5 修正（W6）=====
+let ROWL=[]; // いま描いた面の行の位置（読み直しの当たり判定に使う）
+const ck=(p,k)=>`${S.c}:${p}:${k}`;
+const fmtv=v=>v<0?'△'+fmt(-v):fmt(v);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isX=k=>!!k&&k[0]==='x';
+function rowName(k){if(isX(k)){const r=(EXTRA[S.c]||[]).find(o=>o.k===k);return r?r.name:''}const r=ROWS.find(o=>o[0]===k);return r?r[1]:k}
+function faceOf(k){const r=ROWS.find(o=>o[0]===k);return r?r[2]:null}
+function cell(p,k){
+ if(isX(k)){const r=(EXTRA[S.c]||[]).find(o=>o.k===k),v=r?r.vals[p]:null;return {v:v==null?null:v,st:v==null?'empty':'ok',ed:{how:'input'},x:1}}
+ const e=ED[ck(p,k)];if(e)return {v:e.v,st:e.how==='empty'?'empty':'ok',ed:e};
+ const r=READ[S.c]&&READ[S.c][p];const v=r&&k in r?r[k]:fin(S.c,p)[k];
+ if(v==null)return {v:null,st:'blank'};
+ return {v,st:WARN[S.c]&&WARN[S.c][p]===k&&C().data[p]==='un'?'warn':'ok'}}
+function mark(x){if(!x.ed||x.st==='empty')return '';return `<span class="mk" title="${x.ed.how==='reread'?'読み直し':'手入力'}">${ic(x.ed.how==='reread'?'redo':'pencil')}</span>`}
+function cands(p,k){const c=CAND[ck(p,k)];if(c)return c;const t=fin(S.c,p)[k],d=t>=100000?3000:300;return [{v:t,e:'エンジン A',n:1},{v:t+d,e:'エンジン B',n:1},{v:t*10,e:'エンジン C',n:1}]}
+function boxOf(p,k,row){const x=cell(p,k);if(x.v==null)return null;if(x.ed&&x.ed.box)return x.ed.box;
+ return x.st==='warn'?{x:212,y:row.y0+3,w:66,h:14}:{x:200,y:row.y0,w:78,h:14}}
+function diffs(p){const g=k=>cell(p,k).v,o={},s=g('sales'),c=g('cogs'),gp=g('gp'),sga=g('sga'),op=g('op');
+ if(s!=null&&c!=null&&gp!=null&&s-c!==gp)o.gp={d:gp-(s-c),f:'売上高 − 売上原価',rel:'cogs'};
+ if(gp!=null&&sga!=null&&op!=null&&gp-sga!==op)o.op={d:op-(gp-sga),f:'売上総利益 − 販管費',rel:'sga'};
+ return o}
+function stats(){const o={un:0,w:0,df:0,list:[]};
+ periods().forEach(p=>{ROWS.forEach(r=>{if(r[0]==='sec')return;const x=cell(p,r[0]);
+   if(x.st==='blank'){o.un++;o.list.push({p,k:r[0],t:'未読'})}else if(x.st==='warn'){o.w++;o.list.push({p,k:r[0],t:'自信が低い'})}});
+  Object.entries(diffs(p)).forEach(([k,d])=>{o.df++;o.list.push({p,k,t:`合計が ${fmt(Math.abs(d.d))} 合わない`})})});
+ return o}
+function missFaces(p){const d=C().docs.find(x=>x.kind==='決算書'&&x.p===p);if(!d)return [];
+ return PAGES[d.kind].map((g,i)=>({d,i,k:g[0]})).filter(o=>['bs','pl','sga'].includes(o.k)&&!isDone(d,o.i))}
+function frameMode(p,st){return !!S.ed&&S.ed.mode==='frame'&&S.ed.p===p&&faceOf(S.ed.k)===st}
+function ovInner(){const b=S.ed&&S.ed.box;if(!b)return '';
+ const cs=[['nw',b.x,b.y],['ne',b.x+b.w,b.y],['sw',b.x,b.y+b.h],['se',b.x+b.w,b.y+b.h]];
+ return `<rect class="edr" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1.5"/>`+cs.map(([h,x,y])=>`<circle class="edhit ${h}" data-h="${h}" cx="${x}" cy="${y}" r="9"/><circle class="edk" cx="${x}" cy="${y}" r="3.2"/>`).join('')}
+function withOv(str,edit){return str.replace(/<\/svg>$/,`<g class="edg">${edit?ovInner():''}</g></svg>`).replace('<svg ',edit?'<svg class="edsvg" ':'<svg ')}
+function cropStr(faceStr,k){const r=ROWL.find(o=>o.key===k);if(!r||!faceStr)return '';
+ const fm=S.ed.mode==='frame',vb=fm?`10 ${Math.max(0,r.y0-48)} 280 108`:`14 ${r.y0-6} 272 26`;
+ let s=faceStr.replace(/viewBox="[^"]*"/,`viewBox="${vb}"`).replace(/role="img" aria-label="[^"]*"/,'aria-hidden="true"');
+ if(fm)return withOv(s,true);
+ const b=boxOf(S.ed.p,k,r)||{x:200,y:r.y0,w:78,h:14};
+ return s.replace(/<\/svg>$/,`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1.5" fill="none" stroke="#c0392b" stroke-width="1.2" ${cell(S.ed.p,k).v==null?'stroke-dasharray="3 2"':''}/></svg>`)}
+function vEd(faceStr){const e=S.ed;if(!e)return '';
+ const shell=h=>`<div class="edbg" data-act="edx"></div><div class="edp" id="edp" role="dialog" aria-label="値を直す">${h}</div>`;
+ const xbtn=`<button class="xb" data-act="edx" aria-label="閉じる">${ic('x','sm')}</button>`;
+ if(e.mode==='add'){const ps=periods();
+  return shell(`<div class="edh"><b>行を足す</b><span class="note">原本にあるのに表に無い科目</span>${xbtn}</div>
+  <div class="fgrid" style="margin-top:8px"><div class="fld full"><label>科目名<small>候補から選ぶか自由に入力</small></label><input id="adn" list="adl" placeholder="例: 役員報酬" autocomplete="off"><datalist id="adl">${NAMES.map(n=>`<option value="${n}">`).join('')}</datalist></div>${ps.map(p=>`<div class="fld"><label>第${p}期<small>千円・△で負</small></label><input data-adp="${p}" inputmode="numeric" placeholder="—"></div>`).join('')}</div>
+  ${e.err?`<div class="ederr">${e.err}</div>`:''}<div class="sub3"><button class="btn" data-act="adsave">${ic('check')}行を足す</button><button class="btn ghost" data-act="edx">やめる</button></div>`)}
+ const {p,k}=e,x=cell(p,k),df=diffs(p)[k],fm=e.mode==='frame',rr=e.mode==='reread'||fm;
+ const conf=x.st==='blank'?'<span class="pill y">未読</span>':x.st==='warn'?'<span class="pill y">自信 低</span>':x.st==='empty'?'<span class="pill k">空で確定</span>':x.ed?`<span class="pill b">${x.ed.how==='reread'?'読み直し済':'手入力'}</span>`:'<span class="pill a">自信 高</span>';
+ let h=`<div class="edh"><b>${esc(rowName(k))}</b><span class="chipk">第${p}期</span><span class="cur">${x.v==null?'—':fmtv(x.v)}</span>${conf}${xbtn}</div>`;
+ if(!x.x)h+=`<div class="facew crop">${cropStr(faceStr,k)}</div>`;
+ if(e.mode==='input')h+=`<div class="bin"><input id="edin" inputmode="numeric" placeholder="原本の数字を入力" value="${x.v==null?'':fmtv(x.v)}" aria-label="値（千円）"><span class="note">千円</span><button class="btn" data-act="edsave">保存</button></div><div class="edm">Enter で保存 ・ 負の数は △ を付ける</div>${e.err?`<div class="ederr">${e.err}</div>`:''}`;
+ if(df)h+=`<div class="dfx">${df.f} と ${fmt(Math.abs(df.d))} 合いません<button class="lnk" data-act="edgo" data-k="${df.rel}">${rowName(df.rel)}を見る</button></div>`;
+ if(!x.x)h+=`<div class="edb"><button class="btn line ${rr?'on':''}" data-act="edm" data-m="reread">${ic('redo')}読み直す</button><button class="btn line ${e.mode==='input'?'on':''}" data-act="edm" data-m="input">${ic('pencil')}手で入力</button></div>`;
+ if(rr){
+  if(x.st==='warn'&&!fm){const cs=cands(p,k);h+=`<div class="edm">候補から選ぶ（3 つの読み取りで票が割れた）</div><div class="cands">${cs.map(c=>`<button class="cand ${c.v===x.v?'cur':''}" data-act="edpick" data-v="${c.v}"><b>${fmtv(c.v)}</b><small>${c.e}</small>${c.v===x.v?'<span class="pill y">いまの値</span>':''}<span class="pill k vo">${c.n} 票</span></button>`).join('')}</div>`}
+  if(fm){const b=e.box,busy=e.res==='busy';
+   h+=`<div class="edm">${b?'枠を動かす・角を引いて広げる':'原本の数字を囲むように枠を引く'}（左の原本でもこの図でも）</div><div class="sub3"><button class="btn" data-act="edrr" ${b&&!busy?'':'disabled'}>${busy?'<span class="spin"></span>読み取り中':ic('scan')+'この枠で読み直す'}</button><button class="btn ghost" data-act="edm" data-m="reread">やめる</button></div>`;
+   if(e.res&&e.res!=='busy')h+=e.res==='fail'?`<div class="rres ng">${ic('warn','sm')}数字が読めませんでした。枠を数字に合わせてください</div>`:`<div class="rres"><span>新しい値</span><b>${fmtv(e.res.v)}</b>${e.res.key!==k?`<span class="note">（読んだ行: ${esc(e.res.lb)}）</span>`:''}<button class="btn ok" data-act="edrrok">${ic('check')}この値にする</button></div>`}
+  else h+=`<div class="sub3"><button class="btn ghost" data-act="edm" data-m="frame">${ic('scan','sm')}${x.v==null?'枠を引いて読む':'枠を直して読み直す'}</button><button class="btn ghost" data-act="eds4">${ic('doc','sm')}この面を読み直す（S4）</button></div>`}
+ if(e.mode==='input'&&x.st==='blank')h+=`<div class="sub3"><button class="btn ghost" data-act="edempty">原本に無い（空で確定）</button></div>`;
+ if(x.x)h+=`<div class="sub3"><button class="btn ghost" data-act="xdel">この行を消す</button></div>`;
+ else if(x.ed)h+=`<div class="hist">${ic(x.ed.how==='reread'?'redo':'pencil','sm')}元の値 <b>${x.ed.from==null?'—（未読）':fmtv(x.ed.from)}</b> → <b>${x.v==null?'—（空で確定）':fmtv(x.v)}</b>（${x.ed.at}）<button class="btn ghost" data-act="edundo">元に戻す</button></div>`;
+ return shell(h)}
+function openEd(p,k){const st=faceOf(k);if(st)S.face={p,st};const x=cell(p,k);
+ S.ed={p,k,mode:x.st==='warn'?'reread':isX(k)?'input':null,box:null,res:null,err:null};rerender(true)}
+function tabRight(){if(S.view==='s5'&&matchMedia('(max-width:600px)').matches){const t=document.querySelector('.chk .tw');if(t)t.scrollLeft=t.scrollWidth}}
+function rerender(scroll){const t0=document.querySelector('.chk .tw'),sl=t0?t0.scrollLeft:null;$('app').innerHTML=vChk();bind();const t1=document.querySelector('.chk .tw');if(t1&&sl!=null)t1.scrollLeft=sl;
+ if(S.ed&&S.ed.k&&S.ed.mode!=='frame')hl(S.ed.k,true);
+ const wide=!matchMedia('(max-width:600px)').matches,ip=$('edin')||(S.ed&&S.ed.mode==='add'?$('adn'):null);
+ if(ip&&wide&&scroll!==false)ip.focus({preventScroll:true});
+ if(scroll&&$('edp')&&wide)$('edp').scrollIntoView({block:'nearest'})}
+function parseNum(t){t=String(t).trim().replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[,，\s]/g,'');
+ let neg=false;if(/^[△▲\-−ー]/.test(t)){neg=true;t=t.slice(1)}if(!/^\d+$/.test(t))return NaN;return neg?-Number(t):Number(t)}
+function setEd(p,k,v,how,extra){const x=cell(p,k),old=ED[ck(p,k)];
+ ED[ck(p,k)]=Object.assign({v,how,from:old?old.from:x.v,at:TODAY},extra||{});
+ S.ed={p,k,mode:null,box:null,res:null,err:null};rerender(false);toast(how==='empty'?'空で確定しました':'直しました')}
+function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
+function bindDrag(){document.querySelectorAll('svg.edsvg').forEach(svg=>{svg.onpointerdown=e=>{
+  e.preventDefault();const P=svgPt(svg,e),b0=S.ed.box?Object.assign({},S.ed.box):null;
+  let m=e.target.dataset&&e.target.dataset.h||(e.target.classList.contains('edr')?'move':'new');
+  if(m==='new')S.ed.box={x:P.x,y:P.y,w:0,h:0};
+  svg.setPointerCapture(e.pointerId);
+  svg.onpointermove=ev=>{const Q=svgPt(svg,ev),b=S.ed.box;
+   if(m==='move'){b.x=b0.x+Q.x-P.x;b.y=b0.y+Q.y-P.y}
+   else if(m==='new'){b.x=Math.min(P.x,Q.x);b.y=Math.min(P.y,Q.y);b.w=Math.abs(Q.x-P.x);b.h=Math.abs(Q.y-P.y)}
+   else{let x0=b0.x,y0=b0.y,x1=b0.x+b0.w,y1=b0.y+b0.h;if(m.includes('w'))x0=Q.x;if(m.includes('e'))x1=Q.x;if(m.includes('n'))y0=Q.y;if(m.includes('s'))y1=Q.y;
+    b.x=Math.min(x0,x1);b.y=Math.min(y0,y1);b.w=Math.abs(x1-x0);b.h=Math.abs(y1-y0)}
+   const inner=ovInner();document.querySelectorAll('svg.edsvg .edg').forEach(g=>g.innerHTML=inner)};
+  svg.onpointerup=()=>{svg.onpointermove=null;svg.onpointerup=null;const b=S.ed.box;
+   if(!b||b.w<4||b.h<4)S.ed.box=b0;else['x','y','w','h'].forEach(q=>b[q]=Math.round(b[q]*10)/10);
+   S.ed.res=null;rerender(false)}}})}
+function reread(){S.ed.res='busy';rerender(false);setTimeout(()=>{const b=S.ed.box,cy=b.y+b.h/2;
+ const r=ROWL.find(o=>cy>=o.y0&&cy<=o.y1&&b.x<272&&b.x+b.w>236);S.ed.res=r?{v:r.v,lb:r.lb,key:r.key}:'fail';rerender(false)},1000)}
+function doConfirm(){periods().forEach(p=>C().data[p]='ok');$('lb').classList.remove('on');S.ed=null;
+ if(S.detour){toast('確認済みにしました');S.detour=null;S.view='s6';S.s6=3;render()}
+ else{toast('確認済みにしました');setTimeout(()=>location.href=back('data'),900)}}
+function edAct(k,x){const e=S.ed;
+ if(k==='edx'){S.ed=null;rerender(false)}
+ else if(k==='edm'){const m=x.dataset.m;e.err=null;e.res=null;
+  if(m==='frame'){const st=faceOf(e.k);S.face={p:e.p,st};const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===e.p);if(kd)pageSVG(kd,st==='bs'?1:2,true);
+   const r=ROWL.find(o=>o.key===e.k),bb=r?boxOf(e.p,e.k,r):null;e.box=bb?Object.assign({},bb):null}
+  e.mode=e.mode===m&&m!=='reread'?null:m;rerender(false)}
+ else if(k==='edpick')setEd(e.p,e.k,+x.dataset.v,'reread');
+ else if(k==='edrr')reread();
+ else if(k==='edrrok')setEd(e.p,e.k,e.res.v,'reread',{box:Object.assign({},e.box)});
+ else if(k==='edsave'){const v=parseNum($('edin').value);if(isNaN(v)){e.err='数字で入れてください（例 218,900 ／ △1,200）';rerender(false);return}
+  if(isX(e.k)){const r=EXTRA[S.c].find(o=>o.k===e.k);r.vals[e.p]=v;S.ed=null;rerender(false);toast('直しました')}else setEd(e.p,e.k,v,'input')}
+ else if(k==='edempty')setEd(e.p,e.k,null,'empty');
+ else if(k==='edundo'){delete ED[ck(e.p,e.k)];S.ed={p:e.p,k:e.k,mode:null,box:null,res:null,err:null};rerender(false);toast('元に戻しました')}
+ else if(k==='edgo')openEd(e.p,x.dataset.k);
+ else if(k==='edfirst'){const b=stats().list.find(o=>o.t==='未読');if(b)openEd(b.p,b.k)}
+ else if(k==='edadd'){S.ed={mode:'add',err:null};rerender(true)}
+ else if(k==='adsave'){const n=$('adn').value.trim(),vals={};let bad=false;
+  document.querySelectorAll('[data-adp]').forEach(i=>{if(i.value.trim()==='')return;const v=parseNum(i.value);if(isNaN(v))bad=true;else vals[i.dataset.adp]=v});
+  if(!n||bad||!Object.keys(vals).length){e.err=!n?'科目名を入れてください':bad?'値は数字で入れてください':'どれか 1 期の値を入れてください';rerender(false);return}
+  const L=EXTRA[S.c]=EXTRA[S.c]||[];L.push({k:'x'+(L.length+1),name:n,vals});S.ed=null;rerender(false);toast(`「${n}」を足しました`)}
+ else if(k==='xdel'){EXTRA[S.c]=EXTRA[S.c].filter(o=>o.k!==e.k);S.ed=null;rerender(false)}
+ else if(k==='eds4'||k==='reocr'){let did,is;
+  if(k==='reocr'){did=x.dataset.doc;is=x.dataset.i.split(',').map(Number)}else{const d=C().docs.find(d=>d.kind==='決算書'&&d.p===e.p);did=d.id;is=[faceOf(e.k)==='bs'?1:2]}
+  S.ed=null;S.sel={};is.forEach(i=>S.sel[did+':'+i]=1);S.view='s4sel';render()}
+ else if(k==='confirm'){const st=stats();if(!st.list.length){doConfirm();return}
+  $('lbt').textContent=`まだ ${st.list.length} 件残っています`;
+  $('lbb').innerHTML=`<ul class="rlist">${st.list.map(o=>`<li>第${o.p}期 ${esc(rowName(o.k))} — ${o.t} <button class="lnk" data-lp="${o.p}" data-lk="${o.k}">直す</button></li>`).join('')}</ul><div class="lbbtn"><button class="btn line" data-lact="back">戻って直す</button><button class="btn" data-lact="go">このまま確認済みにする</button></div>`;
+  $('lb').classList.add('on')}}
 
 // ===== S6 =====
 const TYPES=[{id:'ds',t:'ディスカッションシート',s:'提案の場で使う 1 枚',need:'決算書 3 期',mini:'gr'},{id:'sum',t:'決算分析サマリー',s:'3 期の推移と所見',need:'決算書 3 期',mini:'bars'},{id:'stk',t:'自社株評価の下準備',s:'評価に使う数字の一覧',need:'決算書 3 期＋勘定科目内訳書',mini:'gr'}];
@@ -704,15 +927,21 @@ function bind(){const a=$('app');
  a.querySelectorAll('[data-zoom]').forEach(x=>x.onclick=()=>{const [did,pi]=x.dataset.zoom.split(':'),d=C().docs.find(y=>y.id===did);$('lbt').textContent=`${d.kind} 第${d.p}期 p.${+pi+1} ${LAB[PAGES[d.kind][+pi][0]]}`;$('lbb').innerHTML=pageSVG(d,+pi);$('lb').classList.add('on')});
  a.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{S.face.p=+x.dataset.fp;render()});
  a.querySelectorAll('[data-fs]').forEach(x=>x.onclick=()=>{S.face.st=x.dataset.fs;render()});
- a.querySelectorAll('span.v').forEach(x=>{x.onmouseenter=()=>{const p=+x.dataset.p,st=x.dataset.st;if(S.face.p!==p||S.face.st!==st){S.face={p,st};const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===p);$('face').innerHTML=kd?pageSVG(kd,st==='bs'?1:2,true):'';
+ a.querySelectorAll('span.v').forEach(x=>{x.onmouseenter=()=>{const p=+x.dataset.p,st=x.dataset.st;if(!st)return;
+   if(S.ed){if(S.face.p===p&&S.face.st===st&&S.ed.mode!=='frame')hl(x.dataset.k,true);return}
+   if(S.face.p!==p||S.face.st!==st){S.face={p,st};const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===p);$('face').innerHTML=kd?pageSVG(kd,st==='bs'?1:2,true):'';
     const h=a.querySelector('.faceh b');if(h)h.textContent=`原本　第${p}期 ${LAB[st]}`;a.querySelectorAll('[data-fp]').forEach(b=>b.classList.toggle('on',+b.dataset.fp===p));a.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',b.dataset.fs===st))}
-   hl(x.dataset.k,true)};x.onmouseleave=()=>hl(x.dataset.k,false);x.onclick=()=>x.onmouseenter()});
+   hl(x.dataset.k,true)};x.onmouseleave=()=>hl(S.ed&&S.ed.k&&S.ed.mode!=='frame'?S.ed.k:x.dataset.k,!!(S.ed&&S.ed.k));
+  x.onclick=()=>openEd(+x.dataset.p,x.dataset.k);x.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEd(+x.dataset.p,x.dataset.k)}}});
+ const ei=$('edin');if(ei)ei.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();edAct('edsave',ei)}};
+ bindDrag();
  a.querySelectorAll('[data-ty]').forEach(x=>x.onclick=()=>{S.ty=x.dataset.ty;render()});
  a.querySelectorAll('.stp .s.link').forEach(x=>x.onclick=()=>{S.s6=+x.dataset.step;S.gen=false;render()});
  a.querySelectorAll('[data-act]').forEach(x=>x.onclick=()=>act(x.dataset.act,x))}
 function render2(){const n=selCount();document.querySelectorAll('[data-pg]').forEach(e=>e.classList.toggle('on',!!S.sel[e.dataset.pg]));
  const c=document.querySelector('.selbar .cnt');if(c)c.innerHTML=`選択<b>${n}</b>面 ・ 目安 約 ${Math.max(1,Math.round(n*8/60*10)/10)} 分`;const g=document.querySelector('[data-act=run]');if(g)g.disabled=!n}
 function act(k,x){
+ if(k.startsWith('ed')||k==='adsave'||k==='xdel'||k==='reocr'||k==='confirm'){edAct(k,x);return}
  if(k==='run')startRun();
  else if(k==='cancel'){clearTimeout(runT);S.view='s4sel';render()}
  else if(k==='tocheck'){S.face=null;S.view='s5';render()}
@@ -726,13 +955,17 @@ function act(k,x){
  else if(k==='gochk'){S.detour=`第${x.dataset.p}期の確認`;S.face={p:+x.dataset.p,st:'pl'};S.view='s5';render()}
  else if(k==='goocr'){S.detour=`第${x.dataset.p}期の OCR`;S.all=false;defaults();S.view='s4sel';render()}
  else if(k==='pdf')toast('PDF を書き出しました（ダミー）')}
+$('lbb').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.lact==='go')doConfirm();else if(t.dataset.lact==='back')$('lb').classList.remove('on');
+ else if(t.dataset.lp){$('lb').classList.remove('on');openEd(+t.dataset.lp,t.dataset.lk)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.ed&&S.view==='s5'){S.ed=null;rerender(false)}});
 $('lbx').onclick=()=>$('lb').classList.remove('on');
 $('lb').onclick=e=>{if(e.target.id==='lb')$('lb').classList.remove('on')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('lb').classList.remove('on')});
 
 // ===== 入口 =====
 (function(){const st=Q.get('step');
- if(st==='check'){S.view='s5'}
+ if(st==='check'){S.view='s5';const ed=(Q.get('edit')||'').split(':');if(ed[1])setTimeout(()=>{S.face=null;vChk();openEd(+ed[0],ed[1])},0)}
  else if(st==='preview'){S.view='s6';S.s6=4;S.gen=true}
  else if(S.mode==='doc'){S.view='s6'}
  else{S.view='s4sel';defaults()}
