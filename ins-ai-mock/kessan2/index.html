@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>決算書から数字と資料へ（モック v1）</title>
+<style>
+:root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.55}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;vertical-align:-4px}
+.ic.lg{width:24px;height:24px}
+.ic.sm{width:14px;height:14px;vertical-align:-2px}
+header{background:var(--navy);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:15px;margin:0;font-weight:700}
+header .tag{font-size:11px;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:10px}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav .in{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;gap:4px}
+nav button{border:none;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--sub);padding:10px 14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+nav button.on{color:var(--navy);border-bottom-color:var(--navy)}
+nav .today{margin-left:auto;align-self:center;font-size:12px;color:var(--sub);white-space:nowrap}
+.wrap{max-width:1280px;margin:0 auto;padding:16px 20px 48px}
+.view{display:none}.view.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.note{font-size:12px;color:var(--sub)}
+.btn{border:none;border-radius:8px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line);padding:6px 12px;font-size:13px}
+.btn.line{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.ok{background:var(--ok)}
+.btn:disabled{opacity:.6;cursor:default}
+.btn.doneb{background:#e3f3ec;color:var(--ok);opacity:1}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:r .8s linear infinite}
+.btn.line .spin{border-color:rgba(31,58,95,.25);border-top-color:var(--navy)}
+@keyframes r{to{transform:rotate(360deg)}}
+.back{border:none;background:none;color:var(--navy2);font:inherit;font-weight:700;font-size:13px;cursor:pointer;padding:0;margin-bottom:10px;display:inline-flex;align-items:center;gap:4px}
+/* badges */
+.pill{display:inline-block;border-radius:10px;padding:0 7px;font-size:11px;font-weight:700;white-space:nowrap;line-height:1.7}
+.s0{background:#eef1f5;color:#5f6b7a}.s1{background:#e8eff8;color:#2c5282}.s2{background:#f6efdc;color:#8a6d1f}.s3{background:#e3f3ec;color:#1f7a5a}.s4{background:none;color:#8a94a3;border:1px solid #dde3ea}
+.pill.k{background:#eef1f5;color:var(--sub)}.pill.y{background:#fff0c2;color:#8a6d1f}.pill.a{background:#e3f3ec;color:var(--ok)}.pill.b{background:#eef4fb;color:var(--navy2)}
+.chipk{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-size:11px;color:var(--sub);font-weight:700;line-height:1.7;white-space:nowrap}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;flex:none}
+/* ===== list ===== */
+.lhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.kpi{display:inline-flex;align-items:baseline;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+.kpi small{color:var(--sub);font-size:12px;font-weight:700}
+.kpi b{font-size:24px;color:var(--navy);font-weight:800;line-height:1}
+.kpi span{font-size:12px;color:var(--sub)}
+.lhead .tools{margin-left:auto;display:flex;gap:8px;align-items:center}
+select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:#fff;color:var(--sub);max-width:100%}
+.grp{font-size:12px;font-weight:800;color:var(--sub);margin:16px 0 6px;letter-spacing:.04em}
+.grp:first-of-type{margin-top:0}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) 190px;grid-template-areas:"who next meta";gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-left:4px solid #ccc;border-radius:8px;padding:10px 14px;margin-bottom:6px;cursor:pointer}
+.row:hover{background:#f7f9fc}
+.row.fresh{animation:fl 2.2s ease}
+@keyframes fl{from{background:#ffe9a8}to{background:#fff}}
+.row .who{grid-area:who;min-width:0}
+.row .who b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .who small{display:block;color:var(--sub);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .next{grid-area:next;min-width:0;display:flex;gap:12px;align-items:baseline}
+.row .next .d{font-weight:800;font-size:15px;color:var(--navy);white-space:nowrap}
+.row .next .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .next .none{color:#a3acb8;font-size:13px}
+.row .meta{grid-area:meta;text-align:right;min-width:0}
+.row .meta small{display:block;color:var(--sub);font-size:11px;margin-top:2px}
+.newp{display:inline-block;margin-left:6px;background:#fff0c2;color:#8a6d1f;border-radius:8px;padding:0 6px;font-size:11px;font-weight:700;white-space:nowrap}
+.row.done{opacity:.65}
+/* ===== calendar ===== */
+.chead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chead .lbl{font-size:16px;font-weight:800;color:var(--navy);min-width:0}
+.seg{display:inline-flex;border:1px solid var(--navy);border-radius:8px;overflow:hidden;margin-left:auto}
+.seg button{border:none;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:13px;padding:5px 14px;cursor:pointer}
+.seg button.on{background:var(--navy);color:#fff}
+.nb{border:1px solid var(--line);background:#fff;border-radius:6px;font:inherit;font-weight:700;font-size:13px;padding:4px 8px;cursor:pointer;color:var(--navy);display:inline-flex;align-items:center}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--sub);margin-bottom:10px}
+.legend span{display:inline-flex;align-items:center;cursor:pointer}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.mgrid .dh{font-size:11px;color:var(--sub);text-align:center;font-weight:700;padding:2px 0}
+.mgrid .d{min-height:92px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 4px;font-size:11px;color:var(--sub);overflow:hidden;min-width:0}
+.mgrid .d.out{background:#f3f5f8;color:#b3bbc6}
+.mgrid .d.today{border:2px solid var(--navy2);background:#eef4fb}
+.mgrid .d.today .dn{background:var(--navy2);color:#fff;border-radius:9px;padding:0 6px;font-weight:800}
+.ev{display:block;margin-top:2px;border-radius:3px;padding:0 4px;color:#fff;font-size:10.5px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.ev.past,.we.past{opacity:.5}
+.ev.nw{outline:2px solid #f1c24b;outline-offset:-1px}
+.wgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{background:#fff;border:1px solid var(--line);border-radius:8px;min-height:260px;padding:6px;min-width:0}
+.wd.today{border:2px solid var(--navy2);background:#eef4fb}
+.wd .wh{font-size:12px;font-weight:800;color:var(--sub);margin-bottom:4px;display:flex;gap:6px;align-items:center}
+.wd.today .wh{color:var(--navy2)}
+.wd.today .wh::after{content:"今日";font-size:10px;background:var(--navy2);color:#fff;border-radius:8px;padding:0 6px}
+.we{border-radius:6px;padding:5px 7px;color:#fff;margin-bottom:5px;font-size:12px;cursor:pointer;min-width:0}
+.we b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.we small{display:block;font-size:11px;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.we.nw{outline:2px solid #f1c24b;outline-offset:-2px}
+.wd .none{font-size:11px;color:#b3bbc6}
+/* ===== detail ===== */
+.dh1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.dh1 h2{font-size:21px;margin:0;display:flex;align-items:center;min-width:0}
+.prog{display:inline-flex;align-items:center;gap:0;margin-left:4px}
+.prog i{width:7px;height:7px;border-radius:50%;background:#d5dce5;position:relative;margin-right:9px}
+.prog i:not(:last-child)::after{content:"";position:absolute;left:7px;top:3px;width:9px;height:1px;background:#d5dce5}
+.prog i.p{background:var(--navy2)}.prog i.p::after{background:var(--navy2)}
+.prog i.c{background:#fff;border:2px solid var(--navy);width:9px;height:9px}
+.prog i.c::after{left:7px;top:2px}
+.pop{animation:pop 1.2s ease}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.35);box-shadow:0 0 0 4px #f1c24b}100%{transform:scale(1)}}
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.nextrow{display:flex;gap:12px;align-items:stretch;margin-bottom:18px}
+.nextc{flex:1;min-width:0;display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--navy);border-radius:10px;padding:14px 16px}
+.nextc .ic{color:var(--navy);margin-top:2px}
+.nextc small{display:block;font-size:12px;color:var(--sub);font-weight:700}
+.nextc .nd{display:block;font-size:22px;font-weight:800;color:var(--navy);line-height:1.3}
+.nextc .nd.none{font-size:16px;color:#a3acb8}
+.nextc .nt{font-size:15px;font-weight:700;margin-top:2px}
+.nextc .ns{font-size:13px;color:var(--sub)}
+.nextc .nm{font-size:12px;color:var(--sub);margin-top:8px;padding-top:6px;border-top:1px dashed var(--line)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.tab{border:none;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--sub);padding:8px 12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab span{display:inline-block;background:#eef1f5;border-radius:9px;padding:0 6px;font-size:11px;margin-left:4px}
+.tab.on{color:var(--navy);border-bottom-color:var(--navy)}
+.tab.on span{background:var(--navy);color:#fff}
+.pane{display:none}.pane.on{display:block}
+details.rec{border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:#fff}
+details.rec summary{cursor:pointer;padding:9px 12px;display:flex;gap:12px;align-items:center;list-style:none;font-size:13px}
+details.rec summary::-webkit-details-marker{display:none}
+details.rec summary .rd{font-weight:800;color:var(--navy);width:42px;flex:none}
+details.rec summary .rm{flex:1;min-width:0;display:flex;gap:12px;align-items:baseline}
+details.rec summary .rm b{white-space:nowrap}
+details.rec summary .rm small{color:var(--sub);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+details.rec summary .ic{color:var(--sub);transition:transform .2s}
+details.rec[open] summary .ic{transform:rotate(90deg)}
+details.rec.fresh{border-color:#e7c66a;background:var(--hl)}
+.sheet{margin:0;padding:2px 12px 10px 66px;display:grid;grid-template-columns:88px minmax(0,1fr);gap:3px 10px;font-size:12px}
+.sheet dt{color:var(--sub);font-weight:600}
+.sheet dd{margin:0;white-space:pre-line}
+.sl{list-style:none;margin:0;padding:0}
+.sl li{display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:8px 2px}
+.sl li.past{opacity:.5}
+.sl .dt{width:66px;flex:none;text-align:center;border-radius:6px;padding:3px 0;font-weight:800;font-size:13px;color:#fff}
+.sl .dt small{display:block;font-weight:600;font-size:10px;opacity:.9}
+.sl .tx{flex:1;min-width:0}
+.sl .tx b{display:block;font-size:14px}
+.sl .tx small{color:var(--sub);font-size:12px}
+.sl .why{font-size:11px;background:#eef1f5;border-radius:4px;padding:2px 6px;color:var(--sub);flex:none;max-width:200px}
+.empty{border:1px dashed var(--line);border-radius:10px;padding:24px 16px;text-align:center;color:var(--sub);font-size:13px}
+.prof{padding:14px 16px}
+.prof h3{font-size:13px;margin:0 0 8px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.prof dl{margin:0;display:grid;grid-template-columns:80px minmax(0,1fr);gap:6px 10px;font-size:12.5px}
+.prof dt{color:var(--sub)}
+.prof dd{margin:0;white-space:pre-line}
+/* slides */
+.thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.th{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;transition:background .4s;min-width:0}
+.th.flash{background:var(--hl)}
+.th .pv{aspect-ratio:16/9;background:#fff;border-bottom:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.pv .ttl{font-size:10px;font-weight:800;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv .ln{height:5px;background:#e4e9f0;border-radius:3px}
+.pv .bars{display:flex;align-items:flex-end;gap:4px;flex:1}
+.pv .bars span{flex:1;background:var(--navy2);border-radius:2px 2px 0 0}
+.pv .bars span.g{background:#c4ccd6}
+.pv .kp{font-size:15px;font-weight:800;color:var(--ok)}
+.pv.cover{background:var(--navy);color:#fff;justify-content:center}
+.pv.cover .ttl{color:#fff;border-color:#fff;font-size:11px}
+.pv .sm{font-size:9px;opacity:.85}
+.th .cap{padding:6px 8px;font-size:12px}
+.th .cap b{display:block;font-size:12px}
+.th .cap small{color:var(--sub);font-size:11px}
+.stock{margin-top:12px;border:1px solid #e7c66a;background:#fffbef;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stock>.ic{color:var(--amb)}
+.stock b{font-size:13px}
+.stock .val{font-size:17px;font-weight:800;color:var(--navy)}
+.stock .btn{margin-left:auto}
+.bar{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+/* ===== input ===== */
+.ititle{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ititle h2{font-size:19px;margin:0;display:flex;align-items:center;gap:8px}
+.ititle h2 .ic{color:var(--navy)}
+.ititle span{font-size:14px;color:var(--sub);font-weight:700}
+.steps{max-width:960px}
+.step{margin-bottom:14px;transition:opacity .4s}
+.step.off{opacity:.38;pointer-events:none}
+.step h3{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.step h3 .no{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;align-items:center;justify-content:center;font-size:12px;flex:none}
+.step h3 small{font-weight:400;color:var(--sub);font-size:12px}
+.step h3 .okm{color:var(--ok);margin-left:auto;font-size:12px;display:inline-flex;align-items:center;gap:4px}
+.memo{width:100%;min-height:120px;font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fbfcfd;color:var(--txt);resize:vertical}
+.only{font-size:12px;color:var(--sub);margin-top:6px}
+.hint{display:none;margin-top:8px;font-size:12px;color:var(--warn);background:#fff4ea;border-radius:6px;padding:6px 9px}
+.hint.on{display:block}
+.sbar{display:flex;justify-content:flex-end;margin-top:12px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px}
+.fld label{display:block;font-size:12px;color:var(--sub);font-weight:600;margin-bottom:3px}
+.fld input,.fld textarea{width:100%;font:inherit;font-size:13px;padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--txt);transition:background .4s;resize:vertical}
+.fld.flash input,.fld.flash textarea{background:var(--hl);border-color:#e7c66a}
+.out3{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}.out3>div{min-width:0}
+.out3 h4{font-size:13px;margin:0 0 6px;color:var(--navy);display:flex;align-items:center;gap:6px}
+.out3 h4 small{font-weight:400;color:var(--sub)}
+.sl li.prop .dt{background:#d4a72c}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#eef1f5;color:var(--sub);font-weight:700;white-space:nowrap}
+.wtab{min-width:720px}
+tbody tr[data-cid]{cursor:pointer}
+tbody tr[data-cid]:hover td{background:#f4f7fb}
+tr.new td{background:var(--hl)}
+tr.new.anim td{animation:fl2 2s ease}
+@keyframes fl2{from{background:#ffe9a8}to{background:var(--hl)}}
+/* ===== week ===== */
+.weekhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:13px}
+.weekhead .lbl{font-weight:800;color:var(--navy);font-size:15px}
+.wnav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.wsum{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.wsum div{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--sub)}
+.wsum b{font-size:16px;color:var(--navy);margin-left:4px}
+.ylg{display:inline-block;width:12px;height:12px;background:var(--hl);border:1px solid #e7c66a;border-radius:2px;vertical-align:-2px;margin-right:4px}
+.res{display:none;margin-top:10px;background:#e3f3ec;border:1px solid #b7dfcd;color:var(--ok);border-radius:8px;padding:8px 12px;font-weight:700;font-size:13px;align-items:center;gap:6px}
+.res.on{display:flex}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:var(--ok);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.18);transition:all .35s;max-width:calc(100vw - 32px);z-index:20;display:flex;align-items:center;gap:8px}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+a.btn{text-decoration:none}
+.btn.ok:hover{background:#196b4e}
+.hbtns{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hbtn{height:38px;padding:0 14px;font-size:13px}
+.hbtn.hocr{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.75)}
+.hbtn.hocr:hover{background:rgba(255,255,255,.12)}
+.sf{display:none}
+.dh1 .btn.add{margin-left:auto;height:40px;padding:0 18px;font-size:14px}
+.nago{display:inline-block;font-size:11px;font-weight:700;color:var(--navy2);background:#eef4fb;border-radius:8px;padding:0 7px;margin-left:6px;white-space:nowrap;line-height:1.7;vertical-align:2px}
+.docbar{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-bottom:12px}
+.caserow{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;border-left:5px solid var(--navy)}
+.caserow .crl{font-size:12px;color:var(--sub);font-weight:700}
+.caserow .crn{font-size:16px;font-weight:800;color:var(--navy);display:inline-flex;align-items:center;min-width:0}
+.caserow .crs{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);font-weight:700;min-width:0}
+.caserow select{color:var(--txt);font-size:13px;padding:6px 8px;min-width:0}
+.caserow .crw{flex-basis:100%;font-size:12px;color:var(--sub)}
+.flash2{animation:fl3 1.6s ease}
+@keyframes fl3{from{background:#ffe9a8}to{background:#fff}}
+.ptab{min-width:800px}
+.ptab td{vertical-align:middle}
+.ptab tr.offr td:not(.c){opacity:.42}
+.ptab td.c,.ptab th.c{text-align:center;width:48px}
+.ptab td.why{font-size:11px;color:var(--sub)}
+.ptab input[type=checkbox]{width:17px;height:17px;accent-color:var(--ok);cursor:pointer;margin:0}
+.xb{border:1px solid var(--line);background:#fff;border-radius:6px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);padding:0}
+.xb:hover{color:var(--warn);border-color:var(--warn)}
+.fld.full{grid-column:1/-1}
+.fld label small{font-weight:400;margin-left:6px}
+.sec{font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 6px;letter-spacing:.04em}
+.wbox{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.wbox>div{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.wbox small{display:block;font-size:11px;color:var(--sub);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wbox b{font-size:22px;color:var(--navy);font-weight:800;line-height:1.25}
+.wbox span{font-size:12px;color:var(--sub);margin-left:3px}
+.wbox em{display:block;font-style:normal;font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prc{white-space:nowrap;display:inline-flex;align-items:center}
+.prc .ic{width:12px;height:12px;margin:0 2px;vertical-align:0}
+.prc.chg{font-weight:800;color:var(--navy)}
+.wlow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:14px}
+@media(max-width:900px){
+ .dgrid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:600px){
+ header{padding:9px 16px}
+ header h1{font-size:14px}
+ nav .in{padding:0 8px;gap:0}
+ nav button{padding:10px 6px;font-size:12px;flex:1;justify-content:center}
+ nav .today{display:none}
+ .wrap{padding:12px 16px 40px}
+ .card{padding:12px}
+ .lhead .tools{margin-left:0;width:100%}
+ .lhead .tools select{flex:1}
+ .row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who meta" "next next";gap:6px 10px;padding:10px 12px}
+ .row .next{gap:8px}
+ .row .next .d{font-size:14px}
+ .row .meta small{display:none}
+ .wgrid{grid-template-columns:minmax(0,1fr);gap:5px}
+ .wd{min-height:0;display:grid;grid-template-columns:54px minmax(0,1fr);gap:6px;align-items:start}
+ .wd .wh{flex-direction:column;align-items:flex-start;gap:2px;margin:0}
+ .wd.today .wh::after{font-size:9px}
+ .we{margin-bottom:4px}
+ .mgrid{gap:2px}
+ .mgrid .d{min-height:58px;padding:2px}
+ .mgrid .ev{font-size:8.5px;padding:0 2px}
+ .seg{margin-left:0}
+ .dh1 h2{font-size:18px}
+ .nextrow{flex-direction:column}
+ .nextc .nd{font-size:19px}
+ .tab{padding:8px 8px;flex:1}
+ details.rec summary .rm{display:block}
+ details.rec summary .rm small{display:block}
+ .sheet{padding-left:12px;grid-template-columns:74px minmax(0,1fr)}
+ .sl .why{display:none}
+ .fgrid{grid-template-columns:minmax(0,1fr)}
+ .thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sbar .btn{width:100%}
+ .stock .btn{margin-left:0;width:100%}
+ header .tag+.tag{display:none}
+ .hbtns{margin-left:0;width:100%}
+ .hbtn{flex:1;padding:0 8px}
+ .lf{display:none}.sf{display:inline}
+ .dh1 .btn.add{margin-left:0;width:100%}
+ .docbar .btn{width:100%}
+ .caserow .crs{margin-left:0;width:100%}
+ .caserow .crs select{flex:1}
+ .wbox{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .wbox b{font-size:19px}
+ .wlow{grid-template-columns:minmax(0,1fr)}
+ .wbar .btn{width:100%}
+}
+
+/* ===== kessan2 S0-S3 ===== */
+.login{min-height:calc(100vh - 48px);display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.login .card{width:100%;max-width:380px;padding:28px 24px;text-align:center}
+.login .lk{width:52px;height:52px;border-radius:50%;background:#eef4fb;color:var(--navy);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px}
+.login h2{font-size:18px;margin:0 0 4px}
+.login p{margin:0 0 18px;color:var(--sub);font-size:12px}
+.login input{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
+.login .btn{width:100%;padding:12px}
+.lhead h2{font-size:19px;margin:0}
+.srch{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 10px;color:var(--sub);min-width:0}
+.srch input{border:none;outline:none;font:inherit;font-size:13px;padding:8px 0;width:200px;min-width:0;background:none}
+.crow{display:grid;grid-template-columns:minmax(0,1.4fr) 112px minmax(0,1.2fr) 120px 20px;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy2);border-radius:8px;padding:12px 14px;margin-bottom:6px;cursor:pointer;text-decoration:none;color:inherit}
+.crow:hover{background:#f7f9fc}
+.crow.emp{border-left-color:#cfd6df}
+.crow .nm{min-width:0}
+.crow .nm b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow .nm small{display:block;color:var(--sub);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow .bd{display:flex;gap:4px;flex-wrap:wrap;min-width:0}
+.crow .up{text-align:right;font-size:12px;color:var(--sub);white-space:nowrap}
+.crow .up b{display:block;font-size:14px;color:var(--navy)}
+.crow>.ic{color:#a3acb8}
+.has{display:inline-flex;gap:6px}
+.has span{width:30px;height:30px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;background:#eef4fb;color:var(--navy2)}
+.has span.no{background:#f3f5f8;color:#cfd6df}
+.lgd{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin:10px 0 0}
+.lgd span{display:inline-flex;align-items:center;gap:4px}
+.newc{display:none;margin-bottom:12px;align-items:center;gap:10px;flex-wrap:wrap}
+.newc.on{display:flex}
+.newc input{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;flex:1;min-width:0}
+/* S2 */
+.chd{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-bottom:14px}
+.chd h2{font-size:22px;margin:0;min-width:0}
+.chd .sum{font-size:13px;color:var(--sub)}
+.chd .upd{margin-left:auto;font-size:12px;color:var(--sub)}
+.big2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.bigb{display:flex;align-items:center;gap:14px;background:var(--navy);color:#fff;border-radius:12px;padding:16px 18px;text-decoration:none;min-width:0}
+.bigb.b2{background:var(--ok)}
+.bigb:hover{filter:brightness(1.08)}
+.bigb .bi{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex:none}
+.bigb .bi .ic{width:28px;height:28px}
+.bigb b{display:block;font-size:18px}
+.bigb small{display:block;font-size:12px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bigb .tx{min-width:0;flex:1}
+.bigb.off{background:#c7cfd9;pointer-events:none}
+.bigb.off.b2{background:#c7d6cf}
+.guide{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid #e7c66a;background:#fffbef;border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.guide>.ic{color:var(--amb)}
+.guide b{font-size:14px}
+.guide .btn{margin-left:auto}
+.mx{min-width:0}
+.mx table{font-size:13px}
+.mx td,.mx th{text-align:center;vertical-align:middle}
+.mx td:first-child,.mx th:first-child{text-align:left;font-weight:800;color:var(--navy);white-space:nowrap}
+.mx .ok{color:var(--ok);display:inline-flex;align-items:center;gap:3px;font-weight:700;font-size:12px}
+.mx .na{color:#c3cad4}
+.dsplit{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.6fr);gap:16px;align-items:start}
+.h3{font-size:13px;font-weight:800;color:var(--sub);margin:0 0 8px;display:flex;align-items:center;gap:6px}
+.h3 .btn{margin-left:auto}
+.fl{list-style:none;margin:0;padding:0;background:#fff;border:1px solid var(--line);border-radius:8px}
+.fl li{display:grid;grid-template-columns:44px minmax(0,1fr) 170px 70px 56px;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px}
+.fl li:last-child{border-bottom:none}
+.fl li.new{background:var(--hl);animation:fl2 2s ease}
+.fl .thm{width:34px;height:44px;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:#fff;cursor:pointer}
+.fl .thm svg{width:100%;height:100%;display:block}
+.fl .fn{min-width:0}
+.fl .fn b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.fl .fn small{color:var(--sub);font-size:11px}
+.fl .kd{white-space:nowrap}
+.fl .pg,.fl .dt{color:var(--sub);font-size:12px;white-space:nowrap;text-align:right}
+.pcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pc{background:#fff;border:1px solid var(--line);border-top:4px solid var(--ok);border-radius:10px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.pc.un{border-top-color:#d4a72c}
+.pc.no{border-top-color:#cfd6df}
+.pc .pt{display:flex;align-items:center;gap:8px}
+.pc .pt b{font-size:18px;color:var(--navy)}
+.pc .pn{font-size:28px;font-weight:800;color:var(--navy);line-height:1}
+.pc .pn span{font-size:12px;color:var(--sub);font-weight:700;margin-left:4px}
+.pc .ps{font-size:12px;color:var(--sub)}
+.pc .pb{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ml{list-style:none;margin:0;padding:0}
+.ml li{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+.ml .mth{width:96px;aspect-ratio:16/9;border-radius:5px;background:var(--navy);color:#fff;padding:6px;display:flex;flex-direction:column;justify-content:flex-end;font-size:8px;font-weight:700;overflow:hidden}
+.ml .mth i{display:block;height:3px;background:rgba(255,255,255,.5);border-radius:2px;margin-top:3px}
+.ml .mth.draft{background:#d9dee5;color:#5b6878}
+.ml .mx2{min-width:0}
+.ml .mx2 b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ml .mx2 small{color:var(--sub);font-size:12px}
+.ml .mb{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+/* S3 */
+.drop{border:2px dashed #b9c4d1;border-radius:12px;background:#fbfcfd;padding:28px 16px;text-align:center;color:var(--sub);transition:background .2s,border-color .2s}
+.drop.ov{background:#eef4fb;border-color:var(--navy2)}
+.drop .ic{width:40px;height:40px;color:var(--navy2);stroke-width:1.4}
+.drop b{display:block;font-size:16px;color:var(--txt);margin:6px 0 2px}
+.drop .bb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.picked{display:none;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.picked.on{display:flex}
+.picked .ic{color:var(--navy)}
+.picked b{font-size:14px}
+.picked .note{margin-left:auto}
+.est{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;min-height:36px}
+.est .ai{display:inline-flex;align-items:center;gap:8px;background:#eef4fb;color:var(--navy);border-radius:18px;padding:6px 14px;font-weight:800;font-size:14px}
+.est .ai .spin{border-color:rgba(31,58,95,.2);border-top-color:var(--navy)}
+.est .ai.done{background:#e3f3ec;color:var(--ok);animation:pop 1.2s ease}
+.pages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pg1{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:zoom-in;min-width:0;position:relative}
+.pg1>svg{display:block;width:100%;height:auto;background:#fff}
+.pg1 .cap{display:flex;align-items:center;gap:8px;padding:8px 10px;border-top:1px solid var(--line);font-size:13px}
+.pg1 .cap b{font-size:13px}
+.pg1 .cap .pill{margin-left:auto}
+.pg1 .zm{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--navy)}
+.reg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px;align-items:end}
+.reg .fld select{width:100%;font-size:14px;padding:8px;color:var(--txt)}
+.reg .fld input{font-size:14px;padding:8px}
+.reg .fld.flash select,.reg .fld.flash input{background:var(--hl);border-color:#e7c66a}
+.warn2{display:none;margin-top:10px;font-size:12px;color:var(--warn);background:#fff4ea;border-radius:6px;padding:6px 9px}
+.warn2.on{display:block}
+/* zoom */
+.zbg{position:fixed;inset:0;background:rgba(20,30,45,.72);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
+.zbg.on{display:flex}
+.zbox{background:#fff;border-radius:10px;max-width:760px;width:100%;max-height:calc(100vh - 40px);overflow:auto;position:relative}
+.zbox svg{display:block;width:100%;height:auto}
+.zbox .zt{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:800;position:sticky;top:0;background:#fff}
+.zbox .zt .xb{margin-left:auto}
+@media(max-width:900px){
+ .crow{grid-template-columns:minmax(0,1fr) auto 20px;grid-template-areas:"nm has ch" "bd up ch"}
+ .crow .nm{grid-area:nm}.crow .has{grid-area:has}.crow .bd{grid-area:bd}.crow .up{grid-area:up}.crow>.ic{grid-area:ch}
+ .crow .up b{display:inline;margin-right:4px}
+ .dsplit{grid-template-columns:minmax(0,1fr)}
+ .pcards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pages{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ .srch{flex:1}.srch input{width:100%}
+ .lhead .tools{flex-wrap:wrap}
+ .lhead .tools .btn{width:100%}
+ .crow{gap:6px 10px;padding:10px 12px}
+ .has span{width:26px;height:26px}
+ .chd h2{font-size:19px}
+ .chd .upd{margin-left:0}
+ .big2{grid-template-columns:minmax(0,1fr);gap:8px}
+ .bigb{padding:12px 14px}
+ .bigb b{font-size:16px}
+ .bigb .bi{width:40px;height:40px}
+ .guide .btn{margin-left:0;width:100%}
+ .fl li{grid-template-columns:34px minmax(0,1fr) auto;grid-template-areas:"t f p" "t k d"}
+ .fl .thm{grid-area:t}.fl .fn{grid-area:f}.fl .kd{grid-area:k}.fl .pg{grid-area:p}.fl .dt{grid-area:d}
+ .pcards{grid-template-columns:minmax(0,1fr)}
+ .ml li{grid-template-columns:72px minmax(0,1fr);grid-template-areas:"t x" "b b"}
+ .ml .mth{width:72px;grid-area:t}.ml .mx2 b{white-space:normal}.ml .mx2{grid-area:x}.ml .mb{grid-area:b;justify-content:stretch}.ml .mb .btn{flex:1}
+ .pages{grid-template-columns:minmax(0,1fr)}
+ .reg{grid-template-columns:minmax(0,1fr)}
+ .picked .note{margin-left:0}
+ .h3{flex-wrap:wrap}
+ .tab{font-size:12px;padding:8px 4px}
+ .tab span{margin-left:2px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-list" viewBox="0 0 24 24"><path d="M8.5 6H20M8.5 12H20M8.5 18H20M4 6h1M4 12h1M4 18h1"/></symbol>
+ <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+ <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8.5L19 7.5V21H6z"/><path d="M14.5 3v4.5H19M9 12h7M9 15.5h7M9 19h4"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></symbol>
+ <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c.9-3.8 3.9-5.8 7.5-5.8s6.6 2 7.5 5.8"/></symbol>
+ <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4.5 19.5l1-4.2L15.8 5a1.8 1.8 0 012.6 0l.6.6a1.8 1.8 0 010 2.6L8.7 18.5z"/><path d="M14 6.8l3.2 3.2M4 21h16"/></symbol>
+ <symbol id="i-ai" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3M10 14.5l2-5 2 5M10.7 13h2.6"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+ <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+ <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+ <symbol id="i-chl" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+ <symbol id="i-chr" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8.5 8.5M18 13.5V19a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5.5"/></symbol>
+ <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+ <symbol id="i-bldg" viewBox="0 0 24 24"><path d="M4 21V5.5L12 3v18M12 9h8v12M3 21h18M7 8h2M7 12h2M7 16h2M15 13h2M15 17h2"/></symbol>
+ <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M4 14v5a1.5 1.5 0 001.5 1.5h13A1.5 1.5 0 0020 19v-5"/></symbol>
+ <symbol id="i-data" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15"/></symbol>
+ <symbol id="i-slides" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20.5h8M7 12.5l3-3 2.5 2 4.5-4"/></symbol>
+ <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></symbol>
+ <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 018 0v3M12 14.5v2.5"/></symbol>
+ <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M4 19.5h16"/></symbol>
+ <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5M8 10.5h5M10.5 8v5"/></symbol>
+</svg>
+<header>
+ <h1>決算書から数字と資料へ</h1><span class="tag">保険営業向け・モック</span><span class="tag">データはすべてダミー</span>
+</header>
+<nav id="nav"><div class="in">
+ <button class="on" data-go="#clients"><svg class="ic lg"><use href="#i-bldg"/></svg>クライアント</button>
+ <span class="today">今日 2026/11/26（木）</span>
+</div></nav>
+
+<!-- S0 -->
+<section class="view" id="v-login">
+ <div class="login"><form class="card" id="fLogin">
+  <div class="lk"><svg class="ic lg"><use href="#i-lock"/></svg></div>
+  <h2>決算書から数字と資料へ</h2>
+  <p>パスワードを入れてください（モックなので何でも入れます）</p>
+  <input type="password" id="pw" placeholder="パスワード" autocomplete="current-password">
+  <button class="btn" type="submit">入る<svg class="ic"><use href="#i-arrow"/></svg></button>
+ </form></div>
+</section>
+
+<div class="wrap">
+<!-- S1 -->
+<section class="view" id="v-clients">
+ <div class="lhead">
+  <h2>クライアント</h2><span class="pill k" id="ccount"></span>
+  <div class="tools">
+   <label class="srch"><svg class="ic"><use href="#i-search"/></svg><input id="q" placeholder="名前で探す"></label>
+   <button class="btn" id="bNew"><svg class="ic"><use href="#i-plus"/></svg>新しいクライアント</button>
+  </div>
+ </div>
+ <form class="card newc" id="fNew"><input id="newName" placeholder="クライアント名（例: サンプル電機）"><button class="btn" type="submit">作る</button><button class="btn ghost" type="button" id="bNewX">やめる</button></form>
+ <div id="clist"></div>
+ <div class="lgd"><span><svg class="ic sm"><use href="#i-doc"/></svg>書類</span><span><svg class="ic sm"><use href="#i-data"/></svg>構造化データ</span><span><svg class="ic sm"><use href="#i-slides"/></svg>資料</span><span>薄いものはまだ無い</span></div>
+</section>
+
+<!-- S2 -->
+<section class="view" id="v-client">
+ <button class="back" data-go="#clients"><svg class="ic"><use href="#i-back"/></svg>クライアント一覧</button>
+ <div class="chd"><h2 id="cName"></h2><span class="chipk">法人</span><span class="sum" id="cSum"></span><span class="upd" id="cUpd"></span></div>
+ <div class="guide" id="cGuide"><svg class="ic lg"><use href="#i-upload"/></svg><div><b>まず書類を追加してください</b><div class="note">決算書の PDF かスキャン画像を入れると、数字の取り出しと資料作りができるようになります</div></div><a class="btn" id="gAdd"><svg class="ic"><use href="#i-plus"/></svg>書類を追加</a></div>
+ <div class="big2">
+  <a class="bigb" id="bOcr"><span class="bi"><svg class="ic"><use href="#i-data"/></svg></span><span class="tx"><b>数字を取り出す</b><small>決算書 → 構造化データ → CSV</small></span><svg class="ic lg"><use href="#i-arrow"/></svg></a>
+  <a class="bigb b2" id="bDoc"><span class="bi"><svg class="ic"><use href="#i-slides"/></svg></span><span class="tx"><b>資料を作る</b><small>書類 → データ → ディスカッションシート</small></span><svg class="ic lg"><use href="#i-arrow"/></svg></a>
+ </div>
+ <div class="tabs" id="ctabs">
+  <button class="tab" data-tab="docs">書類<span id="nDocs">0</span></button>
+  <button class="tab" data-tab="data">構造化データ<span id="nData">0</span></button>
+  <button class="tab" data-tab="mats">資料<span id="nMats">0</span></button>
+ </div>
+ <div class="pane" id="p-docs"></div>
+ <div class="pane" id="p-data"></div>
+ <div class="pane" id="p-mats"></div>
+</section>
+
+<!-- S3 -->
+<section class="view" id="v-upload">
+ <button class="back" id="upBack"><svg class="ic"><use href="#i-back"/></svg><span id="upBackN"></span></button>
+ <div class="ititle"><h2><svg class="ic lg"><use href="#i-upload"/></svg>書類を追加</h2><span id="upName"></span></div>
+ <div class="steps" style="max-width:none">
+  <div class="step card" id="st1">
+   <h3><span class="no">1</span>ファイルを置く<small>PDF・画像（スキャン）</small><span class="okm" id="ok1" hidden><svg class="ic sm"><use href="#i-check"/></svg>済</span></h3>
+   <div class="drop" id="drop">
+    <svg class="ic"><use href="#i-upload"/></svg>
+    <b>ここにドラッグ＆ドロップ</b>
+    <div class="note">1 冊ずつ入れます。複数の期をまとめたスキャンも可</div>
+    <div class="bb"><label class="btn line"><input type="file" id="file" accept=".pdf,image/*" hidden>ファイルを選ぶ</label><button class="btn" id="bSample">サンプルの決算書で試す</button></div>
+   </div>
+   <div class="picked" id="picked"><svg class="ic lg"><use href="#i-doc"/></svg><b id="pkName"></b><span class="note" id="pkMeta"></span><button class="btn ghost" id="bRe">入れ直す</button></div>
+  </div>
+  <div class="step card off" id="st2">
+   <h3><span class="no">2</span>ページを確かめる<small>クリックで拡大</small></h3>
+   <div class="est" id="est"></div>
+   <div class="pages" id="pages"></div>
+  </div>
+  <div class="step card off" id="st3">
+   <h3><span class="no">3</span>期と種類を確かめて登録</h3>
+   <div class="reg">
+    <div class="fld" id="fKind"><label>種類</label><select id="sKind"><option>決算書</option><option>勘定科目内訳書</option><option>その他</option></select></div>
+    <div class="fld" id="fPer"><label>期</label><select id="sPer"></select></div>
+    <div class="fld"><label>ファイル名<small>このクライアントの中で使う名前</small></label><input id="iName"></div>
+   </div>
+   <div class="warn2" id="dup"></div>
+   <div class="sbar"><button class="btn ok" id="bReg"><svg class="ic"><use href="#i-check"/></svg>登録してクライアントへ</button></div>
+  </div>
+ </div>
+</section>
+</div>
+
+<div class="zbg" id="zbg"><div class="zbox"><div class="zt"><span id="zt"></span><button class="xb" id="zx" aria-label="閉じる"><svg class="ic"><use href="#i-x"/></svg></button></div><div id="zimg"></div></div></div>
+<div class="toast" id="toast"><svg class="ic"><use href="#i-check"/></svg><span id="toastT"></span></div>
+
+<script>
+const KINDS=['決算書','勘定科目内訳書','その他'];
+const C=[
+ {id:'C1',name:'サンプル株式会社',sub:'製造業・3 月決算',upd:'2026-11-25',
+  docs:[
+   {k:'決算書',p:18,n:'第18期_決算書.pdf',pg:14,d:'2026-11-25'},
+   {k:'勘定科目内訳書',p:18,n:'第18期_勘定科目内訳書.pdf',pg:9,d:'2026-11-25'},
+   {k:'勘定科目内訳書',p:17,n:'第17期_勘定科目内訳書.pdf',pg:8,d:'2026-10-02'},
+   {k:'決算書',p:17,n:'第17期_決算書.pdf',pg:13,d:'2026-10-02'},
+   {k:'決算書',p:16,n:'第16期_決算書（スキャン）.pdf',pg:12,d:'2026-10-02'}],
+  data:[{p:18,st:'un',v:146,d:'2026-11-25'},{p:17,st:'ok',v:152,d:'2026-10-05'},{p:16,st:'ok',v:149,d:'2026-10-05'}],
+  mats:[{t:'ディスカッションシート（第 16・17 期）',d:'2026-11-20',pp:6},{t:'ディスカッションシート（第 16 期）',d:'2026-10-08',pp:5}]},
+ {id:'C2',name:'サンプル精工',sub:'精密部品・9 月決算',upd:'2026-11-18',
+  docs:[{k:'決算書',p:17,n:'第17期_決算書.pdf',pg:11,d:'2026-11-18'}],data:[],mats:[]},
+ {id:'C3',name:'サンプル商事',sub:'卸売・3 月決算',upd:'2026-11-26',docs:[],data:[],mats:[]},
+ {id:'C4',name:'サンプル物産',sub:'小売・12 月決算',upd:'2026-11-22',
+  docs:[{k:'決算書',p:9,n:'第9期_決算書.pdf',pg:10,d:'2026-11-22'},{k:'決算書',p:8,n:'第8期_決算書.pdf',pg:10,d:'2026-11-10'}],
+  data:[{p:9,st:'ok',v:128,d:'2026-11-22'},{p:8,st:'ok',v:126,d:'2026-11-12'}],
+  mats:[{t:'ディスカッションシート（第 8・9 期）',d:'2026-11-22',pp:6,draft:true,step:'データの確認まで'}]},
+ {id:'C5',name:'サンプル工業',sub:'建設・6 月決算',upd:'2026-11-12',
+  docs:[{k:'その他',p:24,n:'株主名簿.pdf',pg:2,d:'2026-11-12'},{k:'決算書',p:24,n:'第24期_決算書.pdf',pg:15,d:'2026-11-12'}],
+  data:[{p:24,st:'un',v:61,d:'2026-11-12'}],mats:[]}
+];
+const $=s=>document.querySelector(s);
+const ic=(id,c='')=>`<svg class="ic ${c}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const md=s=>{const [,m,d]=s.split('-');return (+m)+'/'+(+d)};
+const byId=id=>C.find(c=>c.id===id)||C[0];
+const periods=c=>[...new Set([...c.docs.map(d=>d.p),...c.data.map(d=>d.p)])].sort((a,b)=>b-a);
+function toast(t){$('#toastT').textContent=t;const e=$('#toast');e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2200)}
+
+/* ---- 架空の決算書ページ（inline SVG） ---- */
+function rnd(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280}}
+const PAGE_ROWS={
+ '貸借対照表':['現金及び預金','受取手形','売掛金','棚卸資産','前払費用','流動資産合計','建物','機械及び装置','土地','投資有価証券','固定資産合計','資産合計'],
+ '損益計算書':['売上高','売上原価','売上総利益','販売費及び一般管理費','営業利益','受取利息','支払利息','経常利益','特別損失','税引前当期純利益','法人税等','当期純利益'],
+ '販管費内訳':['役員報酬','給料手当','賞与','法定福利費','旅費交通費','通信費','地代家賃','減価償却費','支払手数料','租税公課','雑費','合計'],
+ '勘定科目内訳':['預金（普通）','預金（定期）','売掛金 A','売掛金 B','買掛金 A','買掛金 B','借入金 A','借入金 B','未払金','仮払金','前受金','合計']};
+function pageSVG(title,sub,seed){
+ if(title==='表紙'){return `<svg viewBox="0 0 420 594" xmlns="http://www.w3.org/2000/svg"><rect width="420" height="594" fill="#fff"/><rect x="18" y="18" width="384" height="558" fill="none" stroke="#d5dbe3"/><text x="210" y="230" text-anchor="middle" font-size="30" font-weight="700" fill="#22303f">決 算 報 告 書</text><text x="210" y="280" text-anchor="middle" font-size="16" fill="#3d4a5a">${sub}</text><text x="210" y="420" text-anchor="middle" font-size="18" fill="#22303f">${curName()}</text><line x1="120" y1="432" x2="300" y2="432" stroke="#9aa5b3"/></svg>`}
+ const r=rnd(seed),rows=PAGE_ROWS[title]||PAGE_ROWS['貸借対照表'];
+ let y=118,body='';
+ rows.forEach((n,i)=>{const tot=/合計|利益|^合計/.test(n);const v=Math.round((r()*90+5)*(tot?9:1)*1000).toLocaleString('ja-JP');const v2=Math.round((r()*90+5)*(tot?9:1)*1000).toLocaleString('ja-JP');
+  body+=`<text x="36" y="${y}" font-size="13" fill="#22303f" ${tot?'font-weight="700"':''}>${n}</text><text x="292" y="${y}" text-anchor="end" font-size="13" fill="#22303f" style="font-variant-numeric:tabular-nums">${v2}</text><text x="384" y="${y}" text-anchor="end" font-size="13" fill="#22303f" style="font-variant-numeric:tabular-nums" ${tot?'font-weight="700"':''}>${v}</text><line x1="28" y1="${y+9}" x2="392" y2="${y+9}" stroke="${tot?'#5b6878':'#d5dbe3'}" stroke-width="${tot?1.2:.8}"/>`;y+=36});
+ return `<svg viewBox="0 0 420 594" xmlns="http://www.w3.org/2000/svg"><rect width="420" height="594" fill="#fff"/><text x="210" y="46" text-anchor="middle" font-size="20" font-weight="700" fill="#22303f">${title}</text><text x="210" y="68" text-anchor="middle" font-size="11" fill="#5b6878">${sub}　（単位：円）</text><rect x="28" y="80" width="364" height="22" fill="#eef1f5"/><text x="36" y="95" font-size="11" fill="#5b6878">科目</text><text x="250" y="95" text-anchor="middle" font-size="11" fill="#5b6878">前期</text><text x="344" y="95" text-anchor="middle" font-size="11" fill="#5b6878">当期</text>${body}<line x1="200" y1="80" x2="200" y2="${y-27}" stroke="#d5dbe3" stroke-width=".8"/><line x1="300" y1="80" x2="300" y2="${y-27}" stroke="#d5dbe3" stroke-width=".8"/><text x="210" y="570" text-anchor="middle" font-size="10" fill="#9aa5b3">- ${(seed%9)+1} -</text></svg>`}
+let CUR='C1';const curName=()=>byId(CUR).name;
+function zoom(svg,t){$('#zimg').innerHTML=svg;$('#zt').textContent=t;$('#zbg').classList.add('on')}
+$('#zx').onclick=()=>$('#zbg').classList.remove('on');
+$('#zbg').onclick=e=>{if(e.target.id==='zbg')$('#zbg').classList.remove('on')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#zbg').classList.remove('on')});
+
+/* ---- 画面切替 ---- */
+function parse(){const h=location.hash.slice(1)||'login';const o={};h.split('&').forEach(kv=>{const [k,v]=kv.split('=');o[k]=v===undefined?true:decodeURIComponent(v)});return o}
+function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));$('#nav').style.display=v==='login'?'none':'';window.scrollTo(0,0)}
+function route(){const o=parse();
+ if(o.login){show('login');return}
+ if(o.client){CUR=byId(o.client).id;renderClient(o.tab||'docs');show('client');return}
+ if(o.upload){CUR=byId(o.upload).id;renderUpload();show('upload');return}
+ renderClients();show('clients')}
+window.addEventListener('hashchange',route);
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){location.hash=g.dataset.go}});
+$('#fLogin').onsubmit=e=>{e.preventDefault();location.hash='#clients'};
+
+/* ---- S1 ---- */
+function renderClients(){
+ const q=($('#q').value||'').trim();
+ const list=C.filter(c=>!q||c.name.includes(q)).sort((a,b)=>b.upd.localeCompare(a.upd));
+ $('#ccount').textContent=C.length+' 社';
+ $('#clist').innerHTML=list.map(c=>{const ps=periods(c);const un=c.data.some(d=>d.st==='un');const dr=c.mats.some(m=>m.draft);
+  const rng=ps.length?(ps.length>1?`第 ${ps[ps.length-1]}〜${ps[0]} 期`:`第 ${ps[0]} 期`):'書類なし';
+  return `<a class="crow ${c.docs.length?'':'emp'}" href="#client=${c.id}&tab=docs"><div class="nm"><b>${c.name}</b><small>${c.sub}・${rng}</small></div>
+  <div class="has"><span class="${c.docs.length?'':'no'}" title="書類">${ic('i-doc')}</span><span class="${c.data.length?'':'no'}" title="構造化データ">${ic('i-data')}</span><span class="${c.mats.filter(m=>!m.draft).length?'':'no'}" title="資料">${ic('i-slides')}</span></div>
+  <div class="bd">${un?'<span class="pill y">未確認のデータあり</span>':''}${dr?'<span class="pill b">資料作成の途中</span>':''}${!c.docs.length?'<span class="pill k">まず書類を追加</span>':''}</div>
+  <div class="up"><b>${md(c.upd)}</b>更新</div>${ic('i-chr')}</a>`}).join('')||'<div class="empty">見つかりません</div>'}
+$('#q').oninput=renderClients;
+$('#bNew').onclick=()=>{$('#fNew').classList.add('on');$('#newName').focus()};
+$('#bNewX').onclick=()=>$('#fNew').classList.remove('on');
+$('#fNew').onsubmit=e=>{e.preventDefault();const n=$('#newName').value.trim()||'サンプル電機';const id='C'+(C.length+1);C.push({id,name:n,sub:'業種未設定',upd:'2026-11-26',docs:[],data:[],mats:[]});$('#newName').value='';$('#fNew').classList.remove('on');location.hash='#client='+id+'&tab=docs'};
+
+/* ---- S2 ---- */
+let FLASH=null;
+function renderClient(tab){
+ const c=byId(CUR),has=c.docs.length>0,ps=periods(c);
+ $('#cName').textContent=c.name;
+ const nDec=new Set(c.docs.filter(d=>d.k==='決算書').map(d=>d.p)).size;
+ $('#cSum').textContent=has?`決算書 ${nDec} 期・データ ${c.data.length} 期・資料 ${c.mats.length} 本`:'まだ何もありません';
+ $('#cUpd').textContent='最終更新 '+md(c.upd);
+ $('#cGuide').style.display=has?'none':'';
+ $('#gAdd').href='#upload='+c.id;
+ [['#bOcr','ocr'],['#bDoc','doc']].forEach(([s,m])=>{const a=$(s);a.href=`flow/index.html?mode=${m}&client=${c.id}`;a.classList.toggle('off',!has)});
+ $('#nDocs').textContent=c.docs.length;$('#nData').textContent=c.data.length;$('#nMats').textContent=c.mats.length;
+ document.querySelectorAll('#ctabs .tab').forEach(b=>{b.classList.toggle('on',b.dataset.tab===tab);b.onclick=()=>{location.hash=`#client=${c.id}&tab=${b.dataset.tab}`}});
+ document.querySelectorAll('#v-client .pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+tab));
+ // 書類
+ const add=`<a class="btn" href="#upload=${c.id}">${ic('i-plus')}書類を追加</a>`;
+ if(!has){$('#p-docs').innerHTML=`<div class="empty">書類はまだありません<div style="margin-top:12px">${add}</div></div>`}
+ else{
+  const mx=`<div class="mx"><div class="h3">期 × 種類</div><div class="tw"><table><thead><tr><th>期</th>${KINDS.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${ps.map(p=>`<tr><td>第 ${p} 期</td>${KINDS.map(k=>{const d=c.docs.find(x=>x.p===p&&x.k===k);return `<td>${d?`<span class="ok">${ic('i-check','sm')}${d.pg}p</span>`:'<span class="na">—</span>'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+  const docs=[...c.docs].sort((a,b)=>b.d.localeCompare(a.d)||b.p-a.p);
+  const fl=`<div><div class="h3">ファイル（新しい順）${add}</div><ul class="fl">${docs.map((d,i)=>`<li class="${FLASH===d?'new':''}"><div class="thm" data-z="${i}">${pageSVG(d.k==='その他'?'勘定科目内訳':d.k==='決算書'?'貸借対照表':'勘定科目内訳',`第 ${d.p} 期`,d.p*7+i)}</div><div class="fn"><b>${d.n}</b></div><div class="kd"><span class="pill ${d.k==='決算書'?'b':'k'}">${d.k}</span> <small class="note">第 ${d.p} 期</small></div><div class="pg">${d.pg} ページ</div><div class="dt">${md(d.d)}</div></li>`).join('')}</ul></div>`;
+  $('#p-docs').innerHTML=`<div class="dsplit">${mx}${fl}</div>`;
+  $('#p-docs').querySelectorAll('.thm').forEach(t=>t.onclick=()=>{const d=docs[+t.dataset.z];zoom(t.innerHTML,d.n)});
+ }
+ FLASH=null;
+ // データ
+ const decP=[...new Set(c.docs.filter(d=>d.k==='決算書').map(d=>d.p))];
+ const noData=decP.filter(p=>!c.data.find(d=>d.p===p));
+ const cards=[...c.data.map(d=>({...d})),...noData.map(p=>({p,st:'no'}))].sort((a,b)=>b.p-a.p);
+ $('#p-data').innerHTML=cards.length?`<div class="pcards">${cards.map(d=>d.st==='no'?
+  `<div class="pc no"><div class="pt"><b>第 ${d.p} 期</b><span class="pill k">まだ読み取っていない</span></div><div class="pn">—</div><div class="ps">決算書はあります</div><div class="pb"><a class="btn line" href="flow/index.html?mode=ocr&client=${c.id}&period=${d.p}">${ic('i-data')}数字を取り出す</a></div></div>`:
+  `<div class="pc ${d.st==='un'?'un':''}"><div class="pt"><b>第 ${d.p} 期</b><span class="pill ${d.st==='ok'?'a':'y'}">${d.st==='ok'?'確認済':'未確認'}</span></div><div class="pn">${d.v}<span>項目</span></div><div class="ps">${md(d.d)} 読み取り${d.st==='un'?'・確認がまだです':''}</div><div class="pb"><a class="btn ${d.st==='un'?'':'line'}" href="flow/index.html?step=check&client=${c.id}&period=${d.p}">確認画面を開く${ic('i-arrow')}</a><button class="btn ghost csv">${ic('i-dl','sm')}CSV</button></div></div>`).join('')}</div>`
+  :`<div class="empty">構造化データはまだありません。決算書を追加して「数字を取り出す」から作ります</div>`;
+ $('#p-data').querySelectorAll('.csv').forEach(b=>b.onclick=()=>toast('CSV を書き出しました（ダミー）'));
+ // 資料
+ const mats=[...c.mats].sort((a,b)=>b.d.localeCompare(a.d));
+ $('#p-mats').innerHTML=mats.length?`<ul class="ml">${mats.map(m=>`<li><div class="mth ${m.draft?'draft':''}">${m.draft?'作成中':'資料'}<i></i><i style="width:60%"></i></div><div class="mx2"><b>${m.t}</b><small>${md(m.d)} ${m.draft?'作成開始・'+m.step:'作成'}・${m.pp} 枚</small> ${m.draft?'<span class="pill b">途中</span>':''}</div><div class="mb">${m.draft?`<a class="btn" href="flow/index.html?mode=doc&client=${c.id}">続きから${ic('i-arrow')}</a>`:`<a class="btn line" href="flow/index.html?step=preview&client=${c.id}">プレビュー</a><button class="btn ghost pdf">${ic('i-dl','sm')}PDF</button>`}</div></li>`).join('')}</ul>`
+  :`<div class="empty">資料はまだありません。「資料を作る」から作ります</div>`;
+ $('#p-mats').querySelectorAll('.pdf').forEach(b=>b.onclick=()=>toast('PDF を書き出しました（ダミー）'));
+}
+
+/* ---- S3 ---- */
+let UP=null;
+function renderUpload(){
+ const c=byId(CUR);UP=null;
+ $('#upBackN').textContent=c.name;$('#upBack').onclick=()=>{location.hash='#client='+c.id+'&tab=docs'};
+ $('#upName').textContent=c.name;
+ $('#drop').style.display='';$('#picked').classList.remove('on');$('#ok1').hidden=true;
+ ['#st2','#st3'].forEach(s=>$(s).classList.add('off'));
+ $('#est').innerHTML='<span class="note">ファイルを置くと、ここに中身の推定が出ます</span>';
+ $('#pages').innerHTML='';$('#dup').classList.remove('on');
+ const ps=periods(c),mx=ps.length?ps[0]+1:17;
+ $('#sPer').innerHTML=Array.from({length:6},(_,i)=>mx-i).filter(p=>p>0).map(p=>`<option value="${p}">第 ${p} 期</option>`).join('');
+ $('#iName').value='';
+}
+function pick(fname,size){
+ const c=byId(CUR),ps=periods(c),guess=ps.length?ps[0]+1:17;
+ UP={guess};
+ $('#drop').style.display='none';$('#picked').classList.add('on');$('#ok1').hidden=false;
+ $('#pkName').textContent=fname;$('#pkMeta').textContent=size+'・4 ページ';
+ $('#st2').classList.remove('off');
+ const sub=`第 ${guess} 期`,P=[['表紙',sub,1],['貸借対照表',sub,guess*3],['損益計算書',sub,guess*5],['販管費内訳',sub,guess*11]];
+ $('#pages').innerHTML=P.map((p,i)=>`<div class="pg1" data-i="${i}">${pageSVG(...p)}<span class="zm">${ic('i-zoom')}</span><div class="cap"><b>${i+1} ページ</b><span class="note">${p[0]}</span></div></div>`).join('');
+ $('#pages').querySelectorAll('.pg1').forEach(e=>e.onclick=()=>{const p=P[+e.dataset.i];zoom(pageSVG(...p),`${+e.dataset.i+1} ページ　${p[0]}`)});
+ $('#est').innerHTML=`<span class="ai"><span class="spin"></span>中身を推定しています</span>`;
+ setTimeout(()=>{
+  $('#est').innerHTML=`<span class="ai done">${ic('i-ai')}決算書 第 ${guess} 期らしい</span><span class="note">表紙の「第 ${guess} 期」と貸借対照表・損益計算書から推定</span>`;
+  $('#st3').classList.remove('off');$('#sKind').value='決算書';$('#sPer').value=guess;
+  $('#iName').value=`第${guess}期_決算書.pdf`;
+  ['#fKind','#fPer'].forEach(s=>{$(s).classList.add('flash');setTimeout(()=>$(s).classList.remove('flash'),1600)});
+  checkDup();
+ },1000);
+}
+function checkDup(){const c=byId(CUR),k=$('#sKind').value,p=+$('#sPer').value;const ex=c.docs.find(d=>d.k===k&&d.p===p);
+ $('#dup').textContent=ex?`第 ${p} 期の${k}はもうあります（${ex.n}）。登録すると別のファイルとして並びます`:'';$('#dup').classList.toggle('on',!!ex)}
+$('#sKind').onchange=$('#sPer').onchange=()=>{const k=$('#sKind').value,p=$('#sPer').value;$('#iName').value=`第${p}期_${k}.pdf`;checkDup()};
+$('#bSample').onclick=e=>{e.preventDefault();pick('決算報告書_スキャン.pdf','2.4 MB')};
+$('#file').onchange=e=>{const f=e.target.files[0];if(f)pick(f.name,(f.size/1048576).toFixed(1)+' MB')};
+$('#bRe').onclick=()=>renderUpload();
+const dz=$('#drop');
+['dragenter','dragover'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('ov')}));
+['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('ov')}));
+dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];pick(f?f.name:'決算報告書_スキャン.pdf',f?(f.size/1048576).toFixed(1)+' MB':'2.4 MB')});
+$('#bReg').onclick=()=>{const c=byId(CUR);const d={k:$('#sKind').value,p:+$('#sPer').value,n:$('#iName').value||'書類.pdf',pg:4,d:'2026-11-26'};
+ c.docs.push(d);c.upd='2026-11-26';FLASH=d;toast(`${d.n} を登録しました`);location.hash='#client='+c.id+'&tab=docs'};
+
+route();
+</script>
+</body>
+</html>
