@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
-<title>面談記録 → 予定・資料・週報（複数案件版・モック）</title>
+<title>面談記録から予定・資料・週報へ（複数案件版・モック v3）</title>
 <style>
 :root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
 *{box-sizing:border-box}
@@ -117,7 +117,6 @@ select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6p
 .nextc .nt{font-size:15px;font-weight:700;margin-top:2px}
 .nextc .ns{font-size:13px;color:var(--sub)}
 .nextc .nm{font-size:12px;color:var(--sub);margin-top:8px;padding-top:6px;border-top:1px dashed var(--line)}
-.btn.add{padding:12px 18px;align-self:center}
 .tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:12px}
 .tab{border:none;background:none;font:inherit;font-weight:700;font-size:13px;color:var(--sub);padding:8px 12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
 .tab span{display:inline-block;background:#eef1f5;border-radius:9px;padding:0 6px;font-size:11px;margin-left:4px}
@@ -222,6 +221,45 @@ tr.new.anim td{animation:fl2 2s ease}
 .res.on{display:flex}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:var(--ok);color:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.18);transition:all .35s;max-width:calc(100vw - 32px);z-index:20;display:flex;align-items:center;gap:8px}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+a.btn{text-decoration:none}
+.btn.ok:hover{background:#196b4e}
+.hbtns{margin-left:auto;display:flex;gap:8px;align-items:center}
+.hbtn{height:38px;padding:0 14px;font-size:13px}
+.hbtn.hocr{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.75)}
+.hbtn.hocr:hover{background:rgba(255,255,255,.12)}
+.sf{display:none}
+.dh1 .btn.add{margin-left:auto;height:40px;padding:0 18px;font-size:14px}
+.nago{display:inline-block;font-size:11px;font-weight:700;color:var(--navy2);background:#eef4fb;border-radius:8px;padding:0 7px;margin-left:6px;white-space:nowrap;line-height:1.7;vertical-align:2px}
+.docbar{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-bottom:12px}
+.caserow{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;border-left:5px solid var(--navy)}
+.caserow .crl{font-size:12px;color:var(--sub);font-weight:700}
+.caserow .crn{font-size:16px;font-weight:800;color:var(--navy);display:inline-flex;align-items:center;min-width:0}
+.caserow .crs{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);font-weight:700;min-width:0}
+.caserow select{color:var(--txt);font-size:13px;padding:6px 8px;min-width:0}
+.caserow .crw{flex-basis:100%;font-size:12px;color:var(--sub)}
+.flash2{animation:fl3 1.6s ease}
+@keyframes fl3{from{background:#ffe9a8}to{background:#fff}}
+.ptab{min-width:800px}
+.ptab td{vertical-align:middle}
+.ptab tr.offr td:not(.c){opacity:.42}
+.ptab td.c,.ptab th.c{text-align:center;width:48px}
+.ptab td.why{font-size:11px;color:var(--sub)}
+.ptab input[type=checkbox]{width:17px;height:17px;accent-color:var(--ok);cursor:pointer;margin:0}
+.xb{border:1px solid var(--line);background:#fff;border-radius:6px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);padding:0}
+.xb:hover{color:var(--warn);border-color:var(--warn)}
+.fld.full{grid-column:1/-1}
+.fld label small{font-weight:400;margin-left:6px}
+.sec{font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 6px;letter-spacing:.04em}
+.wbox{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.wbox>div{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+.wbox small{display:block;font-size:11px;color:var(--sub);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wbox b{font-size:22px;color:var(--navy);font-weight:800;line-height:1.25}
+.wbox span{font-size:12px;color:var(--sub);margin-left:3px}
+.wbox em{display:block;font-style:normal;font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prc{white-space:nowrap;display:inline-flex;align-items:center}
+.prc .ic{width:12px;height:12px;margin:0 2px;vertical-align:0}
+.prc.chg{font-weight:800;color:var(--navy)}
+.wlow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:14px}
 @media(max-width:900px){
  .dgrid{grid-template-columns:minmax(0,1fr)}
 }
@@ -250,7 +288,6 @@ tr.new.anim td{animation:fl2 2s ease}
  .seg{margin-left:0}
  .dh1 h2{font-size:18px}
  .nextrow{flex-direction:column}
- .btn.add{align-self:stretch}
  .nextc .nd{font-size:19px}
  .tab{padding:8px 8px;flex:1}
  details.rec summary .rm{display:block}
@@ -261,6 +298,18 @@ tr.new.anim td{animation:fl2 2s ease}
  .thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}
  .sbar .btn{width:100%}
  .stock .btn{margin-left:0;width:100%}
+ header .tag+.tag{display:none}
+ .hbtns{margin-left:0;width:100%}
+ .hbtn{flex:1;padding:0 8px}
+ .lf{display:none}.sf{display:inline}
+ .dh1 .btn.add{margin-left:0;width:100%}
+ .docbar .btn{width:100%}
+ .caserow .crs{margin-left:0;width:100%}
+ .caserow .crs select{flex:1}
+ .wbox{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .wbox b{font-size:19px}
+ .wlow{grid-template-columns:minmax(0,1fr)}
+ .wbar .btn{width:100%}
 }
 </style>
 </head>
@@ -279,10 +328,16 @@ tr.new.anim td{animation:fl2 2s ease}
  <symbol id="i-chl" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
  <symbol id="i-chr" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8.5 8.5M18 13.5V19a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5.5"/></symbol>
+ <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
  <symbol id="i-bldg" viewBox="0 0 24 24"><path d="M4 21V5.5L12 3v18M12 9h8v12M3 21h18M7 8h2M7 12h2M7 16h2M15 13h2M15 17h2"/></symbol>
 </svg>
 <header>
  <h1>面談記録から予定・資料・週報へ（複数案件版）</h1><span class="tag">保険営業向け・モック</span><span class="tag">データはすべてダミー</span>
+ <div class="hbtns">
+  <a class="btn hbtn hocr ocrlink" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener"><span class="lf">決算書を読み取って提案資料を作る</span><span class="sf">決算書を読む</span><svg class="ic sm" aria-hidden="true"><use href="#i-ext"/></svg></a>
+  <button class="btn ok hbtn" id="bAddGlobal"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg><span class="lf">面談記録を追加</span><span class="sf">記録を追加</span></button>
+ </div>
 </header>
 <nav><div class="in">
  <button data-v="list" class="on"><svg class="ic lg"><use href="#i-list"/></svg>案件一覧</button>
@@ -296,7 +351,7 @@ tr.new.anim td{animation:fl2 2s ease}
  <section class="view on" id="vList">
   <div class="lhead">
    <div class="kpi"><small>今週の予定</small><b id="kWeek">0</b><span>件</span></div>
-   <div class="tools"><select id="fSel" aria-label="ステータスで絞り込み"></select><button class="btn ghost" id="bNew"><svg class="ic sm"><use href="#i-plus"/></svg>新規案件</button></div>
+   <div class="tools"><select id="fSel" aria-label="ステータスで絞り込み"></select></div>
   </div>
   <div id="lrows"></div>
  </section>
@@ -327,12 +382,16 @@ tr.new.anim td{animation:fl2 2s ease}
     <div class="wnav"><button class="nb" id="wPrev" aria-label="前の週"><svg class="ic"><use href="#i-chl"/></svg></button><span class="lbl" id="wLbl"></span><button class="nb" id="wNext" aria-label="次の週"><svg class="ic"><use href="#i-chr"/></svg></button></div>
     <span class="note">担当：サンプル 担当者</span>
    </div>
+   <div class="sec" id="wSecN">今週の数字</div>
+   <div class="wbox" id="wbox"></div>
+   <div class="sec">活動（日付順）</div>
    <div class="tw"><table class="wtab">
-    <thead><tr><th>日付</th><th>顧客</th><th>区分</th><th>面談目的</th><th>内容の要約</th><th>次回アクション</th><th>見込み</th></tr></thead>
+    <thead><tr><th>日付</th><th>顧客</th><th>活動</th><th>進展（今週分かったこと・決まったこと）</th><th>確度</th><th>次の期日</th></tr></thead>
     <tbody id="gwbody"></tbody>
    </table></div>
-   <div class="wsum"><div>面談件数<b id="gwn">0</b> 件</div><div>新規<b id="gwnew">0</b> 件</div><div>提案予定<b id="gwpro">0</b> 件</div></div>
-   <div class="bar"><span class="note"><span class="ylg"></span>面談記録から AI が入れた行</span><button class="btn" id="bSubmit">週報を提出</button></div>
+   <div class="note" style="margin-top:6px"><span class="ylg"></span>面談記録から AI が入れた行。確度は 前<svg class="ic sm" aria-hidden="true"><use href="#i-arrow"/></svg>今（変わったものは太字）</div>
+   <div id="wlow"></div>
+   <div class="bar wbar"><span class="note">会社の週報フォーマットで提出します</span><button class="btn" id="bSubmit">週報を提出</button></div>
    <div class="res" id="rSubmit"><svg class="ic"><use href="#i-check"/></svg>会社の週報フォーマットで提出しました（ダミー）</div>
   </div>
  </section>
@@ -402,44 +461,50 @@ const EVENTS=[
  E("C4","2026-11-29","11:00","初回面談（カフェ）","紹介：B 様から"),E("C7","2026-12-01","13:00","初回面談（会社）","役員保険の見直し"),
  E("C3","2026-12-02","","告知書の受け取り"),E("C5","2026-12-04","15:00","決算書 3 期分の受け取り"),E("C6","2026-12-09","","相続の相談（ご自宅）")
 ];
-const A=(cid,date,kind,purpose,sum,next,pros,o)=>Object.assign({cid,date,kind,purpose,sum,next,pros},o||{});
+/* 週報の活動行: kind は 面談／電話・連絡／訪問／提案／申込、al は表示名、pr0/pr1 は確度の 前/今 */
+const A=(cid,date,kind,al,prog,pr0,pr1,dueDate,dueText,o)=>Object.assign({cid,date,kind,al,prog,pr0,pr1,dueDate,dueText},o||{});
 const ACTS=[
- A("C8","2026-11-05","契約","契約手続き","収入保障＋医療で申込完了","1 年後に見直し","済"),
- A("C1","2026-11-09","新規","初回ヒアリング","定期 3,000 万（65 歳満了）。自社株の承継が不安、借入 3 億","11/20 会社訪問","A",{nw:1}),
- A("C6","2026-11-10","既存","相続の相談","自宅と預金の分け方。一時払終身を検討","12/9 ご自宅で相談","B",{pro:1}),
- A("C5","2026-11-14","新規","初回ヒアリング","休業時の固定費が不安。医療法人化を検討","12/4 決算書受領","B",{nw:1}),
- A("C2","2026-11-18","既存","提案","医療保険の見直し案。予算より月 3 千円高い","11/28 見積り再提示","B",{pro:1}),
- A("C1","2026-11-20","新規","第 2 回面談","決算書が遅れ気味。個人分を先に説明","11/27 提案資料の説明","A",{pro:1}),
- A("C3","2026-11-21","既存","申込内容の確認","通院歴の書き方を確認","12/2 告知書の受け取り","A"),
- A("C3","2026-11-24","既存","告知書の説明（電話）","記入例を送付。書き方の不安は解消","12/2 告知書の受け取り","A"),
- A("C5","2026-11-25","新規","決算書の依頼（電話）","税理士経由で 3 期分を準備中","12/4 決算書受領","B"),
- A("C1","2026-11-27","新規","提案資料の説明（予定）","個人分：収入保障の提案","法人分は決算書受領後","A",{pro:1,plan:1}),
- A("C2","2026-11-28","既存","見積り再提示（予定）","入院日額 8 千円案","申込の意思確認","B",{pro:1,plan:1})
+ A("C8","2026-11-05","申込","申込","収入保障＋医療で申込完了","A","成約",null,"1 年後に見直し"),
+ A("C1","2026-11-09","面談","面談（初回）","自社株の承継が不安。借入 3 億円と判明","","B","2026-11-20","会社訪問",{nw:1}),
+ A("C6","2026-11-10","面談","面談","相続対策は一時払終身の方向で合意","B","B","2026-12-09","ご自宅で相談"),
+ A("C5","2026-11-14","面談","面談（初回）","休業時の固定費が不安。医療法人化を検討中","","B","2026-12-04","決算書受領",{nw:1}),
+ A("C2","2026-11-18","提案","提案","医療の見直し案。予算より月 3 千円高い","B","B","2026-11-28","見積り再提示"),
+ A("C1","2026-11-20","面談","面談（第 2 回）","個人分を先に説明することで合意。決算書は遅れ気味","B","A","2026-11-27","提案資料の説明"),
+ A("C3","2026-11-21","面談","面談","通院歴の書き方を確認。申込の意思あり","A","A","2026-12-02","告知書受領"),
+ A("C3","2026-11-24","電話・連絡","電話","告知書の記入例を送付。不安は解消","A","A","2026-12-02","告知書受領"),
+ A("C5","2026-11-25","電話・連絡","電話","税理士経由で決算書 3 期分を準備中","B","B","2026-12-04","決算書受領"),
+ A("C1","2026-11-27","面談","面談（予定）","個人分（収入保障）の提案","","A","2026-12-11","提案説明",{plan:1,pro:1}),
+ A("C2","2026-11-28","面談","面談（予定）","入院日額 8 千円案の見積り再提示","B","A 見込み",null,"申込の意思確認",{plan:1,pro:1})
 ];
+/* 見込み保険料（年換算・万円。ダミー） */
+const AP={C1:186,C2:4.2,C3:18,C4:9,C5:60,C6:30,C7:120,C8:15};
 /* C1 の生成内容 */
 const FILL={name:"サンプル精工 A 社長",date:"2026/11/26（木）第 3 回（電話）",job:"48 歳／製造業の会社経営者（法人オーナー）",fam:"4 人：本人 48・配偶者 45・長男 16・長女 13",
  cov:"個人：定期保険 3,000 万円（65 歳満了）／医療 日額 5,000 円",iss:"借入が 3 億から 2.8 億円に減少\n退職金を 5,000 万円程度用意したい",
  dir:"①11/27 は個人分（収入保障）のみ説明\n②法人分は決算書受領後、税理士同席で説明　③年内申込",nxt:"12/4 決算書受領／12/11 提案説明／12/18 申込手続き"};
 const ORDER=["name","date","job","fam","cov","iss","dir","nxt"];
+const ORDER7=ORDER.filter(k=>k!=="nxt");
 const LBL={name:"顧客名",date:"面談日",job:"年齢・職業",fam:"家族構成",cov:"現在の保障",iss:"課題・不安",dir:"提案の方向",nxt:"次回予定"};
 const PROP=[
- {date:"2026-12-04",time:"10:00",title:"決算書 3 期分の受領",sub:"自社株評価に使う",why:"「12/4 にもらえる」"},
- {date:"2026-12-11",time:"14:00",title:"提案説明（法人分・税理士同席）",sub:"長期定期・自社株評価のご説明",why:"「税理士同席で 12/11」"},
- {date:"2026-12-18",time:"14:00",title:"申込手続き（奥様同席）",sub:"申込書・告知書を持参",why:"「年内・12/18 あたり」"}
+ {date:"2026-12-04",time:"10:00",title:"決算書 3 期分の受領",short:"決算書受領",sub:"自社株評価に使う",place:"先方の会社（総務経由）",why:"「決算書3期分を12/4にもらえる」"},
+ {date:"2026-12-11",time:"14:00",title:"提案説明（法人分・税理士同席）",short:"提案説明",sub:"長期定期・自社株評価のご説明",place:"先方の会社 応接室",why:"「税理士も同席で12/11に聞きたい」"},
+ {date:"2026-12-18",time:"14:00",title:"申込手続き（奥様同席）",short:"申込手続き",sub:"申込書・告知書を持参",place:"未定（奥様の都合で要確認）",why:"「年内に申し込みたい」「12/18あたり」"}
 ];
-const NEWACT=()=>A("C1","2026-11-26","新規","第 3 回（電話）","借入 2.8 億に減少。退職金 5,000 万円の準備を希望。法人分は税理士同席で説明","12/4 決算書受領\n12/11 提案説明\n12/18 申込手続き","A",{pro:1,nw2:1,anim:1});
+const NEWACT=(cid,ps)=>{const f=(ps||[]).find(p=>p.on);return A(cid,"2026-11-26","電話・連絡",cid==="C1"?"電話（第 3 回）":"電話","借入 2.8 億に減少。退職金 5,000 万の準備を希望。法人分は税理士同席で説明","A","A",f?f.date:null,f?f.short:"未定",{nw2:1,anim:1});};
 const SL=[
  {t:"サンプル精工 A 社長 ご提案書",s:"2026 年 12 月",type:"cover"},
  {t:"現在の保障の整理",s:"定期 3,000 万円・65 歳満了",type:"bars",bars:[70,70,70,70,0,0],g:true},
  {t:"必要保障額シミュレーション",s:"前提：48 歳・家族 4 人・末子独立まで 9 年",type:"kpi",k:"不足 約 3,800 万円"},
  {t:"ご提案① 個人：収入保障保険",s:"月額 30 万円・65 歳まで",type:"bars",bars:[90,80,65,50,35,20]},
  {t:"ご提案② 法人：長期定期保険",s:"保険金 1 億円・退職金 5,000 万円の準備",type:"bars",bars:[20,40,60,80,95,100]},
- {t:"事業承継：自社株評価と対策",s:"評価額は「自社株評価を実行」で反映",type:"kpi",k:"要計算",id:"s6"}
+ {t:"事業承継：自社株評価と対策",s:"評価額は決算書の読み取り後に反映",type:"kpi",k:"要計算",id:"s6"}
 ];
 
 /* ---------- 共通 ---------- */
-const st={view:"list",cid:"C1",filter:"all",calMode:"week",calRef:pd(TODAY),wkRef:monday(pd(TODAY)),wkRefW:monday(pd(TODAY)),tab:"rec"};
-let inp={cid:null,fill:false,made:false,stock:false,vals:null};
+const st={view:"list",cid:"C1",filter:"all",calMode:"week",calRef:pd(TODAY),wkRef:monday(pd(TODAY)),wkRefW:monday(pd(TODAY)),tab:"rec",wSub:false,
+ wNote:"法人 2 件（A 社長・E 歯科）は 12/4 に決算書がそろう。個人は B 様が予算内の案で申込に近づいた。",
+ wFocus:"・12/4 決算書 2 社分を受け取り、A 社長の自社株評価を進める\n・11/28 B 様の申込の意思を確かめる\n・D 様（11/29）と G 運送（12/1）の初回面談を準備する"};
+let inp={cid:null,src:"global",how:null,live:false,memo:"",fill:false,made:false,stock:false,vals:null,props:[],prev:{view:"list"}};
 let newSeq=0;
 const VIEWS={list:"vList",cal:"vCal",detail:"vDetail",input:"vInput",week:"vWeek"};
 function show(v){
@@ -452,7 +517,17 @@ function show(v){
 }
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.v));
 function openCase(cid,tab){st.cid=cid;st.tab=tab||'rec';show('detail');}
-function openInput(cid){st.cid=cid;inp={cid,fill:false,made:false,stock:false,vals:null};show('input');}
+/* cid あり = 案件詳細から（その案件を選択済み）、なし = ヘッダから（メモの内容から推定） */
+function openInput(cid){
+ const prev=(st.view==='input'&&inp.prev)?inp.prev:{view:st.view,cid:st.cid};
+ const src=cid?'case':'global';
+ const live=!CMAP.C1.gen.reg&&(src==='global'||cid==='C1');
+ if(cid)st.cid=cid;
+ inp={cid:cid||null,src,how:cid?'case':null,live,memo:live?CMAP.C1.newMemo:'',fill:false,made:false,stock:false,vals:null,
+  props:PROP.map(p=>Object.assign({on:true},p)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),prev};
+ show('input');
+}
+$('bAddGlobal').onclick=()=>openInput(null);
 window.openCase=openCase;window.openInput=openInput;
 document.addEventListener('click',e=>{const t=e.target.closest('[data-cid]');if(t&&!t.closest('#vDetail')&&!t.closest('#vInput'))openCase(t.dataset.cid);});
 function toast(m){const t=$('toast');t.innerHTML=ic('check')+'<span>'+m+'</span>';t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2800);}
@@ -463,6 +538,11 @@ const evOf=cid=>EVENTS.filter(e=>e.cid===cid).sort((a,b)=>(a.date+a.time).locale
 const upcoming=cid=>evOf(cid).filter(e=>e.date>=TODAY);
 const lastMeet=c=>c.records.length?c.records.map(r=>r.date).sort().pop():null;
 const ageJob=c=>(c.age?c.age+' 歳・':'')+c.job;
+const dn=s=>Math.round((pd(s)-pd(TODAY))/864e5);
+const nago=s=>{const n=dn(s);return n===0?'今日':n>0?n+' 日後':(-n)+' 日前';};
+const nagoH=s=>'<span class="nago">'+nago(s)+'</span>';
+const OCR='https://kessan-yomitori-demo.vercel.app';
+const ocrA=label=>'<a class="btn line ocrlink" href="'+OCR+'" target="_blank" rel="noopener">'+label+ic('ext','sm')+'</a>';
 
 /* ---------- 案件一覧 ---------- */
 function renderList(){
@@ -483,13 +563,12 @@ function renderList(){
  CASES.forEach(c=>delete c.fresh);
 }
 $('fSel').onchange=e=>{st.filter=e.target.value;renderList();};
-$('bNew').onclick=()=>{newSeq++;const id="N"+newSeq;const c={id,name:"新規案件 "+newSeq,short:"新規",age:"",job:"未入力",type:"未設定",status:0,fam:"—",memo:"",records:[],isNew:1,gen:{}};CASES.push(c);CMAP[id]=c;COL[id]="#8a94a3";openCase(id);};
 
 /* ---------- カレンダー ---------- */
 function evAttr(e,cls){const c=CMAP[e.cid];return ' class="'+cls+(e.date<TODAY?' past':'')+(e.nw?' nw':'')+'" data-cid="'+e.cid+'" style="background:'+COL[e.cid]+'" title="'+esc(c.name+' '+e.title)+'"';}
 function renderCal(){
  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===st.calMode));
- $('legend').innerHTML=CASES.filter(c=>!c.isNew).map(c=>'<span data-cid="'+c.id+'"><span class="dot" style="background:'+COL[c.id]+'"></span>'+esc(c.short)+'</span>').join('');
+ $('legend').innerHTML=CASES.map(c=>'<span data-cid="'+c.id+'"><span class="dot" style="background:'+COL[c.id]+'"></span>'+esc(c.short)+'</span>').join('');
  let h='';
  if(st.calMode==='month'){
   const r=st.calRef,first=new Date(r.getFullYear(),r.getMonth(),1),start=addD(first,-first.getDay());
@@ -513,33 +592,47 @@ $('cNext').onclick=()=>{if(st.calMode==='month')st.calRef=new Date(st.calRef.get
 $('cToday').onclick=()=>{st.calRef=pd(TODAY);st.wkRef=monday(pd(TODAY));renderCal();};
 
 /* ---------- 週報 ---------- */
-const prosPill=p=>p==='A'?'<span class="pill a">A</span>':p==='B'?'<span class="pill b">B</span>':'<span class="pill k">'+p+'</span>';
-const kindPill=k=>'<span class="pill '+(k==='新規'?'b':k==='契約'?'a':'k')+'">'+k+'</span>';
-function rowHtml(a,link){const c=CMAP[a.cid];return '<tr'+(link?' data-cid="'+a.cid+'"':'')+(a.nw2?' class="new'+(a.anim?' anim':'')+'"':'')+'><td>'+mdw(a.date)+'</td><td><span class="dot" style="background:'+COL[a.cid]+'"></span>'+esc(c.name)+'<br><small class="note">'+c.type+'・'+c.age+' 歳</small></td><td>'+kindPill(a.kind)+'</td><td>'+esc(a.purpose)+(a.plan?' <span class="pill k">予定</span>':'')+'</td><td>'+esc(a.sum)+'</td><td>'+esc(a.next).replace(/\n/g,'<br>')+'</td><td>'+prosPill(a.pros)+'</td></tr>';}
+const WHEAD='<thead><tr><th>日付</th><th>顧客</th><th>活動</th><th>進展（今週分かったこと・決まったこと）</th><th>確度</th><th>次の期日</th></tr></thead>';
+function prHtml(a){if(!a.pr0)return '<span class="prc">'+esc(a.pr1)+'</span>';return '<span class="prc'+(a.pr0!==a.pr1?' chg':'')+'">'+esc(a.pr0)+ic('arrow','sm')+esc(a.pr1)+'</span>';}
+function dueHtml(a){return a.dueDate?'<span style="white-space:nowrap">'+md(a.dueDate)+'</span> '+esc(a.dueText)+(a.dueDate>=TODAY?nagoH(a.dueDate):''):esc(a.dueText);}
+function rowHtml(a,link,nm){const c=CMAP[a.cid];const name=nm||(c?c.short:'');
+ return '<tr'+(link?' data-cid="'+a.cid+'"':'')+(a.nw2?' class="new'+(a.anim?' anim':'')+'"':'')+'><td style="white-space:nowrap">'+mdw(a.date)+'</td><td style="white-space:nowrap"><span class="dot" style="background:'+(COL[a.cid]||'#8a94a3')+'"></span>'+esc(name)+'</td><td style="white-space:nowrap'+(a.plan?';color:var(--sub)':'')+'">'+esc(a.al)+'</td><td>'+esc(a.prog)+'</td><td>'+prHtml(a)+'</td><td>'+dueHtml(a)+'</td></tr>';}
 function renderWeek(){
- const s=st.wkRefW,from=fd(s),to=fd(addD(s,6));
- $('wLbl').textContent='営業週報 '+mdw(from)+' 〜 '+mdw(to)+(from===WK0?'（今週）':'');
+ const s=st.wkRefW,from=fd(s),to=fd(addD(s,6)),cur=from===WK0;
+ $('wLbl').textContent='営業週報 '+mdw(from)+' 〜 '+mdw(to)+(cur?'（今週）':'');
+ $('wSecN').textContent=cur?'今週の数字':'この週の数字';
  const rows=ACTS.filter(a=>a.date>=from&&a.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
- $('gwbody').innerHTML=rows.map(a=>rowHtml(a,true)).join('')||'<tr><td colspan="7" class="note">この週の記録はまだありません</td></tr>';
+ $('gwbody').innerHTML=rows.map(a=>rowHtml(a,true)).join('')||'<tr><td colspan="6" class="note">この週の記録はまだありません</td></tr>';
  rows.forEach(a=>delete a.anim);
- $('gwn').textContent=rows.filter(a=>!a.plan).length;$('gwnew').textContent=rows.filter(a=>a.nw).length;$('gwpro').textContent=rows.filter(a=>a.pro).length;
+ const done=rows.filter(a=>!a.plan),pl=rows.filter(a=>a.plan),cnt=(xs,f)=>xs.filter(f).length;
+ const K=[["面談",a=>a.kind==='面談'||a.kind==='訪問'],["電話・連絡",a=>a.kind==='電話・連絡'],["新規接点",a=>a.nw],["提案",a=>a.kind==='提案'||a.pro],["申込",a=>a.kind==='申込']];
+ const ids=[...new Set(done.filter(a=>/^A/.test(a.pr1)).map(a=>a.cid))];
+ const yen=Math.round(ids.reduce((t,id)=>t+(AP[id]||0),0)*10)/10;
+ $('wbox').innerHTML=K.map(([l,f])=>{const n=cnt(done,f),p=cnt(pl,f);return '<div><small>'+l+'</small><b>'+n+'</b><span>件</span><em>'+(p?'ほか予定 '+p+' 件':'&nbsp;')+'</em></div>';}).join('')+
+  '<div><small>見込み保険料（年換算）</small><b>'+yen.toLocaleString()+'</b><span>万円</span><em>確度 A の案件の合計</em></div>';
+ $('wlow').innerHTML=cur?'<div class="wlow"><div class="fld"><label for="wNote">所感・課題</label><textarea id="wNote" rows="2">'+esc(st.wNote)+'</textarea></div><div class="fld"><label for="wFocus">来週の重点</label><textarea id="wFocus" rows="3">'+esc(st.wFocus)+'</textarea></div></div>':'<div class="note" style="margin-top:14px">この週の週報は提出済みです</div>';
+ if(cur){$('wNote').oninput=e=>{st.wNote=e.target.value;};$('wFocus').oninput=e=>{st.wFocus=e.target.value;};}
+ $('bSubmit').style.display=cur?'':'none';
+ $('rSubmit').classList.toggle('on',cur&&st.wSub);
 }
 $('wPrev').onclick=()=>{st.wkRefW=addD(st.wkRefW,-7);renderWeek();};
 $('wNext').onclick=()=>{st.wkRefW=addD(st.wkRefW,7);renderWeek();};
-$('bSubmit').onclick=function(){const b=this;busy(b,'提出中…');setTimeout(()=>{finish(b,'提出済み');$('rSubmit').classList.add('on');},900);};
+$('bSubmit').onclick=function(){const b=this;busy(b,'提出中…');setTimeout(()=>{finish(b,'提出済み');st.wSub=true;$('rSubmit').classList.add('on');},900);};
 
 /* ---------- 提案資料（共通部品） ---------- */
 function pv(s,stock){
- if(s.type==='cover')return '<div class="pv cover"><div class="ttl">'+s.t+'</div><div class="sm">'+s.s+'</div><div class="sm">保険営業向け サンプル</div></div>';
+ if(s.type==='cover')return '<div class="pv cover"><div class="ttl">'+esc(s.t)+'</div><div class="sm">'+s.s+'</div><div class="sm">保険営業向け サンプル</div></div>';
  let inner='<div class="ttl">'+s.t+'</div>';
  if(s.type==='bars')inner+='<div class="bars">'+s.bars.map(v=>'<span class="'+(s.g?'g':'')+'" style="height:'+Math.max(v,4)+'%"></span>').join('')+'</div>';
  else inner+='<div class="ln" style="width:80%"></div><div class="ln" style="width:60%"></div><div class="kp"'+(s.id?' id="'+s.id+'k"':'')+(s.id&&stock?' style="font-size:11px"':'')+'>'+(s.id&&stock?'1 株 12,400 円 × 1 万株 ≒ 1.24 億円':s.k)+'</div>';
  return '<div class="pv">'+inner+'</div>';
 }
-function slidesHtml(stock,withBtn){
- return '<div class="thumbs">'+SL.map((s,i)=>'<div class="th"'+(s.id?' id="'+s.id+'"':'')+'>'+pv(s,stock)+'<div class="cap"><b>'+(i+1)+'. '+s.t+'</b><small'+(s.id?' id="'+s.id+'c"':'')+'>'+(s.id&&stock?'評価額 約 1.24 億円。納税資金と株の移し方を提案':s.s)+'</small></div></div>').join('')+'</div>'+
- '<div class="stock" id="stockBox">'+ic('bldg')+'<b>法人オーナーのため自社株評価が必要です</b><span class="note" id="stockNote">'+(stock?'<span class="val">約 1.24 億円</span>（類似業種比準・純資産の併用で試算）6 枚目に反映済み':'決算書 3 期分（12/4 受領予定）から 1 株あたりの評価額を計算し、6 枚目に入れます')+'</span>'+
- (withBtn?(stock?'<button class="btn doneb" disabled>'+ic('check')+'評価済み</button>':'<button class="btn line" id="bStock">自社株評価を実行</button>'):'')+'</div>';
+/* where: detail = 案件詳細（自社株評価を実行）、input = 入力画面③（決算書 OCR へ） */
+function slidesHtml(stock,where,name,corp){
+ const sl=SL.map((s,i)=>i===0?Object.assign({},s,{t:name+' ご提案書'}):s);
+ const box=!corp?'':'<div class="stock" id="stockBox">'+ic('bldg')+'<b>法人オーナーのため自社株評価が必要です</b><span class="note" id="stockNote">'+(stock?'<span class="val">約 1.24 億円</span>（類似業種比準・純資産の併用で試算）6 枚目に反映済み':(where==='input'?'決算書を読み取ると、1 株あたりの評価額を 6 枚目に入れます':'決算書 3 期分（12/4 受領予定）から 1 株あたりの評価額を計算し、6 枚目に入れます'))+'</span>'+
+  (where==='input'?ocrA('決算書を読み取って提案資料を作る'):(stock?'<button class="btn doneb" disabled>'+ic('check')+'評価済み</button>':'<button class="btn line" id="bStock">自社株評価を実行</button>'))+'</div>';
+ return '<div class="thumbs">'+sl.map((s,i)=>'<div class="th"'+(s.id?' id="'+s.id+'"':'')+'>'+pv(s,stock)+'<div class="cap"><b>'+(i+1)+'. '+esc(s.t)+'</b><small'+(s.id?' id="'+s.id+'c"':'')+'>'+(s.id&&stock?'評価額 約 1.24 億円。納税資金と株の移し方を提案':s.s)+'</small></div></div>').join('')+'</div>'+box;
 }
 function bindStock(onDone){
  const b=$('bStock');if(!b)return;
@@ -552,25 +645,25 @@ function bindStock(onDone){
 
 /* ---------- 案件詳細 ---------- */
 function progHtml(c){return '<span class="prog" id="prog" title="進捗 '+(c.status+1)+' / 5：'+STATUS[c.status]+'">'+STATUS.map((s,i)=>'<i class="'+(i<c.status?'p':i===c.status?'c':'')+'" title="'+s+'"></i>').join('')+'</span>';}
-function recSum(c,r){const a=ACTS.find(x=>x.cid===c.id&&x.date===r.date&&!x.plan);return a?a.sum:String(r.iss||'').split('\n')[0];}
+function recSum(c,r){const a=ACTS.find(x=>x.cid===c.id&&x.date===r.date&&!x.plan);return a?a.prog:String(r.iss||'').split('\n')[0];}
 function curCov(c){const r=c.records.slice().sort((a,b)=>b.date.localeCompare(a.date)).find(r=>r.cov&&r.cov!=='変更なし');return r?r.cov:'—';}
 function renderDetail(){
  const c=CMAP[st.cid]||CASES[0];const g=c.gen;
  const recs=c.records.slice().sort((a,b)=>b.date.localeCompare(a.date));
  const evs=evOf(c.id).slice().reverse();const u=upcoming(c.id);const n=u[0];
  const nextCard='<div class="nextrow"><div class="nextc">'+ic('clock','lg')+'<div style="min-width:0;flex:1"><small>次回予定</small>'+
-  (n?'<b class="nd">'+mdw(n.date)+(n.time?' '+n.time:'')+'</b><div class="nt">'+esc(n.title)+'</div>'+(n.sub?'<div class="ns">'+esc(n.sub)+'</div>':'')+
+  (n?'<b class="nd">'+mdw(n.date)+(n.time?' '+n.time:'')+nagoH(n.date)+'</b><div class="nt">'+esc(n.title)+'</div>'+(n.sub?'<div class="ns">'+esc(n.sub)+'</div>':'')+
    (u.length>1?'<div class="nm">このあと　'+u.slice(1,4).map(e=>md(e.date)+' '+esc(e.title)+(e.nw?'<span class="newp">新規</span>':'')).join('　／　')+(u.length>4?'　ほか '+(u.length-4)+' 件':'')+'</div>':'')
    :'<b class="nd none">まだありません</b><div class="ns">面談記録を追加すると、メモから次の予定を作ります</div>')+
-  '</div></div><button class="btn add" id="bAdd">'+ic('pen')+'面談記録を追加</button></div>';
+  '</div></div></div>';
  const tabs=[["rec","面談記録",recs.length],["sch","予定",evs.length],["doc","提案資料",null]];
  const paneRec=recs.length?recs.map(r=>'<details class="rec'+(r.fresh?' fresh':'')+'"'+(r.fresh?' open':'')+'><summary><span class="rd">'+md(r.date)+'</span><span class="rm"><b>'+esc(r.label)+'</b><small>'+esc(recSum(c,r))+'</small></span>'+ic('chr','sm')+'</summary><dl class="sheet">'+ORDER.filter(k=>k!=='date'&&k!=='name').map(k=>'<dt>'+LBL[k]+'</dt><dd>'+esc(r[k]||'—')+'</dd>').join('')+'</dl></details>').join(''):'<div class="empty">まだ面談記録はありません</div>';
- const paneSch=evs.length?'<ul class="sl">'+evs.map(e=>'<li class="'+(e.date<TODAY?'past':'')+'"><span class="dt" style="background:'+COL[c.id]+'">'+md(e.date)+'<small>'+WD[pd(e.date).getDay()]+(e.time?' '+e.time:'')+'</small></span><span class="tx"><b>'+esc(e.title)+(e.nw?'<span class="newp">新規</span>':'')+'</b><small>'+esc(e.sub||(e.date<TODAY?'済み':''))+'</small></span></li>').join('')+'</ul>':'<div class="empty">登録済みの予定はありません</div>';
- const paneDoc=(c.id==='C1'&&g.reg)?slidesHtml(g.stock,true)+'<div class="bar"><span class="note">6 枚構成・会社の提案書テンプレに流し込み</span><button class="btn" id="bDoc">資料を書き出す</button></div><div class="res" id="rb">'+ic('check')+'提案資料（6 枚）を書き出しました（ダミー）</div>':'<div class="empty">面談記録を追加すると、提案資料の下書きをここに作ります</div>';
+ const paneSch=evs.length?'<ul class="sl">'+evs.map(e=>'<li class="'+(e.date<TODAY?'past':'')+'"><span class="dt" style="background:'+COL[c.id]+'">'+md(e.date)+'<small>'+WD[pd(e.date).getDay()]+(e.time?' '+e.time:'')+'</small></span><span class="tx"><b>'+esc(e.title)+(e.date>=TODAY?nagoH(e.date):'')+(e.nw?'<span class="newp">新規</span>':'')+'</b><small>'+esc(e.sub||(e.date<TODAY?'済み':''))+'</small></span></li>').join('')+'</ul>':'<div class="empty">登録済みの予定はありません</div>';
+ const paneDoc='<div class="docbar">'+ocrA('決算書を読み取って提案資料を作る')+'<span class="note">決算書の読み取り確認画面が別タブで開きます</span></div>'+(g.reg?slidesHtml(g.stock,'detail',c.name,c.type==='法人')+'<div class="bar"><span class="note">6 枚構成・会社の提案書テンプレに流し込み</span><button class="btn" id="bDoc">資料を書き出す</button></div><div class="res" id="rb">'+ic('check')+'提案資料（6 枚）を書き出しました（ダミー）</div>':'<div class="empty">面談記録を追加すると、提案資料の下書きをここに作ります</div>');
  const prof='<aside class="card prof"><h3>'+ic('person','sm')+'プロフィール</h3><dl>'+
   '<dt>年齢・職業</dt><dd>'+esc(ageJob(c))+'</dd><dt>家族</dt><dd>'+esc(c.fam)+'</dd><dt>現在の保障</dt><dd>'+esc(curCov(c))+'</dd><dt>担当メモ</dt><dd>'+esc(c.memo||'—')+'</dd></dl></aside>';
  $('vDetail').innerHTML='<button class="back" id="dBack">'+ic('back','sm')+'案件一覧</button>'+
-  '<div class="dh1"><h2><span class="dot" style="background:'+COL[c.id]+';width:11px;height:11px"></span>'+esc(c.name)+'</h2><span class="chipk">'+esc(c.type)+'</span><span id="dPill">'+spill(c.status)+'</span>'+progHtml(c)+'</div>'+
+  '<div class="dh1"><h2><span class="dot" style="background:'+COL[c.id]+';width:11px;height:11px"></span>'+esc(c.name)+'</h2><span class="chipk">'+esc(c.type)+'</span><span id="dPill">'+spill(c.status)+'</span>'+progHtml(c)+'<button class="btn ok add" id="bAdd">'+ic('pen')+'面談記録を追加</button></div>'+
   '<div class="dgrid"><div style="min-width:0">'+nextCard+
    '<div class="tabs">'+tabs.map(([k,l,num])=>'<button class="tab'+(st.tab===k?' on':'')+'" data-t="'+k+'">'+l+(num!==null?'<span>'+num+'</span>':'')+'</button>').join('')+'</div>'+
    '<div class="pane'+(st.tab==='rec'?' on':'')+'" id="p_rec">'+paneRec+'</div><div class="pane'+(st.tab==='sch'?' on':'')+'" id="p_sch">'+paneSch+'</div><div class="pane'+(st.tab==='doc'?' on':'')+'" id="p_doc">'+paneDoc+'</div>'+
@@ -584,62 +677,94 @@ function renderDetail(){
 }
 
 /* ---------- 面談記録の入力 ---------- */
+const curCase=()=>inp.cid==='NEW'?{id:'NEW',name:'新規案件',short:'新規',type:'未設定'}:(inp.cid?CMAP[inp.cid]:null);
+function rr(){const y=window.scrollY;renderInput();window.scrollTo(0,y);}
+function propTable(){
+ if(!inp.fill)return '<div class="empty">メモを流し込むと、メモに出てきた日付から予定の案をここに並べます</div>';
+ if(!inp.props.length)return '<div class="empty">予定の案はありません</div>';
+ return '<div class="tw" id="propTw"><table class="ptab"><thead><tr><th class="c">採用</th><th>日付（曜日）</th><th>今日から</th><th>時刻</th><th>内容</th><th>場所</th><th>根拠（メモの言葉）</th><th class="c">削除</th></tr></thead><tbody>'+
+  inp.props.map((p,i)=>'<tr data-pi="'+i+'"'+(p.on?'':' class="offr"')+'><td class="c"><input type="checkbox" aria-label="'+esc(md(p.date)+' '+p.title)+' を採用"'+(p.on?' checked':'')+'></td><td style="white-space:nowrap"><b>'+mdw(p.date)+'</b></td><td>'+nagoH(p.date)+'</td><td>'+esc(p.time||'終日')+'</td><td><b>'+esc(p.title)+'</b><br><small class="note">'+esc(p.sub)+'</small></td><td>'+esc(p.place)+'</td><td class="why">'+esc(p.why)+'</td><td class="c"><button class="xb" aria-label="'+esc(md(p.date)+' '+p.title)+' を削除">'+ic('x','sm')+'</button></td></tr>').join('')+
+  '</tbody></table></div>';
+}
+function caseRowHtml(){
+ if(!inp.fill)return '';
+ const c=curCase();
+ const tag={est:'会話内容から推定',case:'案件詳細から選択',pick:'選び直し'}[inp.how];
+ const why=inp.how==='est'?'根拠：メモの「A社長」「決算書3期分」「税理士」が、この案件の記録と一致しました':inp.how==='case'?'この案件の詳細画面から開いたので、この案件を選んでいます':inp.cid==='NEW'?'登録すると、新しい案件として案件一覧に加わります（顧客名を入れてください）':'手で選び直しました。登録するとこの案件の履歴の先頭に入ります';
+ const opts=CASES.map(x=>'<option value="'+x.id+'"'+(x.id===inp.cid?' selected':'')+'>'+esc(x.name)+'</option>').join('')+'<option value="NEW"'+(inp.cid==='NEW'?' selected':'')+'>新規案件として登録</option>';
+ return '<section class="card step caserow" id="caseRow"><span class="crl">案件</span><span class="crn">'+(c.id!=='NEW'?'<span class="dot" style="background:'+COL[c.id]+'"></span>':'')+esc(c.name)+'</span><span class="pill y">'+tag+'</span>'+
+  '<label class="crs" for="caseSelect">選び直す<select id="caseSelect">'+opts+'</select></label><div class="crw">'+why+'</div></section>';
+}
 function renderInput(){
- const c=CMAP[st.cid]||CASES[0];const live=c.id==='C1'&&!c.gen.reg;
+ const c=curCase();
  const v=k=>inp.vals?inp.vals[k]:(inp.fill?FILL[k]:'');
- const fld=k=>'<div class="fld"><label for="f_'+k+'">'+LBL[k]+'</label>'+(['cov','iss','dir'].includes(k)?'<textarea id="f_'+k+'" rows="'+(k==='cov'?2:3)+'" placeholder="—">'+esc(v(k))+'</textarea>':'<input id="f_'+k+'" placeholder="—" value="'+esc(v(k))+'">')+'</div>';
+ const fld=k=>'<div class="fld"><label for="f_'+k+'">'+LBL[k]+'</label>'+(['cov','iss','dir'].includes(k)?'<textarea id="f_'+k+'" rows="'+(k==='cov'?2:3)+'" placeholder="—">'+esc(v(k))+'</textarea>':'<input id="f_'+k+'" placeholder="'+(k==='name'&&inp.cid==='NEW'?'顧客名を入力':'—')+'" value="'+esc(v(k))+'">')+'</div>';
  const okm=t=>'<span class="okm">'+ic('check','sm')+t+'</span>';
+ const on=inp.props.filter(p=>p.on);
+ const tid=c?c.id:'C1',tname=c&&c.id!=='NEW'?c.name:((inp.vals&&inp.vals.name)||'新規案件');
  const s3=inp.made?
-  '<div class="out3"><div><h4>'+ic('cal','sm')+'予定 '+PROP.length+' 件<small>新しい順</small></h4><ul class="sl">'+PROP.slice().reverse().map(p=>'<li class="prop"><span class="dt">'+md(p.date)+'<small>'+WD[pd(p.date).getDay()]+' '+p.time+'</small></span><span class="tx"><b>'+esc(p.title)+'</b><small>'+esc(p.sub)+'</small></span><span class="why">根拠：'+p.why+'</span></li>').join('')+'</ul></div>'+
-  '<div><h4>'+ic('doc','sm')+'提案資料 6 枚<small>会社の提案書テンプレ</small></h4>'+slidesHtml(inp.stock,true)+'</div>'+
-  '<div><h4>'+ic('list','sm')+'週報の行 1 行<small>今週の週報に入ります</small></h4><div class="tw"><table class="wtab"><thead><tr><th>日付</th><th>顧客</th><th>区分</th><th>面談目的</th><th>内容の要約</th><th>次回アクション</th><th>見込み</th></tr></thead><tbody>'+rowHtml(Object.assign(NEWACT(),{anim:0}),false)+'</tbody></table></div></div></div>'
+  '<div class="out3"><div><h4>'+ic('cal','sm')+'予定 '+on.length+' 件<small>新しい順</small></h4>'+(on.length?'<ul class="sl">'+on.slice().reverse().map(p=>'<li class="prop"><span class="dt">'+md(p.date)+'<small>'+WD[pd(p.date).getDay()]+' '+p.time+'</small></span><span class="tx"><b>'+esc(p.title)+nagoH(p.date)+'</b><small>'+esc(p.sub)+'・'+esc(p.place)+'</small></span><span class="why">根拠：'+esc(p.why)+'</span></li>').join('')+'</ul>':'<div class="empty">採用した予定はありません</div>')+'</div>'+
+  '<div><h4>'+ic('doc','sm')+'提案資料 6 枚<small>会社の提案書テンプレ</small></h4>'+slidesHtml(false,'input',tname,!c||c.type!=='個人')+'</div>'+
+  '<div><h4>'+ic('list','sm')+'週報の行 1 行<small>今週の週報に入ります</small></h4><div class="tw"><table class="wtab">'+WHEAD+'<tbody>'+rowHtml(Object.assign(NEWACT(tid,inp.props),{anim:0}),false,c&&c.id!=='NEW'?c.short:tname)+'</tbody></table></div></div></div>'
   :'<div class="empty">② の後に、予定・提案資料・週報の行を作ります</div>';
- $('vInput').innerHTML='<button class="back" id="iBack">'+ic('back','sm')+'案件詳細</button>'+
-  '<div class="ititle"><h2>'+ic('pen','lg')+'面談記録を追加</h2><span>'+esc(c.name)+'</span></div><div class="steps">'+
+ const onlyMsg=inp.live?'':(CMAP.C1.gen.reg?'このモックのサンプルメモは登録済みです':'このモックでは A 社長の案件で動きます（ヘッダの「面談記録を追加」からも試せます）');
+ $('vInput').innerHTML='<button class="back" id="iBack">'+ic('back','sm')+(inp.prev.view==='detail'?'案件詳細':'戻る')+'</button>'+
+  '<div class="ititle"><h2>'+ic('pen','lg')+'面談記録を追加</h2><span>'+(c?esc(c.id==='NEW'?'新規案件':c.name):'案件はメモの内容から推定します')+'</span></div><div class="steps">'+
   '<section class="card step" id="st1"><h3><span class="no">1</span>メモを貼る<small>音声の文字起こし・議事録・走り書き</small>'+(inp.fill?okm('流し込み済み'):'')+'</h3>'+
-   '<textarea id="memo" class="memo" placeholder="例）12/1 初回。39歳、専務。役員保険を見直したい…">'+esc(live?(c.newMemo||''):'')+'</textarea>'+
-   (live?'':'<div class="only">このモックでは A 社長の案件で動きます</div>')+'<div class="hint" id="hint"></div>'+
+   '<textarea id="memo" class="memo" placeholder="例）12/1 初回。39歳、専務。役員保険を見直したい…">'+esc(inp.memo)+'</textarea>'+
+   (onlyMsg?'<div class="only">'+onlyMsg+'</div>':'')+'<div class="hint" id="hint"></div>'+
    '<div class="sbar"><button class="btn" id="bFill">'+ic('ai')+'AI で型に流し込む</button></div></section>'+
+  caseRowHtml()+
   '<section class="card step'+(inp.fill?'':' off')+'" id="st2"><h3><span class="no">2</span>記録シートを確かめる<small>会社の型の 8 項目。直せます</small>'+(inp.made?okm('作成済み'):'')+'</h3>'+
-   '<div class="fgrid">'+ORDER.map(fld).join('')+'</div>'+
+   '<div class="fgrid">'+ORDER7.map(fld).join('')+'<div class="fld full"><label>'+LBL.nxt+'<small>AI が作った予定の案。採用するものにチェック（近い順）</small></label>'+propTable()+'</div></div>'+
    '<div class="sbar"><button class="btn ok" id="bMake"'+(inp.fill?'':' disabled')+'>'+ic('ai')+'3 つをまとめて作成</button></div></section>'+
   '<section class="card step'+(inp.made?'':' off')+'" id="st3"><h3><span class="no">3</span>作ったものを確かめる<small>予定・提案資料・週報の行</small></h3>'+s3+
    '<div class="sbar"><button class="btn" id="bRegister"'+(inp.made?'':' disabled')+'>登録して案件詳細へ'+ic('arrow')+'</button></div></section></div>';
- $('iBack').onclick=()=>openCase(c.id);
+ $('iBack').onclick=()=>{const p=inp.prev||{view:'list'};if(p.view==='detail')openCase(p.cid);else show(p.view==='input'?'list':p.view);};
  if(inp.fill)finish($('bFill'),'型に流し込みました（8 項目）');
  if(inp.made)finish($('bMake'),'3 つ作成しました');
- $('bFill').onclick=()=>doFill(c,live);
- $('bMake').onclick=()=>doMake(c);
- $('bRegister').onclick=()=>doRegister(c);
- bindStock(()=>{inp.stock=true;});
+ $('bFill').onclick=doFill;
+ $('bMake').onclick=doMake;
+ $('bRegister').onclick=doRegister;
+ if($('caseSelect'))$('caseSelect').onchange=e=>{inp.vals=readVals();inp.cid=e.target.value;inp.how='pick';inp.vals.name=inp.cid==='NEW'?'':CMAP[inp.cid].name;rr();const r=$('caseRow');if(r)r.classList.add('flash2');};
+ document.querySelectorAll('#propTw tbody tr').forEach(tr=>{const i=+tr.dataset.pi;
+  tr.querySelector('input').onchange=e=>{inp.props[i].on=e.target.checked;inp.vals=readVals();rr();};
+  tr.querySelector('.xb').onclick=()=>{inp.props.splice(i,1);inp.vals=readVals();rr();};});
 }
-function readVals(){const o={};ORDER.forEach(k=>{const el=$('f_'+k);o[k]=el?el.value:'';});return o;}
-function doFill(c,live){
- const b=$('bFill');const txt=$('memo').value.trim();
- if(!live){const h=$('hint');h.textContent=!txt?'先にメモを貼ってください':(c.id==='C1'?'この面談は登録済みです（モック）':'このモックでは A 社長の案件で動きます');h.classList.add('on');return;}
- if(!txt){const h=$('hint');h.textContent='先にメモを貼ってください';h.classList.add('on');return;}
+function readVals(){const o={};ORDER7.forEach(k=>{const el=$('f_'+k);o[k]=el?el.value:(inp.vals?inp.vals[k]:'');});o.nxt=inp.props.filter(p=>p.on).map(p=>md(p.date)+' '+p.short).join('／')||'未定';return o;}
+function doFill(){
+ const b=$('bFill');const txt=$('memo').value.trim();const h=$('hint');
+ if(!txt){h.textContent='先にメモを貼ってください';h.classList.add('on');return;}
+ if(!inp.live){h.textContent=CMAP.C1.gen.reg?'このモックのサンプルメモは登録済みです':'このモックでは A 社長の案件で動きます';h.classList.add('on');return;}
+ inp.memo=$('memo').value;
  busy(b,'AI がメモを読んでいます…');
- setTimeout(()=>{ORDER.forEach((k,i)=>setTimeout(()=>{const el=$('f_'+k);el.value=FILL[k];const f=el.closest('.fld');f.classList.add('flash');setTimeout(()=>f.classList.remove('flash'),1400);
-  if(i===ORDER.length-1){inp.fill=true;finish(b,'型に流し込みました（8 項目）');$('st2').classList.remove('off');$('bMake').disabled=false;}},i*90));},700);
+ setTimeout(()=>{ORDER7.forEach((k,i)=>setTimeout(()=>{const el=$('f_'+k);el.value=FILL[k];const f=el.closest('.fld');f.classList.add('flash');setTimeout(()=>f.classList.remove('flash'),1400);
+  if(i===ORDER7.length-1)setTimeout(()=>{inp.fill=true;if(inp.src==='global'){inp.cid='C1';inp.how='est';}else inp.how='case';
+   inp.vals=readVals();rr();['caseRow','propTw'].forEach(id=>{const el=$(id);if(el)el.classList.add('flash2');});},350);},i*90));},700);
 }
-function doMake(c){
+function doMake(){
  const b=$('bMake');inp.vals=readVals();busy(b,'3 つを作成中…');
- setTimeout(()=>{inp.made=true;const y=window.scrollY;renderInput();window.scrollTo(0,y);
+ setTimeout(()=>{inp.made=true;rr();
   const s3=$('st3');if(s3.scrollIntoView)s3.scrollIntoView({behavior:'smooth',block:'start'});
-  toast('予定 3 件・提案資料 6 枚・週報の行を作りました');},900);
+  toast('予定 '+inp.props.filter(p=>p.on).length+' 件・提案資料 6 枚・週報の行を作りました');},900);
 }
-function doRegister(c){
+function doRegister(){
  const b=$('bRegister');const vals=readVals();busy(b,'登録中…');
  setTimeout(()=>{
-  c.records.push(Object.assign({},vals,{date:"2026-11-26",label:"第 3 回（電話）",fresh:1}));
-  ACTS.push(NEWACT());
-  PROP.forEach(p=>EVENTS.push(Object.assign(E(c.id,p.date,p.time,p.title,p.sub),{nw:1})));
-  const e27=EVENTS.find(e=>e.cid==='C1'&&e.date==='2026-11-27');if(e27)e27.sub='個人分（収入保障）のみ説明。法人分は 12/11';
-  c.gen.reg=true;c.gen.stock=inp.stock;c.status=2;c.memo="12/11 税理士同席で法人分を説明";c.fresh=1;
+  let c;
+  if(inp.cid==='NEW'){newSeq++;const id='N'+newSeq;const nm=(vals.name||'').trim()||('新規案件 '+newSeq);
+   c={id,name:nm,short:nm,age:'',job:vals.job||'未入力',type:'未設定',status:0,fam:vals.fam||'—',memo:'面談記録から登録',records:[],isNew:1,gen:{}};CASES.push(c);CMAP[id]=c;COL[id]='#8a94a3';}
+  else c=CMAP[inp.cid];
+  c.records.push(Object.assign({},vals,{date:"2026-11-26",label:c.id==='C1'?"第 3 回（電話）":"電話",fresh:1}));
+  ACTS.push(NEWACT(c.id,inp.props));
+  inp.props.filter(p=>p.on).forEach(p=>EVENTS.push(Object.assign(E(c.id,p.date,p.time,p.title,p.sub+'・'+p.place),{nw:1})));
+  if(c.id==='C1'){const e27=EVENTS.find(e=>e.cid==='C1'&&e.date==='2026-11-27');if(e27)e27.sub='個人分（収入保障）のみ説明。法人分は 12/11';c.status=2;c.memo="12/11 税理士同席で法人分を説明";}
+  else if(c.status<1)c.status=1;
+  c.gen.reg=true;c.gen.stock=inp.stock;c.fresh=1;
   openCase(c.id,'rec');
   const p=$('dPill');if(p){p.classList.add('pop');p.style.display='inline-block';}
   const pc=document.querySelector('#prog i.c');if(pc)pc.classList.add('pop');
-  toast('登録しました。ステータスは「提案済み」、一覧・カレンダー・週報に反映');
+  toast('「'+c.name+'」に登録しました。ステータスは「'+STATUS[c.status]+'」、一覧・カレンダー・週報に反映');
  },700);
 }
 
