@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>決算書から数字と資料へ（モック v3）</title>
+<title>決算書から数字と資料へ（モック v4）</title>
 <style>
 :root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
 *{box-sizing:border-box}
@@ -427,6 +427,53 @@ a.btn{text-decoration:none}
 .reg .fld.flash select,.reg .fld.flash input{background:var(--hl);border-color:#e7c66a}
 .warn2{display:none;margin-top:10px;font-size:12px;color:var(--warn);background:#fff4ea;border-radius:6px;padding:6px 9px}
 .warn2.on{display:block}
+.fl2{background:#fff;border:1px solid var(--line);border-radius:8px}
+.fl2 .fh,.fl2 .fr{display:grid;grid-template-columns:40px minmax(0,1fr) 72px 120px 56px 200px 18px;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px;color:inherit;text-decoration:none}
+.fl2 .fh{font-size:11px;color:var(--sub);font-weight:700;background:#eef1f5;padding:6px 12px;border-radius:8px 8px 0 0}
+.fl2 .fr:last-child{border-bottom:none}
+.fl2 a.fr:hover{background:#f4f7fb}
+.fl2 .fr.new{background:var(--hl)}
+.fl2 .fr.keep{color:var(--sub)}
+.fl2 .fr>.ic{color:#a3acb8}
+.fl2 .thm{width:32px;height:42px;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:#fff}
+.fl2 .thm svg{width:100%;height:100%;display:block}
+.fl2 .fn{min-width:0}.fl2 .fn b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fl2 .fn small{color:var(--sub);font-size:11px}
+.fl2 .pp,.fl2 .pg{white-space:nowrap;color:var(--sub);font-size:12px}
+.stw{display:inline-flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
+.stw small{color:var(--sub);font-size:11px}
+.bar2{display:inline-block;width:70px;height:6px;border-radius:3px;background:#e4e9f0;overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--navy2);transition:width .6s}
+.fl2.mats .fh,.fl2.mats .fr{grid-template-columns:96px minmax(0,1fr) 120px 110px 18px}
+.fl2 .mth{width:96px;aspect-ratio:16/9;border-radius:5px;background:var(--navy);color:#fff;padding:6px;display:flex;flex-direction:column;justify-content:flex-end;font-size:8px;font-weight:700;overflow:hidden}
+.fl2 .mth i{display:block;height:3px;background:rgba(255,255,255,.5);border-radius:2px;margin-top:3px}
+.fl2 .mth.draft{background:#d9dee5;color:#5b6878}
+.gridw{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.gtab{table-layout:fixed}
+.gtab th,.gtab td{text-align:center;vertical-align:middle;padding:8px 6px}
+.gtab th:first-child,.gtab td:first-child{text-align:left;font-weight:800;color:var(--navy);width:84px;padding-left:12px}
+.gtab tr:last-child td{border-bottom:none}
+.gc{display:block;border-radius:6px;padding:8px 2px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+a.gc:hover{filter:brightness(.95);outline:2px solid var(--navy2)}
+.g-ok{background:#e3f3ec;color:var(--ok)}.g-wait{background:#fff0c2;color:#8a6d1f}.g-run{background:#e8eff8;color:var(--navy2)}.g0{background:#f3f5f8;color:#b3bbc6;font-weight:400}
+.gc.sw{display:inline-block;width:14px;height:14px;padding:0;border-radius:3px}
+.chd .sum .pill{margin-left:4px}
+.tab .lf,.tab .sf{background:none;padding:0;margin:0;font-size:inherit;border-radius:0}
+.tab.on .lf,.tab.on .sf{background:none;color:inherit}
+@media(max-width:900px){.fl2 .fh,.fl2 .fr{grid-template-columns:36px minmax(0,1fr) 64px 56px 180px 18px}.fl2 .kd{display:none}.fl2 .fh span:nth-child(4){display:none}}
+@media(max-width:600px){
+ .fl2 .fh{display:none!important}
+ .fl2 .fr{grid-template-columns:32px minmax(0,1fr) 18px;grid-template-areas:"t f c" "t s c";gap:4px 10px}
+ .fl2 .thm{grid-area:t}.fl2 .fn{grid-area:f}.fl2 .st{grid-area:s}.fl2 .fr>.ic,.fl2 .fr>span:last-child{grid-area:c}
+ .fl2 .pp,.fl2 .pg,.fl2 .kd{display:none}
+ .fl2 .fn b{white-space:normal}
+ .fl2.mats .fr{grid-template-columns:72px minmax(0,1fr) 18px;grid-template-areas:"t f c" "t s c"}
+ .fl2.mats .mth{width:72px;grid-area:t}.fl2.mats .pp{display:block;grid-area:s}
+ .bar2{width:56px}
+ .gtab th,.gtab td{padding:6px 2px;font-size:11px}
+ .gtab th:first-child,.gtab td:first-child{width:52px;padding-left:8px;font-size:11px}
+ .gc{font-size:10px;padding:7px 0;white-space:normal;line-height:1.25}
+ .h3 .btn{margin-left:0}
+}
 /* zoom */
 .zbg{position:fixed;inset:0;background:rgba(20,30,45,.72);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}
 .zbg.on{display:flex}
@@ -533,14 +580,14 @@ a.btn{text-decoration:none}
 <section class="view" id="v-client">
  <button class="back" data-go="#clients"><svg class="ic"><use href="#i-back"/></svg>クライアント一覧</button>
  <div class="chd"><h2 id="cName"></h2><span class="chipk">法人</span><span class="sum" id="cSum"></span><span class="upd" id="cUpd"></span></div>
- <div class="guide" id="cGuide"><svg class="ic lg"><use href="#i-upload"/></svg><div><b>まず書類を追加してください</b><div class="note">決算書の PDF かスキャン画像を入れると、数字の取り出しと資料作りができるようになります</div></div><a class="btn" id="gAdd"><svg class="ic"><use href="#i-plus"/></svg>書類を追加</a></div>
+ <div class="guide" id="cGuide"><svg class="ic lg"><use href="#i-upload"/></svg><div><b>まず書類を追加してください</b><div class="note">決算書の PDF かスキャン画像を入れると、自動で読み取って数字にします</div></div><a class="btn" id="gAdd"><svg class="ic"><use href="#i-plus"/></svg>書類を追加</a></div>
  <div class="big2">
-  <a class="bigb" id="bOcr"><span class="bi"><svg class="ic"><use href="#i-data"/></svg></span><span class="tx"><b>数字を取り出す</b><small>決算書 → 構造化データ → CSV</small></span><svg class="ic lg"><use href="#i-arrow"/></svg></a>
-  <a class="bigb b2" id="bDoc"><span class="bi"><svg class="ic"><use href="#i-slides"/></svg></span><span class="tx"><b>資料を作る</b><small>書類 → データ → ディスカッションシート</small></span><svg class="ic lg"><use href="#i-arrow"/></svg></a>
+  <a class="bigb" id="bAdd"><span class="bi"><svg class="ic"><use href="#i-upload"/></svg></span><span class="tx"><b>書類を追加</b><small>入れると自動で読み取って数字にします</small></span><svg class="ic lg"><use href="#i-arrow"/></svg></a>
+  <a class="bigb b2" id="bDoc"><span class="bi"><svg class="ic"><use href="#i-slides"/></svg></span><span class="tx"><b>資料を作る</b><small>種類 → 必要書類 → データ → 生成</small></span><svg class="ic lg"><use href="#i-arrow"/></svg></a>
  </div>
  <div class="tabs" id="ctabs">
   <button class="tab" data-tab="docs">書類<span id="nDocs">0</span></button>
-  <button class="tab" data-tab="data">構造化データ<span id="nData">0</span></button>
+  <button class="tab" data-tab="data"><b class="lf">構造化データ</b><b class="sf">データ</b><span id="nData">0</span></button>
   <button class="tab" data-tab="mats">資料<span id="nMats">0</span></button>
  </div>
  <div class="pane" id="p-docs"></div>
@@ -587,32 +634,36 @@ a.btn{text-decoration:none}
 
 <script>
 const KINDS=['決算書','勘定科目内訳書','その他'];
+const TYPES=[['pl','損益計算書','損益'],['bs','貸借対照表','貸借'],['sga','販管費内訳','販管費'],['mfg','製造原価','製造原価'],['uw','勘定科目内訳書','内訳書']];
+const MATT={ds:'ディスカッションシート',sum:'決算分析サマリー',stk:'自社株評価の下準備'};
+/* 書類の parts = この書類から読む表ごとの状態（run=読み取り中 / wait=確認待ち / ok=確認済）。un=未確認の数、prog=進み具合 */
 const C=[
  {id:'C1',name:'サンプル株式会社',sub:'製造業・3 月決算',upd:'2026-11-25',
   docs:[
-   {k:'決算書',p:18,n:'第18期_決算書.pdf',pg:14,d:'2026-11-25'},
-   {k:'勘定科目内訳書',p:18,n:'第18期_勘定科目内訳書.pdf',pg:9,d:'2026-11-25'},
-   {k:'勘定科目内訳書',p:17,n:'第17期_勘定科目内訳書.pdf',pg:8,d:'2026-10-02'},
-   {k:'決算書',p:17,n:'第17期_決算書.pdf',pg:13,d:'2026-10-02'},
-   {k:'決算書',p:16,n:'第16期_決算書（スキャン）.pdf',pg:12,d:'2026-10-02'}],
-  data:[{p:18,st:'un',v:146,d:'2026-11-25'},{p:17,st:'ok',v:152,d:'2026-10-05'},{p:16,st:'ok',v:149,d:'2026-10-05'}],
-  mats:[{t:'ディスカッションシート（第 16・17 期）',d:'2026-11-20',pp:6},{t:'ディスカッションシート（第 16 期）',d:'2026-10-08',pp:5}]},
+   {id:'k18',k:'決算書',p:18,n:'第18期_決算書.pdf',pg:14,d:'2026-11-25',parts:{pl:'wait',bs:'wait',sga:'run',mfg:'wait'},un:7,prog:62},
+   {id:'uw18',k:'勘定科目内訳書',p:18,n:'第18期_勘定科目内訳書.pdf',pg:9,d:'2026-11-25',parts:{uw:'wait'},un:3},
+   {id:'uw17',k:'勘定科目内訳書',p:17,n:'第17期_勘定科目内訳書.pdf',pg:8,d:'2026-10-02',parts:{uw:'ok'}},
+   {id:'k17',k:'決算書',p:17,n:'第17期_決算書.pdf',pg:13,d:'2026-10-02',parts:{pl:'ok',bs:'ok',sga:'ok',mfg:'ok'}},
+   {id:'k16',k:'決算書',p:16,n:'第16期_決算書（スキャン）.pdf',pg:12,d:'2026-10-02',parts:{pl:'ok',bs:'ok',sga:'ok',mfg:'ok'}}],
+  mats:[{type:'ds',ps:'第 16・17 期',d:'2026-11-20',pp:6},{type:'sum',ps:'第 16 期',d:'2026-10-08',pp:3}]},
  {id:'C2',name:'サンプル精工',sub:'精密部品・9 月決算',upd:'2026-11-18',
-  docs:[{k:'決算書',p:17,n:'第17期_決算書.pdf',pg:11,d:'2026-11-18'}],data:[],mats:[]},
- {id:'C3',name:'サンプル商事',sub:'卸売・3 月決算',upd:'2026-11-26',docs:[],data:[],mats:[]},
+  docs:[{id:'k17',k:'決算書',p:17,n:'第17期_決算書.pdf',pg:11,d:'2026-11-18',parts:{pl:'wait',bs:'wait',sga:'wait'},un:12}],mats:[]},
+ {id:'C3',name:'サンプル商事',sub:'卸売・3 月決算',upd:'2026-11-26',docs:[],mats:[]},
  {id:'C4',name:'サンプル物産',sub:'小売・12 月決算',upd:'2026-11-22',
-  docs:[{k:'決算書',p:9,n:'第9期_決算書.pdf',pg:10,d:'2026-11-22'},{k:'決算書',p:8,n:'第8期_決算書.pdf',pg:10,d:'2026-11-10'}],
-  data:[{p:9,st:'ok',v:128,d:'2026-11-22'},{p:8,st:'ok',v:126,d:'2026-11-12'}],
-  mats:[{t:'ディスカッションシート（第 8・9 期）',d:'2026-11-22',pp:6,draft:true,step:'データの確認まで'}]},
+  docs:[{id:'k9',k:'決算書',p:9,n:'第9期_決算書.pdf',pg:10,d:'2026-11-22',parts:{pl:'ok',bs:'ok',sga:'ok'}},{id:'k8',k:'決算書',p:8,n:'第8期_決算書.pdf',pg:10,d:'2026-11-10',parts:{pl:'ok',bs:'ok',sga:'ok'}}],
+  mats:[{type:'ds',ps:'第 8・9 期',d:'2026-11-22',pp:6,draft:true,step:'データの状態まで'}]},
  {id:'C5',name:'サンプル工業',sub:'建設・6 月決算',upd:'2026-11-12',
-  docs:[{k:'その他',p:24,n:'株主名簿.pdf',pg:2,d:'2026-11-12'},{k:'決算書',p:24,n:'第24期_決算書.pdf',pg:15,d:'2026-11-12'}],
-  data:[{p:24,st:'un',v:61,d:'2026-11-12'}],mats:[]}
+  docs:[{id:'o24',k:'その他',p:24,n:'株主名簿.pdf',pg:2,d:'2026-11-12',parts:{}},{id:'k24',k:'決算書',p:24,n:'第24期_決算書.pdf',pg:15,d:'2026-11-12',parts:{pl:'run',bs:'run',sga:'run',mfg:'run'},prog:38}],mats:[]}
 ];
+const docSt=d=>{const v=Object.values(d.parts);if(!v.length)return 'keep';if(v.includes('run'))return 'run';if(v.includes('wait'))return 'wait';return 'ok'};
+const nWait=c=>c.docs.filter(d=>Object.values(d.parts).includes('wait')).length;
+const nRun=c=>c.docs.filter(d=>docSt(d)==='run').length;
+const hasData=c=>c.docs.some(d=>Object.values(d.parts).some(s=>s!=='run'));
 const $=s=>document.querySelector(s);
 const ic=(id,c='')=>`<svg class="ic ${c}" aria-hidden="true"><use href="#${id}"/></svg>`;
 const md=s=>{const [,m,d]=s.split('-');return (+m)+'/'+(+d)};
 const byId=id=>C.find(c=>c.id===id)||C[0];
-const periods=c=>[...new Set([...c.docs.map(d=>d.p),...c.data.map(d=>d.p)])].sort((a,b)=>b-a);
+const periods=c=>[...new Set(c.docs.filter(d=>d.k!=='その他').map(d=>d.p))].sort((a,b)=>b-a);
 function toast(t){$('#toastT').textContent=t;const e=$('#toast');e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2200)}
 
 /* ---- 架空の決算書ページ（inline SVG） ---- */
@@ -648,62 +699,80 @@ document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g
 $('#fLogin').onsubmit=e=>{e.preventDefault();location.hash='#clients'};
 
 /* ---- S1 ---- */
+function cBadges(c){const w=nWait(c),r=nRun(c),dr=c.mats.some(m=>m.draft);
+ return `${w?`<span class="pill y">確認待ちの書類 ${w}</span>`:''}${r?`<span class="pill b">読み取り中 ${r}</span>`:''}${dr?'<span class="pill k">資料作成の途中</span>':''}`}
 function renderClients(){
  const q=($('#q').value||'').trim();
  const list=C.filter(c=>!q||c.name.includes(q)).sort((a,b)=>b.upd.localeCompare(a.upd));
  $('#ccount').textContent=C.length+' 社';
- $('#clist').innerHTML=list.map(c=>{const ps=periods(c);const un=c.data.some(d=>d.st==='un');const dr=c.mats.some(m=>m.draft);
+ $('#clist').innerHTML=list.map(c=>{const ps=periods(c);
   const rng=ps.length?(ps.length>1?`第 ${ps[ps.length-1]}〜${ps[0]} 期`:`第 ${ps[0]} 期`):'書類なし';
   return `<a class="crow ${c.docs.length?'':'emp'}" href="#client=${c.id}&tab=docs"><div class="nm"><b>${c.name}</b><small>${c.sub}・${rng}</small></div>
-  <div class="has"><span class="${c.docs.length?'':'no'}" title="書類">${ic('i-doc')}</span><span class="${c.data.length?'':'no'}" title="構造化データ">${ic('i-data')}</span><span class="${c.mats.filter(m=>!m.draft).length?'':'no'}" title="資料">${ic('i-slides')}</span></div>
-  <div class="bd">${un?'<span class="pill y">未確認のデータあり</span>':''}${dr?'<span class="pill b">資料作成の途中</span>':''}${!c.docs.length?'<span class="pill k">まず書類を追加</span>':''}</div>
+  <div class="has"><span class="${c.docs.length?'':'no'}" title="書類">${ic('i-doc')}</span><span class="${hasData(c)?'':'no'}" title="構造化データ">${ic('i-data')}</span><span class="${c.mats.filter(m=>!m.draft).length?'':'no'}" title="資料">${ic('i-slides')}</span></div>
+  <div class="bd">${cBadges(c)}${!c.docs.length?'<span class="pill k">まず書類を追加</span>':''}</div>
   <div class="up"><b>${md(c.upd)}</b>更新</div>${ic('i-chr')}</a>`}).join('')||'<div class="empty">見つかりません</div>'}
 $('#q').oninput=renderClients;
 $('#bNew').onclick=()=>{$('#fNew').classList.add('on');$('#newName').focus()};
 $('#bNewX').onclick=()=>$('#fNew').classList.remove('on');
-$('#fNew').onsubmit=e=>{e.preventDefault();const n=$('#newName').value.trim()||'サンプル電機';const id='C'+(C.length+1);C.push({id,name:n,sub:'業種未設定',upd:'2026-11-26',docs:[],data:[],mats:[]});$('#newName').value='';$('#fNew').classList.remove('on');location.hash='#client='+id+'&tab=docs'};
+$('#fNew').onsubmit=e=>{e.preventDefault();const n=$('#newName').value.trim()||'サンプル電機';const id='C'+(C.length+1);C.push({id,name:n,sub:'業種未設定',upd:'2026-11-26',docs:[],mats:[]});$('#newName').value='';$('#fNew').classList.remove('on');location.hash='#client='+id+'&tab=docs'};
 
 /* ---- S2 ---- */
-let FLASH=null;
+let TAB='docs';
+const ST={run:['b','読み取り中'],wait:['y','確認待ち'],ok:['a','確認済'],keep:['k','保管のみ']};
+function stCell(d){const s=docSt(d);
+ if(s==='run')return `<span class="stw"><span class="pill b">読み取り中</span><span class="bar2"><i style="width:${d.prog||0}%"></i></span><small>${d.prog||0}%</small></span>`;
+ if(s==='wait')return `<span class="stw"><span class="pill y">確認待ち</span><small>未確認 ${d.un||0}</small></span>`;
+ return `<span class="stw"><span class="pill ${ST[s][0]}">${ST[s][1]}</span></span>`}
 function renderClient(tab){
- const c=byId(CUR),has=c.docs.length>0,ps=periods(c);
+ TAB=tab;const c=byId(CUR),has=c.docs.length>0;
  $('#cName').textContent=c.name;
  const nDec=new Set(c.docs.filter(d=>d.k==='決算書').map(d=>d.p)).size;
- $('#cSum').textContent=has?`決算書 ${nDec} 期・データ ${c.data.length} 期・資料 ${c.mats.length} 本`:'まだ何もありません';
+ $('#cSum').innerHTML=has?`決算書 ${nDec} 期・書類 ${c.docs.length}・資料 ${c.mats.filter(m=>!m.draft).length} 本 ${cBadges(c)}`:'まだ何もありません';
  $('#cUpd').textContent='最終更新 '+md(c.upd);
  $('#cGuide').style.display=has?'none':'';
  $('#gAdd').href='#upload='+c.id;
- [['#bOcr','ocr'],['#bDoc','doc']].forEach(([s,m])=>{const a=$(s);a.href=`flow/index.html?mode=${m}&client=${c.id}`;a.classList.toggle('off',!has)});
- $('#nDocs').textContent=c.docs.length;$('#nData').textContent=c.data.length;$('#nMats').textContent=c.mats.length;
+ $('#bAdd').href='#upload='+c.id;
+ const bd=$('#bDoc');bd.href=`flow/?mode=doc&client=${c.id}`;bd.classList.toggle('off',!has);
+ $('#nDocs').textContent=c.docs.length;$('#nData').textContent=periods(c).length+' 期';$('#nMats').textContent=c.mats.length;
  document.querySelectorAll('#ctabs .tab').forEach(b=>{b.classList.toggle('on',b.dataset.tab===tab);b.onclick=()=>{location.hash=`#client=${c.id}&tab=${b.dataset.tab}`}});
  document.querySelectorAll('#v-client .pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+tab));
- // 書類
- const add=`<a class="btn" href="#upload=${c.id}">${ic('i-plus')}書類を追加</a>`;
- if(!has){$('#p-docs').innerHTML=`<div class="empty">書類はまだありません<div style="margin-top:12px">${add}</div></div>`}
+ // 書類タブ: 行 = ファイル → 確認画面
+ const add=`<a class="btn ghost" href="#upload=${c.id}">${ic('i-plus','sm')}書類を追加</a>`;
+ if(!has){$('#p-docs').innerHTML=`<div class="empty">書類はまだありません。上の「書類を追加」から入れると、自動で読み取ります</div>`}
  else{
-  const mx=`<div class="mx"><div class="h3">期 × 種類</div><div class="tw"><table><thead><tr><th>期</th>${KINDS.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${ps.map(p=>`<tr><td>第 ${p} 期</td>${KINDS.map(k=>{const d=c.docs.find(x=>x.p===p&&x.k===k);return `<td>${d?`<span class="ok">${ic('i-check','sm')}${d.pg}p</span>`:'<span class="na">—</span>'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div></div>`;
   const docs=[...c.docs].sort((a,b)=>b.d.localeCompare(a.d)||b.p-a.p);
-  const fl=`<div><div class="h3">ファイル（新しい順）${add}</div><ul class="fl">${docs.map((d,i)=>`<li class="${FLASH===d?'new':''}"><div class="thm" data-z="${i}">${pageSVG(d.k==='その他'?'勘定科目内訳':d.k==='決算書'?'貸借対照表':'勘定科目内訳',`第 ${d.p} 期`,d.p*7+i)}</div><div class="fn"><b>${d.n}</b></div><div class="kd"><span class="pill ${d.k==='決算書'?'b':'k'}">${d.k}</span> <small class="note">第 ${d.p} 期</small></div><div class="pg">${d.pg} ページ</div><div class="dt">${md(d.d)}</div></li>`).join('')}</ul></div>`;
-  $('#p-docs').innerHTML=`<div class="dsplit">${mx}${fl}</div>`;
-  $('#p-docs').querySelectorAll('.thm').forEach(t=>t.onclick=()=>{const d=docs[+t.dataset.z];zoom(t.innerHTML,d.n)});
+  $('#p-docs').innerHTML=`<div class="h3">ファイル（新しい順）・押すと読み取り結果の確認へ${add}</div><div class="fl2">
+  <div class="fh"><span></span><span>ファイル</span><span>期</span><span>種類</span><span>面数</span><span>状態</span><span></span></div>
+  ${docs.map((d,i)=>{const keep=docSt(d)==='keep';const inner=`<div class="thm">${pageSVG(d.k==='決算書'?'貸借対照表':'勘定科目内訳',`第 ${d.p} 期`,d.p*7+i)}</div><div class="fn"><b>${d.n}</b></div><div class="pp">第 ${d.p} 期</div><div class="kd"><span class="chipk">${d.k}</span></div><div class="pg">${d.pg} 面</div><div class="st">${stCell(d)}</div>${keep?'<span></span>':ic('i-chr')}`;
+   return keep?`<div class="fr keep">${inner}</div>`:`<a class="fr ${d.fresh?'new':''}" href="flow/?step=check&client=${c.id}&doc=${d.id}">${inner}</a>`}).join('')}</div>`;
  }
- FLASH=null;
- // データ
- const decP=[...new Set(c.docs.filter(d=>d.k==='決算書').map(d=>d.p))];
- const noData=decP.filter(p=>!c.data.find(d=>d.p===p));
- const cards=[...c.data.map(d=>({...d})),...noData.map(p=>({p,st:'no'}))].sort((a,b)=>b.p-a.p);
- $('#p-data').innerHTML=cards.length?`<div class="pcards">${cards.map(d=>d.st==='no'?
-  `<div class="pc no"><div class="pt"><b>第 ${d.p} 期</b><span class="pill k">まだ読み取っていない</span></div><div class="pn">—</div><div class="ps">決算書はあります</div><div class="pb"><a class="btn line" href="flow/index.html?mode=ocr&client=${c.id}&period=${d.p}">${ic('i-data')}数字を取り出す</a></div></div>`:
-  `<div class="pc ${d.st==='un'?'un':''}"><div class="pt"><b>第 ${d.p} 期</b><span class="pill ${d.st==='ok'?'a':'y'}">${d.st==='ok'?'確認済':'未確認'}</span></div><div class="pn">${d.v}<span>項目</span></div><div class="ps">${md(d.d)} 読み取り${d.st==='un'?'・確認がまだです':''}</div><div class="pb"><a class="btn ${d.st==='un'?'':'line'}" href="flow/index.html?step=check&client=${c.id}&period=${d.p}">確認画面を開く${ic('i-arrow')}</a><button class="btn ghost csv">${ic('i-dl','sm')}CSV</button></div></div>`).join('')}</div>`
-  :`<div class="empty">構造化データはまだありません。決算書を追加して「数字を取り出す」から作ります</div>`;
- $('#p-data').querySelectorAll('.csv').forEach(b=>b.onclick=()=>toast('CSV を書き出しました（ダミー）'));
- // 資料
+ // 構造化データタブ: 期 × 書類の格子
+ const ps=periods(c);
+ if(!ps.length){$('#p-data').innerHTML=`<div class="empty">まだありません。書類を追加すると、読み取った数字がここに期 × 書類で並びます</div>`}
+ else{
+  const cell=(p,t)=>{const ss=c.docs.filter(d=>d.p===p&&d.parts[t]).map(d=>d.parts[t]);
+   if(!ss.length)return `<td><span class="gc g0">未登録</span></td>`;
+   const s=ss.includes('run')?'run':ss.includes('wait')?'wait':'ok';
+   return `<td><a class="gc g-${s}" href="flow/?step=check&client=${c.id}&period=${p}&type=${t}">${s==='run'?'読み取り中':ST[s][1]}</a></td>`};
+  $('#p-data').innerHTML=`<div class="h3">期 × 書類・マスを押すとその期・その書類の確認へ<button class="btn ghost csv">${ic('i-dl','sm')}CSV</button></div>
+  <div class="gridw"><table class="gtab"><thead><tr><th>期</th>${TYPES.map(t=>`<th><span class="lf">${t[1]}</span><span class="sf">${t[2]}</span></th>`).join('')}</tr></thead>
+  <tbody>${ps.map(p=>`<tr><td>第 ${p} 期</td>${TYPES.map(t=>cell(p,t[0])).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="lgd"><span><i class="gc g-ok sw"></i>確認済</span><span><i class="gc g-wait sw"></i>確認待ち</span><span><i class="gc g-run sw"></i>読み取り中</span><span><i class="gc g0 sw"></i>未登録</span></div>`;
+  $('#p-data').querySelector('.csv').onclick=()=>toast('確認済の数字を CSV に書き出しました（ダミー）');
+ }
+ // 資料タブ: 行 → その資料の流れ（プレビュー）
  const mats=[...c.mats].sort((a,b)=>b.d.localeCompare(a.d));
- $('#p-mats').innerHTML=mats.length?`<ul class="ml">${mats.map(m=>`<li><div class="mth ${m.draft?'draft':''}">${m.draft?'作成中':'資料'}<i></i><i style="width:60%"></i></div><div class="mx2"><b>${m.t}</b><small>${md(m.d)} ${m.draft?'作成開始・'+m.step:'作成'}・${m.pp} 枚</small> ${m.draft?'<span class="pill b">途中</span>':''}</div><div class="mb">${m.draft?`<a class="btn" href="flow/index.html?mode=doc&client=${c.id}">続きから${ic('i-arrow')}</a>`:`<a class="btn line" href="flow/index.html?step=preview&client=${c.id}">プレビュー</a><button class="btn ghost pdf">${ic('i-dl','sm')}PDF</button>`}</div></li>`).join('')}</ul>`
-  :`<div class="empty">資料はまだありません。「資料を作る」から作ります</div>`;
- $('#p-mats').querySelectorAll('.pdf').forEach(b=>b.onclick=()=>toast('PDF を書き出しました（ダミー）'));
+ const mk=`<a class="btn ok" href="flow/?mode=doc&client=${c.id}">${ic('i-slides','sm')}資料を作る</a>`;
+ $('#p-mats').innerHTML=`<div class="h3">作った資料（新しい順）・押すとその資料を開く${has?mk:''}</div>`+(mats.length?`<div class="fl2 mats">
+  <div class="fh"><span></span><span>種類</span><span>使った期</span><span>作成日</span><span></span></div>
+  ${mats.map(m=>`<a class="fr" href="flow/?mode=doc&client=${c.id}&type=${m.type}${m.draft?'':'&view=preview'}"><div class="mth ${m.draft?'draft':''}">${m.draft?'作成中':'資料'}<i></i><i style="width:60%"></i></div><div class="fn"><b>${MATT[m.type]}</b><small>${m.pp} 枚${m.draft?'・'+m.step:''}</small></div><div class="pp">${m.ps}</div><div class="pg">${md(m.d)}${m.draft?' <span class="pill b">途中</span>':''}</div>${ic('i-chr')}</a>`).join('')}</div>`
+  :`<div class="empty">資料はまだありません</div>`);
 }
-
+/* 読み取り（自動 OCR）の進み具合 */
+function startOcr(c,d){toast('読み取りを始めました');
+ const t=setInterval(()=>{d.prog=Math.min(100,(d.prog||0)+17);
+  if(d.prog>=100){clearInterval(t);Object.keys(d.parts).forEach(k=>d.parts[k]='wait');d.un=9;toast(`${d.n} の読み取りが終わりました。確認待ちです`)}
+  if(CUR===c.id&&$('#v-client').classList.contains('on'))renderClient(TAB)},700)}
 /* ---- S3 ---- */
 let UP=null;
 function renderUpload(){
@@ -746,8 +815,12 @@ const dz=$('#drop');
 ['dragenter','dragover'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('ov')}));
 ['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('ov')}));
 dz.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];pick(f?f.name:'決算報告書_スキャン.pdf',f?(f.size/1048576).toFixed(1)+' MB':'2.4 MB')});
-$('#bReg').onclick=()=>{const c=byId(CUR);const d={k:$('#sKind').value,p:+$('#sPer').value,n:$('#iName').value||'書類.pdf',pg:4,d:'2026-11-26'};
- c.docs.push(d);c.upd='2026-11-26';FLASH=d;toast(`${d.n} を登録しました`);location.hash='#client='+c.id+'&tab=docs'};
+$('#bReg').onclick=()=>{const c=byId(CUR);const k=$('#sKind').value,p=+$('#sPer').value;
+ const parts=k==='決算書'?(c.id==='C1'?{pl:'run',bs:'run',sga:'run',mfg:'run'}:{pl:'run',bs:'run',sga:'run'}):k==='勘定科目内訳書'?{uw:'run'}:{};
+ let id=(k==='決算書'?'k':k==='その他'?'o':'uw')+p;while(c.docs.some(x=>x.id===id))id+='b';
+ const d={id,k,p,n:$('#iName').value||'書類.pdf',pg:4,d:'2026-11-26',parts,prog:0,fresh:true};
+ c.docs.push(d);c.upd='2026-11-26';location.hash='#client='+c.id+'&tab=docs';
+ if(Object.keys(parts).length)startOcr(c,d);else toast(d.n+' を保管しました')};
 
 route();
 </script>

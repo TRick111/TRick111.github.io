@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>決算書ツール モック v3 | 数字を取り出す・資料を作る</title>
+<title>決算書ツール モック v4 | 数字を取り出す・資料を作る</title>
 <style>
 :root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
 *{box-sizing:border-box}
@@ -547,6 +547,84 @@ svg.edsvg{touch-action:none;cursor:crosshair}
 .rlist{margin:0 0 12px;padding-left:18px;font-size:13px}
 .rlist li{margin-bottom:4px}
 .lbbtn{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+/* ===== v4 1 期・1 書類／S6 根拠つきプレビュー ===== */
+.pdsw{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.pdrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.pdrow>small{font-size:12px;font-weight:800;color:var(--sub);width:34px;flex:none}
+.pdbtns{display:flex;gap:6px;flex-wrap:wrap;min-width:0;flex:1}
+.pdb{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 11px;font:inherit;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;white-space:nowrap}
+.pdb.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.pdb .ic{width:13px;height:13px;color:var(--ok)}
+.pdb.on .ic{color:#9fe0c4}
+.pdb .bd{font-size:10.5px;font-weight:800;border-radius:9px;padding:0 6px;line-height:1.6;background:#fff0c2;color:#8a6d1f}
+.pdb .bd.g{background:#eef1f5;color:var(--sub)}
+.pdb.on .bd{background:rgba(255,255,255,.2);color:#fff}
+.confd{display:inline-flex;align-items:center;gap:5px;color:var(--ok);font-weight:800;font-size:13px}
+.vt span.v.ro{cursor:default}
+.nof{border:1px dashed var(--line);border-radius:10px;padding:18px 14px;text-align:center;color:var(--sub);font-size:13px}
+.nof .btn{margin-top:10px}
+.qbtn{margin-left:8px}
+.quickl{margin:0 0 12px;padding-left:18px;font-size:13px}
+.quickl li{margin-bottom:5px}
+.rq td.use{font-size:12.5px;color:var(--txt)}
+.rq td.use .ic{width:12px;height:12px;color:var(--sub);vertical-align:-1px;margin:0 3px}
+.ty .use{font-size:12px;color:var(--navy2);font-weight:700}
+.pvbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pvbar .r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.provb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff4ea;border:1px solid #f3c9a6;color:var(--warn);border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:700;margin-bottom:12px}
+.pv2{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:16px;align-items:start}
+.pv2.cl{grid-template-columns:48px minmax(0,1fr)}
+.evp{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;position:sticky;top:10px}
+.evh{display:flex;align-items:center;gap:8px}
+.evh b{font-size:14px}
+.evh .btn{margin-left:auto;padding:4px 9px;font-size:12px}
+.pv2.cl .evp{padding:8px 4px}
+.pv2.cl .evh{flex-direction:column}
+.pv2.cl .evh b{writing-mode:vertical-rl;font-size:13px;letter-spacing:.1em}
+.pv2.cl .evh .btn{margin:0;padding:6px}
+.pv2.cl .evb{display:none}
+.evt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.evt th{font-size:11px;color:var(--sub);text-align:right;padding:4px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+.evt th:first-child{text-align:left}
+.evt td{border-bottom:1px solid #eef1f5;padding:5px 4px;vertical-align:top}
+.evt td.k b{display:block;font-size:12.5px}
+.evt td.k small{display:block;font-size:10.5px;color:var(--sub);line-height:1.35;margin-top:1px}
+.evt td.n{text-align:right}
+.evv{border:none;background:none;font:inherit;font-variant-numeric:tabular-nums;font-weight:700;color:var(--txt);cursor:pointer;padding:1px 3px;border-radius:3px;white-space:nowrap}
+.evv.w{background:#fff4d6}
+.evv.hl,.a4 [data-ev].hl{background:#ffe08a;box-shadow:0 0 0 2px #c0392b inset}
+.evn{font-size:11px;color:var(--sub);margin-top:8px}
+.a4w{min-width:0}
+.pv2.cl .a4{max-width:900px}
+.a4{background:#fff;border:1px solid var(--line);box-shadow:0 4px 18px rgba(20,40,70,.12);max-width:680px;margin:0 auto;aspect-ratio:210/297;padding:28px 30px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.a4 .ah{border-bottom:3px solid var(--navy);padding-bottom:8px}
+.a4 .ah b{font-size:18px;color:var(--navy);display:block}
+.a4 .ah small{font-size:11.5px;color:var(--sub)}
+.a4 h4{font-size:12.5px;margin:0 0 6px;color:var(--navy)}
+.a4 table{width:100%;border-collapse:collapse;font-size:12px}
+.a4 th{background:#eef1f5;font-size:11px;padding:5px 6px;text-align:right}
+.a4 th:first-child{text-align:left}
+.a4 td{padding:5px 6px;border-bottom:1px solid #eef1f5;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.a4 td:first-child{text-align:left;font-weight:700}
+.a4 [data-ev]{cursor:pointer;border-radius:3px}
+.a4 .tmp{color:var(--warn);font-size:10px;font-weight:800;margin-left:3px}
+.a4 .obs{font-size:12px}
+.a4 .afoot{margin-top:auto;font-size:10px;color:#9aa3ae;display:flex;justify-content:space-between}
+@media(max-width:900px){
+ .pv2,.pv2.cl{grid-template-columns:minmax(0,1fr)}
+ .evp{position:static}
+ .pv2.cl .evp{padding:8px 12px}
+ .pv2.cl .evh{flex-direction:row}
+ .pv2.cl .evh b{writing-mode:horizontal-tb}
+ .pv2.cl .evh .btn{margin-left:auto;padding:4px 9px}
+}
+@media(max-width:600px){
+ .pdrow>small{width:100%}
+ .pdbtns{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
+ .a4{padding:16px 14px;aspect-ratio:auto}
+ .a4 td,.a4 th{padding:4px 3px;font-size:11px}
+ .pvbar .r{margin-left:0}
+}
 /* ===== v3 エリアを読む ===== */
 .artool{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin:-2px 0 8px;padding:6px 8px;background:#f5f7fa;border:1px solid var(--line);border-radius:8px}
 .artool .btn{padding:5px 10px;font-size:12.5px}
@@ -630,7 +708,7 @@ svg.edsvg{touch-action:none;cursor:crosshair}
  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M5 19l1-4.5L15.5 5a2 2 0 012.8 0l.7.7a2 2 0 010 2.8L9.5 18z"/><path d="M13.5 7l3.5 3.5"/></symbol>
 </svg>
 <header>
- <h1>決算書ツール</h1><span class="tag">モック v3</span>
+ <h1>決算書ツール</h1><span class="tag">モック v4</span>
  <span class="hcl" id="hcl"></span>
  <a class="hback" id="hback" href="../index.html#clients"><svg class="ic sm"><use href="#i-back"/></svg>クライアントに戻る</a>
 </header>
@@ -710,7 +788,8 @@ function pageSVG(d,i,boxes){
    if(v!=null){const t=fmt(Math.round(v));s+=T(274,y,t,{a:'end',b,fs:8.5});
     if(boxes){const row={key,lb,v:Math.round(v),y0:y-10,y1:y+4};ROWL.push(row);
      if(key&&!(S.ed&&S.ed.mode==='frame'&&S.ed.p===d.p&&S.ed.k===key)){const x=cell(d.p,key),bb=boxOf(d.p,key,row);
-      if(bb)s+=`<rect class="bx${x.st==='warn'?' warn':''}" data-k="${key}" x="${bb.x}" y="${bb.y}" width="${bb.w}" height="${bb.h}" rx="1.5"/>`}}}
+      if(bb)s+=`<rect class="bx${x.st==='warn'?' warn':''}" data-k="${key}" x="${bb.x}" y="${bb.y}" width="${bb.w}" height="${bb.h}" rx="1.5"/>`}
+     else if(!key&&k!=='pl'&&k!=='bs')s+=`<rect class="bx" data-k="r${ROWL.length-1}" x="200" y="${y-10}" width="78" height="14" rx="1.5"/>`}}
    y+=rh});
   if(boxes)(EXTRA[c]||[]).forEach(r=>{const m=r.meta&&r.meta[d.p];if(m&&m.box&&r.st===k){const b=m.box;s+=`<rect class="bx" data-k="${r.k}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1.5"/>`}});
   s+=`<rect x="20" y="66" width="260" height="${y-66-10}" fill="none" stroke="#999"/><line x1="190" y1="66" x2="190" y2="${y-10}" stroke="#bbb"/>`;}
@@ -725,11 +804,11 @@ function pageGrid(d,title){let s=`<svg viewBox="0 0 300 420" xmlns="http://www.w
 function stepper(items,now,onClick){
  return `<div class="stp">`+items.map((t,i)=>{const n=i+1,st=n<now?'ok':n===now?'now':'';
   return (i?`<span class="bar2 ${n<=now?'ok':''}"></span>`:'')+`<button class="s ${st} ${onClick&&n<now?'link':''}" data-step="${n}" ${onClick&&n<now?'':'tabindex="-1"'}><span class="n">${n<now?ic('check'):n}</span><span class="t">${t}</span></button>`}).join('')+`</div>`}
-const OCR_STEPS=['書類とページを選ぶ','読み取り中','完了'];
+const OCR_STEPS=['面を選ぶ','読み取り中','完了'];
 const DOC_STEPS=['資料の種類','必要書類','データの状態','生成'];
 function head(){
  $('hcl').textContent=C().name;
- $('hback').href=back(S.view==='s5'||S.view.startsWith('s4')?'data':S.view==='s6'&&S.s6===4&&S.gen?'mats':'docs');}
+ $('hback').href=back(S.view.startsWith('s4')?'docs':S.view==='s5'?(S.fromDoc?'docs':'data'):S.view==='s6'&&S.s6===4&&S.gen?'mats':'docs');}
 function detourBar(){if(!S.detour)return'';
  return `<div class="detour">${ic('arrow','sm')}資料の作成の途中（${S.detour}）。終わると「データの状態」に戻ります<button class="btn ghost" data-act="todoc">資料の作成に戻る</button></div>`}
 function render(){head();const a=$('app');
@@ -754,15 +833,17 @@ function vSel(){const docs=C().docs;
   <button class="btn go" data-act="run" ${n?'':'disabled'}>${ic('scan')}OCR を実行</button></div>`+
  (todo.length?todo.map(docSec).join(''):`<div class="empty">すべてのページが OCR 済みです</div>`)+
  (fin_.length?`<details class="olds" ${fin_.some(d=>PAGES[d.kind].some((_,i)=>S.sel[d.id+':'+i]))?'open':''}><summary>OCR 済みの書類（${fin_.length} 冊）</summary>${fin_.map(docSec).join('')}</details>`:'')}
-function mh(){const doc=S.detour;return `<div class="mh"><h2>${ic(doc?'doc':'scan','lg')}${doc?'資料を作る':'数字を取り出す'}</h2></div>`}
+function mh(){const doc=S.detour;return `<div class="mh"><h2>${ic(doc?'doc':'scan','lg')}${doc?'資料を作る':S.auto?'書類の読み取り（自動）':'面を選んで読み直す'}</h2>${!S.auto&&!doc&&S.view==='s4sel'?'<div class="mtools"><button class="btn line" data-act="tocheck">'+ic('back','sm')+'読み取り確認に戻る</button></div>':''}</div>`}
+function autoQueue(p){const q=[];C().docs.forEach(d=>{if(p&&d.p!==p)return;PAGES[d.kind].forEach((g,i)=>{if(!isDone(d,i))q.push(d.id+':'+i)})});return q}
+function startAuto(p){S.auto=true;S.sel={};autoQueue(p).forEach(id=>S.sel[id]=1);if(!selCount()){S.queue=[];S.view='s4done';render();return}startRun()}
 
 // ===== S4② =====
 let runT=null;
 function vRun(){const L=S.queue,n=L.length;
- return mh()+detourBar()+stepper(OCR_STEPS,2)+`<div class="card runc"><b style="font-size:15px">読み取り中</b>
+ return mh()+detourBar()+(S.auto?`<p class="note" style="margin:-4px 0 12px">アップロードした書類は、すべて自動で読み取ります。終わると読み取り確認に進めます。</p>`:stepper(OCR_STEPS,2))+`<div class="card runc"><b style="font-size:15px">読み取り中</b>
  <div class="pbar"><i id="pb"></i></div>
  <div class="runrow"><div class="cur" id="rcur"></div><div><div class="rnum"><span id="rn">0</span><small> ／ ${n} 面</small></div><div class="rnow" id="rnow"></div><div class="rleft" id="rleft"></div></div></div>
- <div class="bar" style="justify-content:flex-start"><button class="btn ghost" data-act="cancel">中止</button><span class="note">閉じても読み取りは続きます</span></div></div>`}
+ <div class="bar" style="justify-content:flex-start">${S.auto?`<a class="btn ghost" href="${back('docs')}">${ic('back','sm')}書類タブに戻る</a>`:'<button class="btn ghost" data-act="cancel">中止</button>'}<span class="note">閉じても読み取りは続きます</span></div></div>`}
 function startRun(){S.queue=Object.keys(S.sel);S.view='s4run';render();const n=S.queue.length;let i=0;const step=Math.max(300,Math.round(3000/n));
  const tick=()=>{const [did,pi]=S.queue[Math.min(i,n-1)].split(':'),d=C().docs.find(x=>x.id===did),idx=+pi;
   $('rn').textContent=Math.min(i+1,n);$('pb').style.width=(Math.min(i+1,n)/n*100)+'%';
@@ -777,36 +858,54 @@ function finishRun(){S.queue.forEach(id=>{const [did,pi]=id.split(':'),d=C().doc
 
 // ===== S4③ =====
 function vDone(){const n=S.queue.length;
- return mh()+detourBar()+stepper(OCR_STEPS,3)+`<div class="card runc"><b style="font-size:15px;display:inline-flex;align-items:center;gap:6px;color:var(--ok)">${ic('check')}読み取りが終わりました</b>
+ if(!n)return mh()+detourBar()+`<div class="card runc"><b style="font-size:15px;display:inline-flex;align-items:center;gap:6px;color:var(--ok)">${ic('check')}読み取りが必要な書類はありません</b><div class="endbar"><button class="btn big" data-act="tocheck">読み取り確認へ${ic('arrow')}</button><a class="btn line" href="${back('docs')}">書類タブに戻る</a></div></div>`;
+ return mh()+detourBar()+(S.auto?'':stepper(OCR_STEPS,3))+`<div class="card runc"><b style="font-size:15px;display:inline-flex;align-items:center;gap:6px;color:var(--ok)">${ic('check')}読み取りが終わりました</b>
  <div class="kp3"><div><small>読んだ面</small><b>${n}</b><span>面</span></div><div><small>取り出した値</small><b>${n*27}</b><span>個</span></div><div><small>要確認</small><b class="w">${WARN[S.c]?1:0}</b><span>個</span></div></div>
- <div class="endbar"><button class="btn big" data-act="tocheck">読み取り結果を確認${ic('arrow')}</button><a class="btn line" href="${back('data')}">あとで確認する</a></div></div>`}
+ <div class="endbar"><button class="btn big" data-act="tocheck">確認する${ic('arrow')}</button><a class="btn line" href="${back('docs')}">あとで確認する</a></div></div>`}
 
 // ===== S5 =====
 function periods(){return Object.keys(C().data).filter(p=>C().data[p]!=='no').map(Number).sort()}
+const DOCTYPES=[['pl','損益計算書'],['bs','貸借対照表'],['sga','販管費内訳'],['mfg','製造原価'],['uw','勘定科目内訳書']];
+const TLAB=Object.fromEntries(DOCTYPES);
+const CONF={}; // 確認済みにした書類 'C1:18:pl'
+function faceLoc(p,t){const kind=t==='uw'?'勘定科目内訳書':'決算書',d=C().docs.find(x=>x.kind===kind&&x.p===p);if(!d)return null;const i=PAGES[kind].findIndex(g=>g[0]===t);return i<0?null:{d,i}}
+function faceRead(p,t){const L=faceLoc(p,t);return !!L&&isDone(L.d,L.i)}
+function typesOf(p){return DOCTYPES.filter(([t])=>faceLoc(p,t)).map(a=>a[0])}
+function isConf(p,t){return C().data[p]==='ok'||!!CONF[`${S.c}:${p}:${t}`]}
+function rowsOf(t){return ROWS.filter(r=>r[0]!=='sec'&&r[2]===t).map(r=>r[0]).concat((EXTRA[S.c]||[]).filter(r=>(r.st||'pl')===t).map(r=>r.k))}
 function vChk(){const ps=periods();
- if(!ps.length)return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2></div><div class="empty">確認できる読み取り結果がありません。<br><br><button class="btn" data-act="toocr">${ic('scan')}OCR する</button></div>`;
- if(!S.face)S.face={p:ps[ps.length-1],st:'pl'};
- const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===S.face.p),pi=S.face.st==='bs'?1:2;
- const un=ps.filter(p=>C().data[p]==='un');
- const faceStr=kd?pageSVG(kd,pi,true):'';
- const dfs=ps.map(diffs),stt=stats(),zero=!stt.un&&!stt.w&&!stt.df;
- const cellTd=(p,j,k,st)=>{const x=cell(p,k),d=dfs[j][k],sel=S.ed&&S.ed.p===p&&S.ed.k===k,np=npl(x);
+ if(!ps.length)return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2></div><div class="empty">まだ読み取りの結果がありません（アップロードした書類を読み取り中）。<br><br><button class="btn" data-act="toocr">${ic('scan')}読み取りの進み具合を見る</button></div>`;
+ if(!S.face||!ps.includes(S.face.p))S.face={p:ps[ps.length-1],st:'pl'};
+ const P=S.face.p,ts=typesOf(P);if(!ts.includes(S.face.st))S.face.st=ts[0]||'pl';
+ const T=S.face.st,L=faceLoc(P,T),rd=faceRead(P,T),cf=isConf(P,T),edit=T==='pl'||T==='bs';
+ const faceStr=L?pageSVG(L.d,L.i,rd):'';if(!rd)ROWL=[];
+ const stt=stats(P,T),dfs=diffs(P);
+ // 上段: 期と書類の切替
+ const pb=ps.map(p=>`<button class="pdb ${p===P?'on':''}" data-fp="${p}">第${p}期${C().data[p]==='ok'?ic('check'):''}</button>`).join('');
+ const tb_=ts.map(t=>{const n=faceRead(P,t)?stats(P,t):null,c=n?n.un+n.w+n.df:0;
+  return `<button class="pdb ${t===T?'on':''}" data-fs="${t}">${TLAB[t]}${!faceRead(P,t)?'<span class="bd g">未読</span>':isConf(P,t)?ic('check'):c?`<span class="bd">${c}</span>`:''}</button>`}).join('');
+ const sw=`<div class="pdsw"><div class="pdrow"><small>期</small><div class="pdbtns">${pb}</div></div><div class="pdrow"><small>書類</small><div class="pdbtns">${tb_}</div></div></div>`;
+ // カウンタ・帯（0 でないものだけ）
+ const cs=[['un','未読','n'],['w','要確認','n'],['df','合計ずれ','n'],['np','場所未指定','i']].filter(a=>stt[a[0]]);
+ const cnts=cs.length?`<div class="cnts">${cs.map(a=>`<span class="cnt1 ${a[2]}">${a[1]}<b>${stt[a[0]]}</b></span>`).join('')}${stt.un?`<span class="band">${ic('warn','sm')}この書類に空が ${stt.un} つ<button class="btn ghost" data-act="edfirst">空の項目へ${ic('arrow','sm')}</button></span>`:''}</div>`:'';
+ const zero=!stt.un&&!stt.w&&!stt.df;
+ const cbtn=!rd?'':cf?`<span class="confd">${ic('check')}この書類は確認済み</span>`:`<button class="btn ${zero?'ok':'line'}" data-act="confirm">${ic('check')}この書類を確認済みにする</button>`;
+ const cellTd=(p,k,st)=>{const x=cell(p,k),d=dfs[k],sel=S.ed&&S.ed.p===p&&S.ed.k===k,np=npl(x);
   return `<td class="num"><span class="v${x.st==='warn'?' w':''}${x.st==='blank'?' e':''}${d?' bad':''}${sel?' sel':''}${np?' np':''}" data-p="${p}" data-k="${k}" ${st?`data-st="${st}"`:''} role="button" tabindex="0">${x.v==null?'—':fmtv(x.v)}${x.st==='blank'?'<span class="un">未読</span>':''}${mark(x)}${np?`<span class="npm" title="押すと原本で場所を指す">${ic('area','sm')}場所未指定</span>`:''}${d?`<span class="df">差 ${fmt(Math.abs(d.d))}</span>`:''}</span></td>`};
- let tb='';ROWS.forEach(r=>{if(r[0]==='sec'){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>${r[1]}</span></td></tr>`;return}
-  tb+=`<tr><td class="k">${r[1]}</td>`+ps.map((p,j)=>cellTd(p,j,r[0],r[2])).join('')+`</tr>`});
- const xs=EXTRA[S.c]||[];
- if(xs.length){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>足した行（表に無かった科目）</span></td></tr>`;xs.forEach(r=>{tb+=`<tr class="xr"><td class="k">${esc(r.name)}</td>`+ps.map((p,j)=>cellTd(p,j,r.k,r.st||'')).join('')+`</tr>`})}
- const th=p=>{const mf=missFaces(p);return `<th class="num">第${p}期<span class="pill ${C().data[p]==='ok'?'a':'y'}">${C().data[p]==='ok'?'確認済':'未確認'}</span>${mf.length?`<span class="unf">${mf.map(o=>LAB[o.k]).join('・')} 面が未読<button class="lnk" data-act="reocr" data-doc="${mf[0].d.id}" data-i="${mf.map(o=>o.i).join(',')}">S4 で読む</button></span>`:''}</th>`};
- const bp=ps.map(p=>[p,stt.list.filter(o=>o.p===p&&o.t==='未読').length]).filter(a=>a[1]);
- const cnts=`<div class="cnts"><span class="cnt1 ${stt.un?'n':'z'}">未読<b>${stt.un}</b></span><span class="cnt1 ${stt.w?'n':'z'}">要確認<b>${stt.w}</b></span><span class="cnt1 ${stt.df?'n':'z'}">合計ずれ<b>${stt.df}</b></span><span class="cnt1 ${stt.np?'i':'z'}" title="手で入れた数字で、原本の場所が付いていないもの">場所未指定<b>${stt.np}</b></span>`+
-  (bp.length?`<span class="band">${ic('warn','sm')}${bp.map(a=>`第 ${a[0]} 期に空が ${a[1]} つ`).join('、')}<button class="btn ghost" data-act="edfirst">空の項目へ${ic('arrow','sm')}</button></span>`:zero?`<span class="band okb">${ic('check','sm')}直すところはありません</span>`:'')+`</div>`;
- return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2><div class="mtools"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物の確認画面を開く（既存モック）</a><button class="btn ${zero?'ok pulse':'line'}" data-act="confirm">${ic('check')}確認済みにする</button></div></div>`+detourBar()+cnts+
- `<div class="chk"><div class="card"><div class="faceh"><b>原本　第${S.face.p}期 ${LAB[S.face.st]}</b><div class="seg2">${ps.map(p=>`<button class="${p===S.face.p?'on':''}" data-fp="${p}">${p}期</button>`).join('')}</div><div class="seg2"><button class="${S.face.st==='pl'?'on':''}" data-fs="pl">PL</button><button class="${S.face.st==='bs'?'on':''}" data-fs="bs">BS</button></div></div>
- ${arTool()}<div class="facew" id="face">${frameMode(S.face.p,S.face.st)?withOv(faceStr,true):faceStr}</div></div>
- <div class="card"><div class="faceh"><b>読み取った数字</b><span class="note">（単位：千円・数字を押すと直せる）</span></div><div class="tw"><table class="vt"><thead><tr><th>科目</th>${ps.map(th).join('')}</tr></thead><tbody>${tb}</tbody></table></div>
- <div class="addr"><button class="btn ghost" data-act="edadd">${ic('plus','sm')}行を足す</button></div>
- <div class="legend2"><span><i style="background:#fff1c7;border:1px solid #e2c770"></i>乗せると原本の枠が光る</span><span><i style="background:#fff4d6;border:1px solid #d4a72c"></i>自信が低い</span><span><i style="background:#fff;border-bottom:2px solid #c0392b"></i>合計が合わない</span><span>${ic('redo','sm')}読み直し</span><span>${ic('pencil','sm')}手入力</span><span>${ic('plus','sm')}原本から追加</span><span><i class="dsh"></i>場所未指定（押すと場所を指せる）</span><span>未確認 ${un.length} 期</span></div>
- ${vEd(faceStr)}</div></div>`}
+ let tb='';
+ if(edit)ROWS.forEach(r=>{if(r[0]!=='sec'&&r[2]===T)tb+=`<tr><td class="k">${r[1]}</td>${cellTd(P,r[0],T)}</tr>`});
+ else ROWL.forEach((r,i)=>{tb+=`<tr><td class="k">${esc(r.lb)}</td><td class="num"><span class="v ro" data-k="r${i}" data-p="${P}">${fmt(r.v)}</span></td></tr>`});
+ const xs=(EXTRA[S.c]||[]).filter(r=>(r.st||'pl')===T);
+ if(xs.length){tb+=`<tr><td class="sec2" colspan="2"><span>足した行（表に無かった科目）</span></td></tr>`;xs.forEach(r=>{tb+=`<tr class="xr"><td class="k">${esc(r.name)}</td>${cellTd(P,r.k,r.st||'')}</tr>`})}
+ const right=!rd?`<div class="nof">${L?`第${P}期 ${TLAB[T]}の数字はまだ読めていません。`:'この書類はありません。'}<br>${L?`<button class="btn" data-act="reocr" data-doc="${L.d.id}" data-i="${L.i}">${ic('scan')}S4 で読む（面を選んで読み直す）</button>`:''}</div>`:
+  `<div class="tw"><table class="vt"><thead><tr><th>科目</th><th class="num">第${P}期</th></tr></thead><tbody>${tb}</tbody></table></div>
+  <div class="addr"><button class="btn ghost" data-act="edadd">${ic('plus','sm')}行を足す</button>${edit?'':'<span class="note">このモックでは、数字を直すのは損益計算書・貸借対照表で試せます</span>'}</div>
+  <div class="legend2"><span><i style="background:#fff1c7;border:1px solid #e2c770"></i>乗せると原本の枠が光る</span><span><i style="background:#fff4d6;border:1px solid #d4a72c"></i>自信が低い</span><span><i style="background:#fff;border-bottom:2px solid #c0392b"></i>合計が合わない</span><span>${ic('redo','sm')}読み直し</span><span>${ic('pencil','sm')}手入力</span><span>${ic('plus','sm')}原本から追加</span><span><i class="dsh"></i>場所未指定（押すと場所を指せる）</span></div>`;
+ return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2><div class="mtools"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物の確認画面を開く（既存モック）</a>${cbtn}</div></div>`+detourBar()+sw+cnts+
+ `<div class="chk"><div class="card"><div class="faceh"><b>原本　第${P}期 ${TLAB[T]}</b>${L?`<span class="chipk">${L.d.kind} p.${L.i+1}</span>`:''}</div>
+ ${rd?arTool():''}<div class="facew" id="face">${frameMode(P,T)?withOv(faceStr,true):faceStr}</div></div>
+ <div class="card"><div class="faceh"><b>読み取った数字</b><span class="note">（単位：千円${edit?'・数字を押すと直せる':''}）</span></div>${right}
+ ${rd?vEd(faceStr):''}</div></div>`}
 function hl(k,on){document.querySelectorAll('#face .bx').forEach(b=>b.classList.toggle('hl',on&&b.dataset.k===k))}
 
 // ===== S5 修正（W6）=====
@@ -822,7 +921,7 @@ function cell(p,k){
  const e=ED[ck(p,k)];if(e)return {v:e.v,st:e.how==='empty'?'empty':'ok',ed:e};
  const r=READ[S.c]&&READ[S.c][p];const v=r&&k in r?r[k]:fin(S.c,p)[k];
  if(v==null)return {v:null,st:'blank'};
- return {v,st:WARN[S.c]&&WARN[S.c][p]===k&&C().data[p]==='un'?'warn':'ok'}}
+ return {v,st:WARN[S.c]&&WARN[S.c][p]===k&&!isConf(p,faceOf(k))?'warn':'ok'}}
 function mark(x){if(!x.ed||x.st==='empty')return '';const h=x.ed.how;return `<span class="mk" title="${h==='reread'?'読み直し':h==='add'?'原本から追加':'手入力'}">${ic(h==='reread'?'redo':h==='add'?'plus':'pencil')}</span>`}
 const npl=x=>x.v!=null&&!!x.ed&&x.ed.how==='input'&&!x.ed.box; // 場所未指定
 function cands(p,k){const c=CAND[ck(p,k)];if(c)return c;const t=fin(S.c,p)[k],d=t>=100000?3000:300;return [{v:t,e:'エンジン A',n:1},{v:t+d,e:'エンジン B',n:1},{v:t*10,e:'エンジン C',n:1}]}
@@ -832,10 +931,11 @@ function diffs(p){const g=k=>cell(p,k).v,o={},s=g('sales'),c=g('cogs'),gp=g('gp'
  if(s!=null&&c!=null&&gp!=null&&s-c!==gp)o.gp={d:gp-(s-c),f:'売上高 − 売上原価',rel:'cogs'};
  if(gp!=null&&sga!=null&&op!=null&&gp-sga!==op)o.op={d:op-(gp-sga),f:'売上総利益 − 販管費',rel:'sga'};
  return o}
-function stats(){const o={un:0,w:0,df:0,np:0,list:[]};
- periods().forEach(p=>{(EXTRA[S.c]||[]).forEach(r=>{if(npl(cell(p,r.k)))o.np++});ROWS.forEach(r=>{if(r[0]==='sec')return;const x=cell(p,r[0]);if(npl(x))o.np++;
-   if(x.st==='blank'){o.un++;o.list.push({p,k:r[0],t:'未読'})}else if(x.st==='warn'){o.w++;o.list.push({p,k:r[0],t:'自信が低い'})}});
-  Object.entries(diffs(p)).forEach(([k,d])=>{o.df++;o.list.push({p,k,t:`合計が ${fmt(Math.abs(d.d))} 合わない`})})});
+function stats(p,t){p=p==null?S.face.p:p;t=t||S.face.st;const o={un:0,w:0,df:0,np:0,list:[]};
+ if(!faceRead(p,t))return o;
+ rowsOf(t).forEach(k=>{const x=cell(p,k);if(npl(x))o.np++;if(isX(k))return;
+  if(x.st==='blank'){o.un++;o.list.push({p,k,t:'未読'})}else if(x.st==='warn'){o.w++;o.list.push({p,k,t:'自信が低い'})}});
+ if(t==='pl')Object.entries(diffs(p)).forEach(([k,d])=>{o.df++;o.list.push({p,k,t:`合計が ${fmt(Math.abs(d.d))} 合わない`})});
  return o}
 function missFaces(p){const d=C().docs.find(x=>x.kind==='決算書'&&x.p===p);if(!d)return [];
  return PAGES[d.kind].map((g,i)=>({d,i,k:g[0]})).filter(o=>['bs','pl','sga'].includes(o.k)&&!isDone(d,o.i))}
@@ -952,13 +1052,16 @@ function placeApply(){const e=S.ed,b=Object.assign({},e.box);
  if(isX(e.k)){const r=EXTRA[S.c].find(o=>o.k===e.k);r.st=e.st;r.meta=r.meta||{};r.meta[e.p]=Object.assign({how:'input'},r.meta[e.p],{box:b})}
  else ED[ck(e.p,e.k)].box=b;
  S.ed={p:e.p,k:e.k,mode:isX(e.k)?'input':null,box:null,res:null,err:null};rerender(false);toast('場所を付けました')}
-function doConfirm(){periods().forEach(p=>C().data[p]='ok');$('lb').classList.remove('on');S.ed=null;
- if(S.detour){toast('確認済みにしました');S.detour=null;S.view='s6';S.s6=3;render()}
- else{toast('確認済みにしました');setTimeout(()=>location.href=back('data'),900)}}
+function doConfirm(){const p=S.face.p,t=S.face.st;CONF[`${S.c}:${p}:${t}`]=true;$('lb').classList.remove('on');S.ed=null;
+ const rest=typesOf(p).filter(x=>NUMERIC.includes(x)&&faceRead(p,x)&&!isConf(p,x));
+ if(!rest.length)C().data[p]='ok';
+ if(S.detour&&C().data[p]==='ok'){toast(`第${p}期を確認済みにしました`);S.detour=null;S.view='s6';S.s6=3;render();return}
+ if(rest.length){S.face.st=rest[0];toast(`確認済みにしました。次は ${TLAB[rest[0]]}`)}else toast(`第${p}期の書類はすべて確認済みです`);
+ render()}
 function edAct(k,x){const e=S.ed;
  if(k==='edx'){S.ed=null;rerender(false)}
  else if(k==='edm'){const m=x.dataset.m;e.err=null;e.res=null;
-  if(m==='frame'){const st=faceOf(e.k);S.face={p:e.p,st};const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===e.p);if(kd)pageSVG(kd,st==='bs'?1:2,true);
+  if(m==='frame'){const st=faceOf(e.k);S.face={p:e.p,st};const FL=faceLoc(e.p,st);if(FL)pageSVG(FL.d,FL.i,true);
    const r=ROWL.find(o=>o.key===e.k),bb=r?boxOf(e.p,e.k,r):null;e.box=bb?Object.assign({},bb):null}
   e.mode=e.mode===m&&m!=='reread'?null:m;rerender(false)}
  else if(k==='edpick')setEd(e.p,e.k,+x.dataset.v,'reread');
@@ -985,36 +1088,58 @@ function edAct(k,x){const e=S.ed;
  else if(k==='xdel'){EXTRA[S.c]=EXTRA[S.c].filter(o=>o.k!==e.k);S.ed=null;rerender(false)}
  else if(k==='eds4'||k==='reocr'){let did,is;
   if(k==='reocr'){did=x.dataset.doc;is=x.dataset.i.split(',').map(Number)}else{const d=C().docs.find(d=>d.kind==='決算書'&&d.p===e.p);did=d.id;is=[faceOf(e.k)==='bs'?1:2]}
-  S.ed=null;S.sel={};is.forEach(i=>S.sel[did+':'+i]=1);S.view='s4sel';render()}
+  S.ed=null;S.auto=false;S.sel={};is.forEach(i=>S.sel[did+':'+i]=1);S.view='s4sel';render()}
  else if(k==='confirm'){const st=stats();if(!st.list.length){doConfirm();return}
-  $('lbt').textContent=`まだ ${st.list.length} 件残っています`;
+  $('lbt').textContent=`この書類にまだ ${st.list.length} 件残っています`;
   $('lbb').innerHTML=`<ul class="rlist">${st.list.map(o=>`<li>第${o.p}期 ${esc(rowName(o.k))} — ${o.t} <button class="lnk" data-lp="${o.p}" data-lk="${o.k}">直す</button></li>`).join('')}</ul><div class="lbbtn"><button class="btn line" data-lact="back">戻って直す</button><button class="btn" data-lact="go">このまま確認済みにする</button></div>`;
   $('lb').classList.add('on')}}
 
 // ===== S6 =====
-const TYPES=[{id:'ds',t:'ディスカッションシート',s:'提案の場で使う 1 枚',need:'決算書 3 期',mini:'gr'},{id:'sum',t:'決算分析サマリー',s:'3 期の推移と所見',need:'決算書 3 期',mini:'bars'},{id:'stk',t:'自社株評価の下準備',s:'評価に使う数字の一覧',need:'決算書 3 期＋勘定科目内訳書',mini:'gr'}];
+const TYPES=[{id:'ds',t:'ディスカッションシート',s:'提案の場で使う 1 枚',need:'決算書 3 期',use:'損益計算書・貸借対照表（3 期）',mini:'gr'},{id:'sum',t:'決算分析サマリー',s:'3 期の推移と所見',need:'決算書 3 期',use:'損益計算書・貸借対照表・販管費内訳（3 期）',mini:'bars'},{id:'stk',t:'自社株評価の下準備',s:'評価に使う数字の一覧',need:'決算書 3 期＋勘定科目内訳書',use:'貸借対照表（3 期）・勘定科目内訳書（最新期）',mini:'gr'}];
 function last3(){const ps=C().docs.map(d=>d.p);const mx=ps.length?Math.max(...ps):18;return [mx-2,mx-1,mx]}
-function reqRows(){const p3=last3(),has=(k,p)=>C().docs.some(d=>d.kind===k&&d.p===p);
- const r=p3.map(p=>({t:`決算書 第${p}期`,ok:has('決算書',p),must:true}));
- r.push({t:`勘定科目内訳書 第${p3[2]}期`,ok:has('勘定科目内訳書',p3[2]),must:S.ty==='stk'});return r}
+function reqRows(){const p3=last3(),has=(k,p)=>C().docs.some(d=>d.kind===k&&d.p===p),miss=k=>p3.filter(p=>!has(k,p));
+ const rng=`第${p3[0]}〜${p3[2]}期`,ty=S.ty,m=miss('決算書');
+ const kd=(name,use,must)=>({t:`決算書 ${rng}の${name}`,use,must,ok:!m.length,note:m.length?`第${m.join('・')}期が無い`:'3 期ある'});
+ const r=[kd('損益計算書',ty==='stk'?'利益の推移（評価の参考）':'3 期の推移表・所見',ty!=='stk'),kd('貸借対照表',ty==='stk'?'純資産・資産合計（評価の土台）':'自己資本比率・純資産の推移',true)];
+ if(ty!=='stk')r.push({t:`決算書 第${p3[2]}期の販管費内訳`,use:'販管費の内訳と所見',must:false,ok:has('決算書',p3[2]),note:has('決算書',p3[2])?'ある':'無い'});
+ r.push({t:`勘定科目内訳書 第${p3[2]}期`,use:'自社株評価の数字（預金・売掛金など）',must:ty==='stk',ok:has('勘定科目内訳書',p3[2]),note:has('勘定科目内訳書',p3[2])?'ある':'無い'});
+ return r}
+function issues(){const o=[];reqRows().forEach(r=>{if(r.must&&!r.ok)o.push({t:`${r.t}: ${r.note}`,go:2})});
+ last3().forEach(p=>{const s=perState(p);if(s!=='ok')o.push({t:`第${p}期: ${s==='un'?'確認待ち（数字が仮）':s==='no'?'まだ読み取っていない':'決算書が無い'}`,go:3})});return o}
+function quickGen(){const is=issues();if(!is.length){startGen();return}S.qfix=is[0].go;
+ $('lbt').textContent='このまま生成すると、仮の値・空欄が入ります';
+ $('lbb').innerHTML=`<ul class="quickl">${is.map(o=>`<li>${esc(o.t)} <button class="lnk" data-lgo="${o.go}">直しに行く</button></li>`).join('')}</ul><div class="lbbtn"><button class="btn line" data-lact="fix">直しに行く</button><button class="btn" data-lact="gen">それでも生成（仮の値のまま）</button></div>`;
+ $('lb').classList.add('on')}
 function perState(p){const s=C().data[p];const hasDoc=C().docs.some(d=>d.kind==='決算書'&&d.p===p);return s==='ok'?'ok':s==='un'?'un':hasDoc?'no':'nd'}
 function vDoc(){let body='',nextOk=true,why='';
- if(S.s6===1){body=`<div class="types">${TYPES.map(t=>`<button class="ty ${S.ty===t.id?'on':''}" data-ty="${t.id}"><span class="tp"><b>${t.t}</b><span class="rd"></span></span><span class="mini"><span class="tl"></span><span class="ln"></span>${t.mini==='gr'?'<span class="gr">'+'<i></i>'.repeat(12)+'</span>':'<span class="bars"><i style="height:45%"></i><i style="height:62%"></i><i style="height:80%"></i></span>'}</span><small>${t.s}</small><span class="need">必要: <b>${t.need}</b></span></button>`).join('')}</div>`}
+ if(S.s6===1){body=`<div class="types">${TYPES.map(t=>`<button class="ty ${S.ty===t.id?'on':''}" data-ty="${t.id}"><span class="tp"><b>${t.t}</b><span class="rd"></span></span><span class="mini"><span class="tl"></span><span class="ln"></span>${t.mini==='gr'?'<span class="gr">'+'<i></i>'.repeat(12)+'</span>':'<span class="bars"><i style="height:45%"></i><i style="height:62%"></i><i style="height:80%"></i></span>'}</span><small>${t.s}</small><span class="use">使う書類: ${t.use}</span><span class="need">必要: <b>${t.need}</b></span></button>`).join('')}</div>`}
  else if(S.s6===2){const rs=reqRows();nextOk=rs.every(r=>r.ok||!r.must);if(!nextOk)why='必須の書類が足りません';
-  body=`<div class="tw"><table class="rq"><thead><tr><th>書類</th><th>区分</th><th>状態</th><th></th></tr></thead><tbody>${rs.map(r=>`<tr><td><b>${r.t}</b></td><td>${r.must?'必須':'<span class="opt">あると良い</span>'}</td><td class="st">${r.ok?`<span class="okb">${ic('check','sm')}ある</span>`:`<span class="ngb">${ic('warn','sm')}足りない</span>`}</td><td class="act">${r.ok?'':`<a class="btn ghost" href="../index.html#upload=${S.c}">${ic('plus','sm')}書類を追加</a>`}</td></tr>`).join('')}</tbody></table></div>`}
+  body=`<div class="tw"><table class="rq"><thead><tr><th>書類</th><th>何に使うか</th><th>区分</th><th>状態</th><th></th></tr></thead><tbody>${rs.map(r=>`<tr><td><b>${r.t}</b></td><td class="use">${ic('arrow')}${r.use}</td><td>${r.must?'必須':'<span class="opt">あると良い</span>'}</td><td class="st">${r.ok?`<span class="okb">${ic('check','sm')}ある</span>`:`<span class="ngb">${ic('warn','sm')}足りない</span>`}<div class="note">${r.note}</div></td><td class="act">${r.ok?'':`<a class="btn ghost" href="../index.html#upload=${S.c}">${ic('plus','sm')}書類を追加</a>`}</td></tr>`).join('')}</tbody></table></div>`}
  else if(S.s6===3){const p3=last3();const st=p3.map(perState);nextOk=st.every(s=>s==='ok');if(!nextOk)why='すべての期が「確認済」になると生成できます';
   const M={ok:['確認済','値 27 個'],un:['未確認','読み取り済み・確認待ち'],no:['未 OCR','書類はあります'],nd:['書類なし','決算書が未登録']};
   body=`<div class="pers">${p3.map((p,j)=>{const s=st[j];return `<div class="per ${s}"><span class="ph">第${p}期</span><span class="ps">${M[s][0]}</span><span class="pm">${M[s][1]}</span>${s==='un'?`<button class="btn" data-act="gochk" data-p="${p}">${ic('check')}確認する</button>`:s==='no'?`<button class="btn" data-act="goocr" data-p="${p}">${ic('scan')}OCR する</button>`:s==='nd'?`<a class="btn ghost" href="../index.html#upload=${S.c}">${ic('plus','sm')}書類を追加</a>`:''}</div>`}).join('')}</div>`}
  else{body=S.gen?vPrev():`<div class="card gen"><span class="spin"></span><p>${TYPES.find(t=>t.id===S.ty).t}を作っています</p></div>`}
- const nb=S.s6<4?`<div class="nbar">${S.s6>1?`<button class="btn line" data-act="prev">${ic('back')}戻る</button>`:''}${why?`<span class="why">${why}</span>`:''}<button class="btn go" data-act="next" ${nextOk?'':'disabled'}>${S.s6===3?'資料を生成':'次へ'}${ic('arrow')}</button></div>`:'';
+ const nb=S.s6<4?`<div class="nbar">${S.s6>1?`<button class="btn line" data-act="prev">${ic('back')}戻る</button>`:''}${why?`<span class="why">${why}</span>`:''}<span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button class="btn line" data-act="quick">${ic('ai','sm')}いきなり生成</button><button class="btn go" style="margin-left:0" data-act="next" ${nextOk?'':'disabled'}>${S.s6===3?'資料を生成':'次へ'}${ic('arrow')}</button></span></div>`:'';
  return `<div class="mh"><h2>${ic('doc','lg')}資料を作る</h2></div>`+stepper(DOC_STEPS,S.gen&&S.s6===4?5:S.s6,true)+body+nb}
-function vPrev(){const p3=last3(),fs=p3.map(p=>fin(S.c,p)),t=TYPES.find(x=>x.id===S.ty).t;
- const rr=[['売上高','sales'],['売上総利益','gp'],['営業利益','op'],['経常利益','ord'],['当期純利益','ni'],['純資産','na']];
- const g=(a,b)=>b?((a/b-1)*100).toFixed(1):0;
- return `<div class="prev"><div class="ph2"><b>${t}</b><small>${C().name} ・ 第${p3[0]}〜${p3[2]}期 ・ 作成 11/26</small></div><div class="pb"><div><h4>3 期の推移（千円）</h4><div class="tw"><table class="vt"><thead><tr><th>科目</th>${p3.map(p=>`<th class="num">第${p}期</th>`).join('')}</tr></thead><tbody>${rr.map(r=>`<tr><td class="k">${r[0]}</td>${fs.map((f,j)=>`<td class="num">${fmt(f[r[1]])}${j?`<span class="up">${g(f[r[1]],fs[j-1][r[1]])>0?'+':''}${g(f[r[1]],fs[j-1][r[1]])}%</span>`:''}</td>`).join('')}</tr>`).join('')}<tr><td class="k">自己資本比率</td>${fs.map(f=>`<td class="num">${(f.na/f.ta*100).toFixed(1)}%</td>`).join('')}</tr></tbody></table></div></div>
- <div class="obs"><h4>所見</h4><ul><li>売上高は 3 期連続で増加（第${p3[2]}期 ${g(fs[2].sales,fs[0].sales)}%／2 期）</li><li>営業利益率 ${(fs[2].op/fs[2].sales*100).toFixed(1)}%、販管費の伸びは売上より緩やか</li><li>純資産が積み上がり、自己資本比率は ${(fs[2].na/fs[2].ta*100).toFixed(1)}%</li></ul></div></div></div>
- <div class="prevbar"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物のプレビュー（既存モック②）</a><div class="r"><button class="btn line" data-act="pdf">${ic('dl')}PDF</button><a class="btn" href="${back('mats')}">クライアントの資料タブへ${ic('arrow')}</a></div></div>`}
-function startGen(){S.s6=4;S.gen=false;render();setTimeout(()=>{S.gen=true;render();toast('資料を作りました')},2000)}
+function vPrev(){const p3=last3(),t=TYPES.find(x=>x.id===S.ty).t,is=issues();
+ const rr=[['売上高','sales','pl'],['売上総利益','gp','pl'],['営業利益','op','pl'],['経常利益','ord','pl'],['当期純利益','ni','pl'],['資産合計','ta','bs'],['純資産','na','bs']];
+ const has=p=>['ok','un'].includes(perState(p));
+ const V=(p,k)=>has(p)?cell(p,k).v:null,TMP=(p,k)=>has(p)&&(perState(p)!=='ok'||cell(p,k).st==='warn');
+ const src=(k,f)=>{const L=faceLoc(p3[2],f);return `決算書 ${TLAB[f]} p.${L?L.i+1:f==='bs'?2:3}（第${p3[0]}〜${p3[2]}期）`};
+ const g=(a,b)=>a!=null&&b?((a/b-1)*100).toFixed(1):null;
+ const ev=`<div class="evp"><div class="evh"><b>根拠の数字</b><button class="btn ghost" data-act="evt" aria-label="${S.evCl?'根拠の数字を開く':'根拠の数字を畳む'}">${ic(S.evCl?'chr':'chl','sm')}${S.evCl?'':'畳む'}</button></div><div class="evb">
+  <table class="evt"><thead><tr><th>科目・出どころ</th>${p3.map(p=>`<th>${p}期</th>`).join('')}</tr></thead><tbody>${rr.map(r=>`<tr><td class="k"><b>${r[0]}</b><small>${src(r[1],r[2])}</small></td>${p3.map(p=>{const v=V(p,r[1]);return `<td class="n">${v==null?'—':`<button class="evv ${TMP(p,r[1])?'w':''}" data-ev="${r[1]}:${p}">${fmtv(v)}</button>`}</td>`}).join('')}</tr>`).join('')}</tbody></table>
+  <div class="evn">単位：千円。数字を押すと資料の同じ所が光る（資料の数字を押しても同じ）。黄色は確認待ちの仮の値。直すときは読み取り確認で直して「作り直す」</div></div></div>`;
+ const a=p3.map(p=>V(p,'sales')),last=p3.length-1,cut=(k,p)=>V(p,k);
+ const doc=`<div class="a4w"><div class="a4"><div class="ah"><b>${t}</b><small>${C().name} ・ 第${p3[0]}〜${p3[2]}期 ・ 作成 ${TODAY}</small></div>
+  <div><h4>3 期の推移（千円）</h4><table><thead><tr><th>科目</th>${p3.map(p=>`<th>第${p}期</th>`).join('')}</tr></thead><tbody>${rr.map(r=>`<tr><td>${r[0]}</td>${p3.map((p,j)=>{const v=V(p,r[1]),gg=j?g(v,V(p3[j-1],r[1])):null;return `<td>${v==null?'—':`<span data-ev="${r[1]}:${p}">${fmtv(v)}</span>${TMP(p,r[1])?'<span class="tmp">仮</span>':''}`}${gg!=null?`<span class="up">${gg>0?'+':''}${gg}%</span>`:''}</td>`}).join('')}</tr>`).join('')}
+  <tr><td>自己資本比率</td>${p3.map(p=>{const na=V(p,'na'),ta=V(p,'ta');return `<td>${na!=null&&ta?(na/ta*100).toFixed(1)+'%':'—'}</td>`}).join('')}</tr></tbody></table></div>
+  <div class="obs"><h4>所見</h4><ul><li>売上高は ${a[0]!=null&&a[last]!=null?`第${p3[0]}期から ${g(a[last],a[0])}% 増えた`:'比べられる期が足りない'}</li><li>営業利益率は ${V(p3[last],'op')!=null&&a[last]?(V(p3[last],'op')/a[last]*100).toFixed(1)+'%':'—'}。販管費の伸びは売上より緩やか</li><li>純資産が積み上がり、自己資本比率は ${V(p3[last],'na')!=null&&V(p3[last],'ta')?(V(p3[last],'na')/V(p3[last],'ta')*100).toFixed(1)+'%':'—'}</li></ul></div>
+  <div class="afoot"><span>数字は決算書（構造化データ）から</span><span>1 / 1</span></div></div></div>`;
+ return `<div class="pvbar"><button class="btn" data-act="pdf">${ic('dl')}PDF でダウンロード</button><button class="btn line" data-act="regen">${ic('redo','sm')}作り直す</button><div class="r"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物のプレビュー（既存モック②）</a><a class="btn line" href="${back('mats')}">クライアントの資料タブへ${ic('arrow')}</a></div></div>`+
+ (is.length?`<div class="provb">${ic('warn','sm')}仮の値を含みます: ${is.map(o=>esc(o.t)).join('／')}<button class="lnk" data-act="quick">一覧を見る</button></div>`:'')+
+ `<div class="pv2 ${S.evCl?'cl':''}">${ev}${doc}</div>`}
+function startGen(){S.s6=4;S.gen=false;S.evCl=matchMedia('(max-width:900px)').matches;render();setTimeout(()=>{S.gen=true;render();toast('資料を作りました')},2000)}
 
 // ===== 操作 =====
 function bind(){const a=$('app');
@@ -1022,13 +1147,11 @@ function bind(){const a=$('app');
  a.querySelectorAll('[data-all]').forEach(x=>x.onclick=()=>{S.all=x.dataset.all==='1';defaults();render()});
  a.querySelectorAll('[data-zoom]').forEach(x=>x.onclick=()=>{const [did,pi]=x.dataset.zoom.split(':'),d=C().docs.find(y=>y.id===did);$('lbt').textContent=`${d.kind} 第${d.p}期 p.${+pi+1} ${LAB[PAGES[d.kind][+pi][0]]}`;$('lbb').innerHTML=pageSVG(d,+pi);$('lb').classList.add('on')});
  const arSync=()=>{if(S.ed&&S.ed.mode==='area'&&S.ed.pu!=='place'){S.ed.p=S.face.p;S.ed.st=S.face.st;S.ed.box=null;S.ed.res=null}else if(S.ed&&(S.ed.mode==='frame'||S.ed.mode==='area'))S.ed=null};
- a.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{S.face.p=+x.dataset.fp;arSync();render()});
- a.querySelectorAll('[data-fs]').forEach(x=>x.onclick=()=>{S.face.st=x.dataset.fs;arSync();render()});
- a.querySelectorAll('span.v').forEach(x=>{x.onmouseenter=()=>{const p=+x.dataset.p,st=x.dataset.st;if(!st)return;
-   if(S.ed){if(S.face.p===p&&S.face.st===st&&S.ed.mode!=='frame')hl(x.dataset.k,true);return}
-   if(S.face.p!==p||S.face.st!==st){S.face={p,st};const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===p);$('face').innerHTML=kd?pageSVG(kd,st==='bs'?1:2,true):'';
-    const h=a.querySelector('.faceh b');if(h)h.textContent=`原本　第${p}期 ${LAB[st]}`;a.querySelectorAll('[data-fp]').forEach(b=>b.classList.toggle('on',+b.dataset.fp===p));a.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',b.dataset.fs===st))}
-   hl(x.dataset.k,true)};x.onmouseleave=()=>hl(S.ed&&S.ed.k&&S.ed.mode!=='frame'?S.ed.k:x.dataset.k,!!(S.ed&&S.ed.k));
+ a.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{S.face.p=+x.dataset.fp;S.ed=null;render()});
+ a.querySelectorAll('[data-fs]').forEach(x=>x.onclick=()=>{S.face.st=x.dataset.fs;S.ed=null;render()});
+ a.querySelectorAll('span.v').forEach(x=>{x.onmouseenter=()=>{if(S.ed&&S.ed.mode==='frame')return;hl(x.dataset.k,true)};
+  x.onmouseleave=()=>hl(S.ed&&S.ed.k&&S.ed.mode!=='frame'?S.ed.k:x.dataset.k,!!(S.ed&&S.ed.k));
+  if(x.classList.contains('ro'))return;
   x.onclick=ev=>{if(ev.target.closest('.npm')){S.ed={p:+x.dataset.p,k:x.dataset.k};startArea('place')}else openEd(+x.dataset.p,x.dataset.k)};x.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEd(+x.dataset.p,x.dataset.k)}}});
  const ei=$('edin');if(ei)ei.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();edAct('edsave',ei)}};
  bindDrag();
@@ -1036,6 +1159,7 @@ function bind(){const a=$('app');
  a.querySelectorAll('[data-ari]').forEach(c=>c.onchange=()=>{S.ed.res[+c.dataset.ari].on=c.checked;rerender(false)});
  a.querySelectorAll('[data-art]').forEach(c=>c.onchange=()=>{const it=S.ed.res[+c.dataset.art];it.t=c.value;it.on=itState(it)!=='same';rerender(false)});
  a.querySelectorAll('[data-ty]').forEach(x=>x.onclick=()=>{S.ty=x.dataset.ty;render()});
+ a.querySelectorAll('[data-ev]').forEach(x=>x.onclick=()=>{const v=x.dataset.ev,on=!x.classList.contains('hl');a.querySelectorAll('[data-ev]').forEach(y=>y.classList.toggle('hl',on&&y.dataset.ev===v));if(on){const t=a.querySelector(x.closest('.a4')?`.evv[data-ev="${v}"]`:`.a4 [data-ev="${v}"]`);if(t&&!S.evCl)t.scrollIntoView({block:'nearest'})}});
  a.querySelectorAll('.stp .s.link').forEach(x=>x.onclick=()=>{S.s6=+x.dataset.step;S.gen=false;render()});
  a.querySelectorAll('[data-act]').forEach(x=>x.onclick=()=>act(x.dataset.act,x))}
 function render2(){const n=selCount();document.querySelectorAll('[data-pg]').forEach(e=>e.classList.toggle('on',!!S.sel[e.dataset.pg]));
@@ -1044,8 +1168,8 @@ function act(k,x){
  if(k.startsWith('ed')||k.startsWith('ar')||k==='adsave'||k==='xdel'||k==='reocr'||k==='confirm'){edAct(k,x);return}
  if(k==='run')startRun();
  else if(k==='cancel'){clearTimeout(runT);S.view='s4sel';render()}
- else if(k==='tocheck'){S.face=null;S.view='s5';render()}
- else if(k==='toocr'){S.view='s4sel';defaults();render()}
+ else if(k==='tocheck'){const q=(S.queue||[])[0];if(q&&!S.auto){const [did,pi]=q.split(':'),d=C().docs.find(x=>x.id===did);S.face={p:d.p,st:PAGES[d.kind][+pi][0]}}else if(!S.face)S.face=null;S.auto=false;S.view='s5';render()}
+ else if(k==='toocr')startAuto();
  else if(k==='confirm'){periods().forEach(p=>C().data[p]='ok');
   if(S.detour){toast('確認済みにしました');S.detour=null;S.view='s6';S.s6=3;render()}
   else{toast('確認済みにしました');setTimeout(()=>location.href=back('data'),900)}}
@@ -1053,9 +1177,14 @@ function act(k,x){
  else if(k==='next'){if(S.s6===3)startGen();else{S.s6++;render()}}
  else if(k==='prev'){S.s6--;render()}
  else if(k==='gochk'){S.detour=`第${x.dataset.p}期の確認`;S.face={p:+x.dataset.p,st:'pl'};S.view='s5';render()}
- else if(k==='goocr'){S.detour=`第${x.dataset.p}期の OCR`;S.all=false;defaults();S.view='s4sel';render()}
- else if(k==='pdf')toast('PDF を書き出しました（ダミー）')}
+ else if(k==='goocr'){S.detour=`第${x.dataset.p}期の読み取り`;startAuto(+x.dataset.p)}
+ else if(k==='quick')quickGen();
+ else if(k==='regen')startGen();
+ else if(k==='evt'){S.evCl=!S.evCl;render()}
+ else if(k==='pdf')toast('PDF をダウンロードしました（ダミー）')}
 $('lbb').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.lact==='gen'){$('lb').classList.remove('on');startGen();return}
+ if(t.dataset.lact==='fix'||t.dataset.lgo){$('lb').classList.remove('on');const g=+(t.dataset.lgo||S.qfix);S.s6=g;S.gen=false;render();return}
  if(t.dataset.lact==='go')doConfirm();else if(t.dataset.lact==='back')$('lb').classList.remove('on');
  else if(t.dataset.lp){$('lb').classList.remove('on');openEd(+t.dataset.lp,t.dataset.lk)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.ed||S.pick)&&S.view==='s5'){S.ed=null;S.pick=false;rerender(false)}});
@@ -1064,11 +1193,14 @@ $('lb').onclick=e=>{if(e.target.id==='lb')$('lb').classList.remove('on')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('lb').classList.remove('on')});
 
 // ===== 入口 =====
-(function(){const st=Q.get('step');
- if(st==='check'){S.view='s5';const ed=(Q.get('edit')||'').split(':');if(ed[1])setTimeout(()=>{S.face=null;vChk();openEd(+ed[0],ed[1])},0)}
- else if(st==='preview'){S.view='s6';S.s6=4;S.gen=true}
- else if(S.mode==='doc'){S.view='s6'}
- else{S.view='s4sel';defaults()}
+(function(){const st=Q.get('step'),ty=Q.get('type');
+ if(st==='check'){S.view='s5';const per=+Q.get('period'),dc=Q.get('doc'),ed=(Q.get('edit')||'').split(':');
+  if(dc){const d=C().docs.find(x=>x.id===dc||x.id===dc.replace(/^uw/,'u'));if(d){S.fromDoc=true;S.face={p:d.p,st:d.kind==='勘定科目内訳書'?'uw':'pl'}}}
+  else if(per)S.face={p:per,st:TLAB[ty]?ty:'pl'};
+  if(ed[1])setTimeout(()=>{vChk();openEd(+ed[0],ed[1])},0)}
+ else if(st==='preview'||(S.mode==='doc'&&Q.get('view')==='preview')){S.view='s6';S.s6=4;S.gen=true;if(TYPES.some(t=>t.id===ty))S.ty=ty;S.evCl=matchMedia('(max-width:900px)').matches}
+ else if(S.mode==='doc'){S.view='s6';if(TYPES.some(t=>t.id===ty))S.ty=ty}
+ else{startAuto();return}
  render()})();
 </script>
 </body>
