@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>決算書ツール モック v2 | 数字を取り出す・資料を作る</title>
+<title>決算書ツール モック v3 | 数字を取り出す・資料を作る</title>
 <style>
 :root{--navy:#1f3a5f;--navy2:#2c5282;--bg:#f5f7fa;--line:#dde3ea;--txt:#1d2733;--sub:#5b6878;--ok:#1f7a5a;--amb:#8a6d1f;--warn:#b54708;--card:#fff;--hl:#fff7e0}
 *{box-sizing:border-box}
@@ -547,6 +547,42 @@ svg.edsvg{touch-action:none;cursor:crosshair}
 .rlist{margin:0 0 12px;padding-left:18px;font-size:13px}
 .rlist li{margin-bottom:4px}
 .lbbtn{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+/* ===== v3 エリアを読む ===== */
+.artool{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin:-2px 0 8px;padding:6px 8px;background:#f5f7fa;border:1px solid var(--line);border-radius:8px}
+.artool .btn{padding:5px 10px;font-size:12.5px}
+.artool .btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.artool .note{font-size:11.5px}
+.artool .note.go{color:var(--navy2);font-weight:700}
+.facew .bx{cursor:pointer}
+.edr.ar{fill:rgba(44,82,130,.10);stroke:var(--navy2);stroke-dasharray:4 2.5}
+.fnd{fill:none;stroke:#9aa6b5;stroke-width:1;pointer-events:none}
+.fnd.on{fill:rgba(31,122,90,.12);stroke:var(--ok);stroke-width:1.3}
+.arz{display:none}
+.cnt1.i{border-color:#c9d6e6}.cnt1.i b{color:var(--navy2)}
+.vt span.v.np{outline:1.5px dashed #8a96a6;outline-offset:2px;border-radius:2px}
+.vt span.v .npm{display:inline-flex;align-items:center;gap:2px;margin-left:5px;font-size:10px;font-weight:800;color:var(--navy2);background:#eef4fb;border:1px solid #c9d6e6;border-radius:4px;padding:0 4px;line-height:1.6;white-space:nowrap;cursor:pointer;vertical-align:1px}
+.vt span.v .npm .ic{width:10px;height:10px}
+.legend2 i.dsh{background:#fff;border:1.5px dashed #8a96a6}
+.npx{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin-top:10px;border:1.5px dashed #8a96a6;border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--sub)}
+.npx .btn{margin-left:auto}
+.edb.two .btn{display:flex;align-items:flex-start;gap:8px;text-align:left;padding:10px 12px;height:auto;white-space:normal}
+.edb.two .btn span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.edb.two .btn small{font-size:11.5px;color:var(--sub);font-weight:400;line-height:1.4}
+.arh{margin-top:10px;font-size:13.5px;font-weight:800;color:var(--navy)}
+.arl{display:grid;gap:6px;margin-top:6px}
+.ari{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff}
+.ari.on{border-color:#b7dfcd;background:#f6fcf9}
+.ari input[type=checkbox]{width:18px;height:18px;grid-row:span 2;margin:0;accent-color:var(--ok)}
+.ari .arn{font-weight:700;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ari .arv{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.ari .arv s{color:#a3acb8;font-weight:600;margin-right:2px}
+.ari select{font:inherit;font-size:12px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:#fff;min-width:0;max-width:100%}
+.ari .pill{justify-self:end}
+@media(max-width:600px){
+ .arz{display:block}
+ .cnts .cnt1{font-size:11px;padding:5px 6px;gap:4px}
+ .artool .note{flex-basis:100%}
+}
 @media(max-width:600px){
  .edbg{display:block;position:fixed;inset:0;background:rgba(15,25,40,.55);z-index:24}
  .edp{position:fixed;left:0;right:0;bottom:0;margin:0;max-height:86vh;overflow:auto;border:none;border-radius:14px 14px 0 0;z-index:25;box-shadow:0 -6px 24px rgba(0,0,0,.25);padding:12px 16px 20px}
@@ -590,10 +626,11 @@ svg.edsvg{touch-action:none;cursor:crosshair}
  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.2v.3"/></symbol>
  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M19 12a7 7 0 11-2.05-4.95"/><path d="M19.5 4v4h-4"/></symbol>
+ <symbol id="i-area" viewBox="0 0 24 24"><path d="M4 8V4h4M12 4h2M18 4h2v4M20 12v1M4 12v2M4 18v2h4M12 20h1"/><path d="M15 15l5.5 5.5M15 15v4.2M15 15h4.2"/></symbol>
  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M5 19l1-4.5L15.5 5a2 2 0 012.8 0l.7.7a2 2 0 010 2.8L9.5 18z"/><path d="M13.5 7l3.5 3.5"/></symbol>
 </svg>
 <header>
- <h1>決算書ツール</h1><span class="tag">モック v2</span>
+ <h1>決算書ツール</h1><span class="tag">モック v3</span>
  <span class="hcl" id="hcl"></span>
  <a class="hback" id="hback" href="../index.html#clients"><svg class="ic sm"><use href="#i-back"/></svg>クライアントに戻る</a>
 </header>
@@ -634,7 +671,9 @@ const READ={C1:{18:{sga:213900,ord:null,na:null}}};
 // 3 エンジンの候補（票が割れた＝自信が低い）。無いセルは cands() が作る
 const CAND={'C1:18:sga':[{v:213900,e:'エンジン A',n:1},{v:218900,e:'エンジン B',n:1},{v:2189000,e:'エンジン C',n:1}]};
 const ED={};   // 直した値 'C1:18:sga' → {v,how:'reread'|'input'|'empty',from,fromSt,at,box}
-const EXTRA={}; // 手で足した行 C1 → [{k:'x1',name,vals:{18:1200}}]
+// 手で足した行・原本から追加した行。meta[期]={how:'input'|'add'|'reread',box,from,at}。st＝枠のある面
+const EXTRA={C1:[{k:'x1',name:'役員報酬',st:null,vals:{18:30646},meta:{18:{how:'input',at:'11/26'}}}]};
+let XN=1;
 const NAMES=['役員報酬','給料手当','減価償却費','地代家賃','支払利息','受取利息','雑収入','特別利益','特別損失','法人税等'];
 const TODAY='11/27';
 
@@ -673,6 +712,7 @@ function pageSVG(d,i,boxes){
      if(key&&!(S.ed&&S.ed.mode==='frame'&&S.ed.p===d.p&&S.ed.k===key)){const x=cell(d.p,key),bb=boxOf(d.p,key,row);
       if(bb)s+=`<rect class="bx${x.st==='warn'?' warn':''}" data-k="${key}" x="${bb.x}" y="${bb.y}" width="${bb.w}" height="${bb.h}" rx="1.5"/>`}}}
    y+=rh});
+  if(boxes)(EXTRA[c]||[]).forEach(r=>{const m=r.meta&&r.meta[d.p];if(m&&m.box&&r.st===k){const b=m.box;s+=`<rect class="bx" data-k="${r.k}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1.5"/>`}});
   s+=`<rect x="20" y="66" width="260" height="${y-66-10}" fill="none" stroke="#999"/><line x1="190" y1="66" x2="190" y2="${y-10}" stroke="#bbb"/>`;}
  else{let y=78;for(let j=0;j<20;j++){const w=j%5===4?140:240;s+=`<rect x="24" y="${y}" width="${w}" height="5" rx="2" fill="#e3e7ec"/>`;y+=14}
   if(title==='株主資本等変動計算書'){s='';s=pageGrid(d,title)}}
@@ -750,22 +790,22 @@ function vChk(){const ps=periods();
  const un=ps.filter(p=>C().data[p]==='un');
  const faceStr=kd?pageSVG(kd,pi,true):'';
  const dfs=ps.map(diffs),stt=stats(),zero=!stt.un&&!stt.w&&!stt.df;
- const cellTd=(p,j,k,st)=>{const x=cell(p,k),d=dfs[j][k],sel=S.ed&&S.ed.p===p&&S.ed.k===k;
-  return `<td class="num"><span class="v${x.st==='warn'?' w':''}${x.st==='blank'?' e':''}${d?' bad':''}${sel?' sel':''}" data-p="${p}" data-k="${k}" ${st?`data-st="${st}"`:''} role="button" tabindex="0">${x.v==null?'—':fmtv(x.v)}${x.st==='blank'?'<span class="un">未読</span>':''}${mark(x)}${d?`<span class="df">差 ${fmt(Math.abs(d.d))}</span>`:''}</span></td>`};
+ const cellTd=(p,j,k,st)=>{const x=cell(p,k),d=dfs[j][k],sel=S.ed&&S.ed.p===p&&S.ed.k===k,np=npl(x);
+  return `<td class="num"><span class="v${x.st==='warn'?' w':''}${x.st==='blank'?' e':''}${d?' bad':''}${sel?' sel':''}${np?' np':''}" data-p="${p}" data-k="${k}" ${st?`data-st="${st}"`:''} role="button" tabindex="0">${x.v==null?'—':fmtv(x.v)}${x.st==='blank'?'<span class="un">未読</span>':''}${mark(x)}${np?`<span class="npm" title="押すと原本で場所を指す">${ic('area','sm')}場所未指定</span>`:''}${d?`<span class="df">差 ${fmt(Math.abs(d.d))}</span>`:''}</span></td>`};
  let tb='';ROWS.forEach(r=>{if(r[0]==='sec'){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>${r[1]}</span></td></tr>`;return}
   tb+=`<tr><td class="k">${r[1]}</td>`+ps.map((p,j)=>cellTd(p,j,r[0],r[2])).join('')+`</tr>`});
  const xs=EXTRA[S.c]||[];
- if(xs.length){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>手で足した行</span></td></tr>`;xs.forEach(r=>{tb+=`<tr class="xr"><td class="k">${esc(r.name)}</td>`+ps.map((p,j)=>cellTd(p,j,r.k,'')).join('')+`</tr>`})}
+ if(xs.length){tb+=`<tr><td class="sec2" colspan="${ps.length+1}"><span>足した行（表に無かった科目）</span></td></tr>`;xs.forEach(r=>{tb+=`<tr class="xr"><td class="k">${esc(r.name)}</td>`+ps.map((p,j)=>cellTd(p,j,r.k,r.st||'')).join('')+`</tr>`})}
  const th=p=>{const mf=missFaces(p);return `<th class="num">第${p}期<span class="pill ${C().data[p]==='ok'?'a':'y'}">${C().data[p]==='ok'?'確認済':'未確認'}</span>${mf.length?`<span class="unf">${mf.map(o=>LAB[o.k]).join('・')} 面が未読<button class="lnk" data-act="reocr" data-doc="${mf[0].d.id}" data-i="${mf.map(o=>o.i).join(',')}">S4 で読む</button></span>`:''}</th>`};
  const bp=ps.map(p=>[p,stt.list.filter(o=>o.p===p&&o.t==='未読').length]).filter(a=>a[1]);
- const cnts=`<div class="cnts"><span class="cnt1 ${stt.un?'n':'z'}">未読<b>${stt.un}</b></span><span class="cnt1 ${stt.w?'n':'z'}">要確認<b>${stt.w}</b></span><span class="cnt1 ${stt.df?'n':'z'}">合計ずれ<b>${stt.df}</b></span>`+
+ const cnts=`<div class="cnts"><span class="cnt1 ${stt.un?'n':'z'}">未読<b>${stt.un}</b></span><span class="cnt1 ${stt.w?'n':'z'}">要確認<b>${stt.w}</b></span><span class="cnt1 ${stt.df?'n':'z'}">合計ずれ<b>${stt.df}</b></span><span class="cnt1 ${stt.np?'i':'z'}" title="手で入れた数字で、原本の場所が付いていないもの">場所未指定<b>${stt.np}</b></span>`+
   (bp.length?`<span class="band">${ic('warn','sm')}${bp.map(a=>`第 ${a[0]} 期に空が ${a[1]} つ`).join('、')}<button class="btn ghost" data-act="edfirst">空の項目へ${ic('arrow','sm')}</button></span>`:zero?`<span class="band okb">${ic('check','sm')}直すところはありません</span>`:'')+`</div>`;
  return `<div class="mh"><h2>${ic('check','lg')}読み取り確認</h2><div class="mtools"><a class="btn ghost" href="https://kessan-yomitori-demo.vercel.app" target="_blank" rel="noopener">${ic('ext','sm')}本物の確認画面を開く（既存モック）</a><button class="btn ${zero?'ok pulse':'line'}" data-act="confirm">${ic('check')}確認済みにする</button></div></div>`+detourBar()+cnts+
  `<div class="chk"><div class="card"><div class="faceh"><b>原本　第${S.face.p}期 ${LAB[S.face.st]}</b><div class="seg2">${ps.map(p=>`<button class="${p===S.face.p?'on':''}" data-fp="${p}">${p}期</button>`).join('')}</div><div class="seg2"><button class="${S.face.st==='pl'?'on':''}" data-fs="pl">PL</button><button class="${S.face.st==='bs'?'on':''}" data-fs="bs">BS</button></div></div>
- <div class="facew" id="face">${frameMode(S.face.p,S.face.st)?withOv(faceStr,true):faceStr}</div></div>
+ ${arTool()}<div class="facew" id="face">${frameMode(S.face.p,S.face.st)?withOv(faceStr,true):faceStr}</div></div>
  <div class="card"><div class="faceh"><b>読み取った数字</b><span class="note">（単位：千円・数字を押すと直せる）</span></div><div class="tw"><table class="vt"><thead><tr><th>科目</th>${ps.map(th).join('')}</tr></thead><tbody>${tb}</tbody></table></div>
  <div class="addr"><button class="btn ghost" data-act="edadd">${ic('plus','sm')}行を足す</button></div>
- <div class="legend2"><span><i style="background:#fff1c7;border:1px solid #e2c770"></i>乗せると原本の枠が光る</span><span><i style="background:#fff4d6;border:1px solid #d4a72c"></i>自信が低い</span><span><i style="background:#fff;border-bottom:2px solid #c0392b"></i>合計が合わない</span><span>${ic('redo','sm')}読み直し</span><span>${ic('pencil','sm')}手入力</span><span>未確認 ${un.length} 期</span></div>
+ <div class="legend2"><span><i style="background:#fff1c7;border:1px solid #e2c770"></i>乗せると原本の枠が光る</span><span><i style="background:#fff4d6;border:1px solid #d4a72c"></i>自信が低い</span><span><i style="background:#fff;border-bottom:2px solid #c0392b"></i>合計が合わない</span><span>${ic('redo','sm')}読み直し</span><span>${ic('pencil','sm')}手入力</span><span>${ic('plus','sm')}原本から追加</span><span><i class="dsh"></i>場所未指定（押すと場所を指せる）</span><span>未確認 ${un.length} 期</span></div>
  ${vEd(faceStr)}</div></div>`}
 function hl(k,on){document.querySelectorAll('#face .bx').forEach(b=>b.classList.toggle('hl',on&&b.dataset.k===k))}
 
@@ -778,32 +818,35 @@ const isX=k=>!!k&&k[0]==='x';
 function rowName(k){if(isX(k)){const r=(EXTRA[S.c]||[]).find(o=>o.k===k);return r?r.name:''}const r=ROWS.find(o=>o[0]===k);return r?r[1]:k}
 function faceOf(k){const r=ROWS.find(o=>o[0]===k);return r?r[2]:null}
 function cell(p,k){
- if(isX(k)){const r=(EXTRA[S.c]||[]).find(o=>o.k===k),v=r?r.vals[p]:null;return {v:v==null?null:v,st:v==null?'empty':'ok',ed:{how:'input'},x:1}}
+ if(isX(k)){const r=(EXTRA[S.c]||[]).find(o=>o.k===k),v=r?r.vals[p]:null,m=r&&r.meta&&r.meta[p]||{how:'input'};return {v:v==null?null:v,st:v==null?'empty':'ok',ed:m,x:1}}
  const e=ED[ck(p,k)];if(e)return {v:e.v,st:e.how==='empty'?'empty':'ok',ed:e};
  const r=READ[S.c]&&READ[S.c][p];const v=r&&k in r?r[k]:fin(S.c,p)[k];
  if(v==null)return {v:null,st:'blank'};
  return {v,st:WARN[S.c]&&WARN[S.c][p]===k&&C().data[p]==='un'?'warn':'ok'}}
-function mark(x){if(!x.ed||x.st==='empty')return '';return `<span class="mk" title="${x.ed.how==='reread'?'読み直し':'手入力'}">${ic(x.ed.how==='reread'?'redo':'pencil')}</span>`}
+function mark(x){if(!x.ed||x.st==='empty')return '';const h=x.ed.how;return `<span class="mk" title="${h==='reread'?'読み直し':h==='add'?'原本から追加':'手入力'}">${ic(h==='reread'?'redo':h==='add'?'plus':'pencil')}</span>`}
+const npl=x=>x.v!=null&&!!x.ed&&x.ed.how==='input'&&!x.ed.box; // 場所未指定
 function cands(p,k){const c=CAND[ck(p,k)];if(c)return c;const t=fin(S.c,p)[k],d=t>=100000?3000:300;return [{v:t,e:'エンジン A',n:1},{v:t+d,e:'エンジン B',n:1},{v:t*10,e:'エンジン C',n:1}]}
-function boxOf(p,k,row){const x=cell(p,k);if(x.v==null)return null;if(x.ed&&x.ed.box)return x.ed.box;
+function boxOf(p,k,row){const x=cell(p,k);if(x.v==null)return null;if(x.ed){if(x.ed.box)return x.ed.box;if(x.ed.how==='input')return null}if(!row)return null;
  return x.st==='warn'?{x:212,y:row.y0+3,w:66,h:14}:{x:200,y:row.y0,w:78,h:14}}
 function diffs(p){const g=k=>cell(p,k).v,o={},s=g('sales'),c=g('cogs'),gp=g('gp'),sga=g('sga'),op=g('op');
  if(s!=null&&c!=null&&gp!=null&&s-c!==gp)o.gp={d:gp-(s-c),f:'売上高 − 売上原価',rel:'cogs'};
  if(gp!=null&&sga!=null&&op!=null&&gp-sga!==op)o.op={d:op-(gp-sga),f:'売上総利益 − 販管費',rel:'sga'};
  return o}
-function stats(){const o={un:0,w:0,df:0,list:[]};
- periods().forEach(p=>{ROWS.forEach(r=>{if(r[0]==='sec')return;const x=cell(p,r[0]);
+function stats(){const o={un:0,w:0,df:0,np:0,list:[]};
+ periods().forEach(p=>{(EXTRA[S.c]||[]).forEach(r=>{if(npl(cell(p,r.k)))o.np++});ROWS.forEach(r=>{if(r[0]==='sec')return;const x=cell(p,r[0]);if(npl(x))o.np++;
    if(x.st==='blank'){o.un++;o.list.push({p,k:r[0],t:'未読'})}else if(x.st==='warn'){o.w++;o.list.push({p,k:r[0],t:'自信が低い'})}});
   Object.entries(diffs(p)).forEach(([k,d])=>{o.df++;o.list.push({p,k,t:`合計が ${fmt(Math.abs(d.d))} 合わない`})})});
  return o}
 function missFaces(p){const d=C().docs.find(x=>x.kind==='決算書'&&x.p===p);if(!d)return [];
  return PAGES[d.kind].map((g,i)=>({d,i,k:g[0]})).filter(o=>['bs','pl','sga'].includes(o.k)&&!isDone(d,o.i))}
-function frameMode(p,st){return !!S.ed&&S.ed.mode==='frame'&&S.ed.p===p&&faceOf(S.ed.k)===st}
-function ovInner(){const b=S.ed&&S.ed.box;if(!b)return '';
+function frameMode(p,st){return !!S.ed&&((S.ed.mode==='frame'&&S.ed.p===p&&faceOf(S.ed.k)===st)||(S.ed.mode==='area'&&S.ed.p===p&&S.ed.st===st))}
+function ovInner(){const e=S.ed,b=e&&e.box,ar=e&&e.mode==='area';
+ const f=ar&&Array.isArray(e.res)?e.res.map(it=>`<rect class="fnd${it.on?' on':''}" x="${it.box.x}" y="${it.box.y}" width="${it.box.w}" height="${it.box.h}" rx="1.5"/>`).join(''):'';
+ if(!b)return f;
  const cs=[['nw',b.x,b.y],['ne',b.x+b.w,b.y],['sw',b.x,b.y+b.h],['se',b.x+b.w,b.y+b.h]];
- return `<rect class="edr" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1.5"/>`+cs.map(([h,x,y])=>`<circle class="edhit ${h}" data-h="${h}" cx="${x}" cy="${y}" r="9"/><circle class="edk" cx="${x}" cy="${y}" r="3.2"/>`).join('')}
+ return f+`<rect class="edr${ar?' ar':''}" x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" rx="1.5"/>`+cs.map(([h,x,y])=>`<circle class="edhit ${h}" data-h="${h}" cx="${x}" cy="${y}" r="9"/><circle class="edk" cx="${x}" cy="${y}" r="3.2"/>`).join('')}
 function withOv(str,edit){return str.replace(/<\/svg>$/,`<g class="edg">${edit?ovInner():''}</g></svg>`).replace('<svg ',edit?'<svg class="edsvg" ':'<svg ')}
-function cropStr(faceStr,k){const r=ROWL.find(o=>o.key===k);if(!r||!faceStr)return '';
+function cropStr(faceStr,k){let r=ROWL.find(o=>o.key===k);if(!r){const bb=boxOf(S.ed.p,k);if(bb)r={y0:bb.y,y1:bb.y+bb.h}}if(!r||!faceStr)return '';
  const fm=S.ed.mode==='frame',vb=fm?`10 ${Math.max(0,r.y0-48)} 280 108`:`14 ${r.y0-6} 272 26`;
  let s=faceStr.replace(/viewBox="[^"]*"/,`viewBox="${vb}"`).replace(/role="img" aria-label="[^"]*"/,'aria-hidden="true"');
  if(fm)return withOv(s,true);
@@ -812,6 +855,10 @@ function cropStr(faceStr,k){const r=ROWL.find(o=>o.key===k);if(!r||!faceStr)retu
 function vEd(faceStr){const e=S.ed;if(!e)return '';
  const shell=h=>`<div class="edbg" data-act="edx"></div><div class="edp" id="edp" role="dialog" aria-label="値を直す">${h}</div>`;
  const xbtn=`<button class="xb" data-act="edx" aria-label="閉じる">${ic('x','sm')}</button>`;
+ if(e.mode==='addq')return shell(`<div class="edh"><b>行を足す</b><span class="note">表に無い科目を足す</span>${xbtn}</div><div class="edb two">
+  <button class="btn line" data-act="arstart" data-pu="add">${ic('area')}<span><b>原本から読んで足す</b><small>原本でエリアを囲む → 見つかった行を選んで追加。枠が付く</small></span></button>
+  <button class="btn line" data-act="edhand">${ic('pencil')}<span><b>手で打つ</b><small>原本に無い数字を入れる。あとで「原本で場所を指す」もできる</small></span></button></div>`);
+ if(e.mode==='area')return shell(vArea(faceStr,xbtn));
  if(e.mode==='add'){const ps=periods();
   return shell(`<div class="edh"><b>行を足す</b><span class="note">原本にあるのに表に無い科目</span>${xbtn}</div>
   <div class="fgrid" style="margin-top:8px"><div class="fld full"><label>科目名<small>候補から選ぶか自由に入力</small></label><input id="adn" list="adl" placeholder="例: 役員報酬" autocomplete="off"><datalist id="adl">${NAMES.map(n=>`<option value="${n}">`).join('')}</datalist></div>${ps.map(p=>`<div class="fld"><label>第${p}期<small>千円・△で負</small></label><input data-adp="${p}" inputmode="numeric" placeholder="—"></div>`).join('')}</div>
@@ -819,7 +866,7 @@ function vEd(faceStr){const e=S.ed;if(!e)return '';
  const {p,k}=e,x=cell(p,k),df=diffs(p)[k],fm=e.mode==='frame',rr=e.mode==='reread'||fm;
  const conf=x.st==='blank'?'<span class="pill y">未読</span>':x.st==='warn'?'<span class="pill y">自信 低</span>':x.st==='empty'?'<span class="pill k">空で確定</span>':x.ed?`<span class="pill b">${x.ed.how==='reread'?'読み直し済':'手入力'}</span>`:'<span class="pill a">自信 高</span>';
  let h=`<div class="edh"><b>${esc(rowName(k))}</b><span class="chipk">第${p}期</span><span class="cur">${x.v==null?'—':fmtv(x.v)}</span>${conf}${xbtn}</div>`;
- if(!x.x)h+=`<div class="facew crop">${cropStr(faceStr,k)}</div>`;
+ if(!x.x||(x.ed&&x.ed.box&&x.ed.box.y))h+=`<div class="facew crop">${cropStr(faceStr,k)}</div>`;
  if(e.mode==='input')h+=`<div class="bin"><input id="edin" inputmode="numeric" placeholder="原本の数字を入力" value="${x.v==null?'':fmtv(x.v)}" aria-label="値（千円）"><span class="note">千円</span><button class="btn" data-act="edsave">保存</button></div><div class="edm">Enter で保存 ・ 負の数は △ を付ける</div>${e.err?`<div class="ederr">${e.err}</div>`:''}`;
  if(df)h+=`<div class="dfx">${df.f} と ${fmt(Math.abs(df.d))} 合いません<button class="lnk" data-act="edgo" data-k="${df.rel}">${rowName(df.rel)}を見る</button></div>`;
  if(!x.x)h+=`<div class="edb"><button class="btn line ${rr?'on':''}" data-act="edm" data-m="reread">${ic('redo')}読み直す</button><button class="btn line ${e.mode==='input'?'on':''}" data-act="edm" data-m="input">${ic('pencil')}手で入力</button></div>`;
@@ -828,15 +875,16 @@ function vEd(faceStr){const e=S.ed;if(!e)return '';
   if(fm){const b=e.box,busy=e.res==='busy';
    h+=`<div class="edm">${b?'枠を動かす・角を引いて広げる':'原本の数字を囲むように枠を引く'}（左の原本でもこの図でも）</div><div class="sub3"><button class="btn" data-act="edrr" ${b&&!busy?'':'disabled'}>${busy?'<span class="spin"></span>読み取り中':ic('scan')+'この枠で読み直す'}</button><button class="btn ghost" data-act="edm" data-m="reread">やめる</button></div>`;
    if(e.res&&e.res!=='busy')h+=e.res==='fail'?`<div class="rres ng">${ic('warn','sm')}数字が読めませんでした。枠を数字に合わせてください</div>`:`<div class="rres"><span>新しい値</span><b>${fmtv(e.res.v)}</b>${e.res.key!==k?`<span class="note">（読んだ行: ${esc(e.res.lb)}）</span>`:''}<button class="btn ok" data-act="edrrok">${ic('check')}この値にする</button></div>`}
-  else h+=`<div class="sub3"><button class="btn ghost" data-act="edm" data-m="frame">${ic('scan','sm')}${x.v==null?'枠を引いて読む':'枠を直して読み直す'}</button><button class="btn ghost" data-act="eds4">${ic('doc','sm')}この面を読み直す（S4）</button></div>`}
+  else h+=`<div class="sub3"><button class="btn ghost" data-act="edm" data-m="frame">${ic('scan','sm')}原本で場所を指して読む</button><button class="btn ghost" data-act="eds4">${ic('doc','sm')}この面を読み直す（S4）</button></div>`}
  if(e.mode==='input'&&x.st==='blank')h+=`<div class="sub3"><button class="btn ghost" data-act="edempty">原本に無い（空で確定）</button></div>`;
+ if(npl(x))h+=`<div class="npx">${ic('area','sm')}場所未指定（原本のどの数字か付いていない）<button class="btn ghost" data-act="arstart" data-pu="place">原本で場所を指す</button></div>`;
  if(x.x)h+=`<div class="sub3"><button class="btn ghost" data-act="xdel">この行を消す</button></div>`;
  else if(x.ed)h+=`<div class="hist">${ic(x.ed.how==='reread'?'redo':'pencil','sm')}元の値 <b>${x.ed.from==null?'—（未読）':fmtv(x.ed.from)}</b> → <b>${x.v==null?'—（空で確定）':fmtv(x.v)}</b>（${x.ed.at}）<button class="btn ghost" data-act="edundo">元に戻す</button></div>`;
  return shell(h)}
 function openEd(p,k){const st=faceOf(k);if(st)S.face={p,st};const x=cell(p,k);
  S.ed={p,k,mode:x.st==='warn'?'reread':isX(k)?'input':null,box:null,res:null,err:null};rerender(true)}
 function tabRight(){if(S.view==='s5'&&matchMedia('(max-width:600px)').matches){const t=document.querySelector('.chk .tw');if(t)t.scrollLeft=t.scrollWidth}}
-function rerender(scroll){const t0=document.querySelector('.chk .tw'),sl=t0?t0.scrollLeft:null;$('app').innerHTML=vChk();bind();const t1=document.querySelector('.chk .tw');if(t1&&sl!=null)t1.scrollLeft=sl;
+function rerender(scroll){const t0=document.querySelector('.chk .tw'),sl=t0?t0.scrollLeft:null,e0=$('edp'),es=e0?e0.scrollTop:0;$('app').innerHTML=vChk();bind();const t1=document.querySelector('.chk .tw');if(t1&&sl!=null)t1.scrollLeft=sl;if(scroll===false&&$('edp'))$('edp').scrollTop=es;
  if(S.ed&&S.ed.k&&S.ed.mode!=='frame')hl(S.ed.k,true);
  const wide=!matchMedia('(max-width:600px)').matches,ip=$('edin')||(S.ed&&S.ed.mode==='add'?$('adn'):null);
  if(ip&&wide&&scroll!==false)ip.focus({preventScroll:true});
@@ -863,6 +911,47 @@ function bindDrag(){document.querySelectorAll('svg.edsvg').forEach(svg=>{svg.onp
    S.ed.res=null;rerender(false)}}})}
 function reread(){S.ed.res='busy';rerender(false);setTimeout(()=>{const b=S.ed.box,cy=b.y+b.h/2;
  const r=ROWL.find(o=>cy>=o.y0&&cy<=o.y1&&b.x<272&&b.x+b.w>236);S.ed.res=r?{v:r.v,lb:r.lb,key:r.key}:'fail';rerender(false)},1000)}
+// ===== v3 エリアを読む =====
+function arTool(){const e=S.ed,on=e&&e.mode==='area'&&e.pu!=='place';
+ const hint=S.pick?'<span class="note go">原本の枠を押すと、その枠を直せます</span>':on?'<span class="note go">原本の上をドラッグして囲む（1 行でも複数行でも）</span>':'<span class="note">読み直したい所・表に無い行を、原本で囲んで読む</span>';
+ return `<div class="artool"><button class="btn line ${on?'on':''}" data-act="arstart" data-pu="tool">${ic('area','sm')}エリアを読む</button><button class="btn line ${S.pick||(e&&e.mode==='frame')?'on':''}" data-act="arfix">${ic('scan','sm')}枠を直す</button>${hint}</div>`}
+function itState(it){if(it.t==='new')return 'new';const v=cell(S.ed.p,it.t).v;return v==null?'fill':v===it.v?'same':'diff'}
+function areaCrop(faceStr){if(!faceStr)return '';const L=ROWL.length?ROWL[ROWL.length-1].y1:300;
+ return withOv(faceStr.replace(/viewBox="[^"]*"/,`viewBox="10 60 280 ${Math.round(L-50)}"`).replace(/role="img" aria-label="[^"]*"/,'aria-hidden="true"'),true)}
+function vArea(faceStr,xbtn){const e=S.ed,pl=e.pu==='place',busy=e.res==='busy',its=Array.isArray(e.res)?e.res:null,b=e.box;
+ let h=`<div class="edh"><b>${pl?'場所を指す':e.pu==='add'?'原本から読んで足す':'エリアを読む'}</b>${pl?`<span class="chipk">${esc(rowName(e.k))}</span><span class="chipk">第${e.p}期</span><span class="cur">${fmtv(cell(e.p,e.k).v)}</span>`:`<span class="chipk">第${e.p}期 ${LAB[e.st]}</span>`}${xbtn}</div>`;
+ if(!its){h+=`<div class="edm">${pl?`原本で「${esc(rowName(e.k))}」の数字がある所を囲む。原本に行が無ければ、近い所を囲んでもよい`:'原本の上をドラッグして、読みたい行を囲む（1 行でも複数行でも）。枠は動かす・角で広げることもできる'}</div>
+  <div class="facew crop arz">${areaCrop(faceStr)}</div>
+  <div class="sub3">${pl?`<button class="btn" data-act="arplace" ${b?'':'disabled'}>${ic('check')}この場所にする</button>`:`<button class="btn" data-act="arread" ${b&&!busy?'':'disabled'}>${busy?'<span class="spin"></span>読み取り中':ic('scan')+'このエリアを読む'}</button>`}<button class="btn ghost" data-act="edx">やめる</button></div>`;
+  if(e.res==='fail')h+=`<div class="rres ng">${ic('warn','sm')}エリアの中に数字が見つかりませんでした。右の数字の列まで囲んでください</div>`;
+  return h}
+ const allEx=its.every(it=>it.t0!=='new'),ch=its.filter(it=>itState(it)!=='same').length,n=its.filter(it=>it.on).length;
+ h+=`<div class="arh">${allEx?`${its.length} つを読み直しました。変わったのは ${ch} つ`:`${its.length} 行が見つかりました`}</div><div class="edm">チェックした行を表に入れる。入れ先は自動で当てたもの（違えば変える）</div>`;
+ const opts=[['new','新しい行として足す']].concat(ROWS.filter(r=>r[0]!=='sec'&&r[2]===e.st).map(r=>[r[0],r[1]+'に入れる'])).concat((EXTRA[S.c]||[]).map(r=>[r.k,r.name+'に入れる']));
+ const PL={new:['b','新しい行'],fill:['y','空に入る'],diff:['y','値が変わる'],same:['k','同じ']};
+ h+=`<div class="arl">${its.map((it,i)=>{const st=itState(it),cur=it.t==='new'?null:cell(e.p,it.t).v;
+  return `<label class="ari ${it.on?'on':''}"><input type="checkbox" data-ari="${i}" ${it.on?'checked':''}><span class="arn">${esc(it.lb)}</span><span class="arv">${st==='diff'?`<s>${fmtv(cur)}</s> → ${fmtv(it.v)}`:st==='fill'?`<s>—</s> → ${fmtv(it.v)}`:fmtv(it.v)}</span><select data-art="${i}" aria-label="${esc(it.lb)}の入れ先">${opts.map(o=>`<option value="${o[0]}" ${o[0]===it.t?'selected':''}>${esc(o[1])}</option>`).join('')}</select><span class="pill ${PL[st][0]}">${PL[st][1]}</span></label>`}).join('')}</div>
+ <div class="sub3"><button class="btn ok" data-act="arapply" ${n?'':'disabled'}>${ic('check')}反映する（${n}）</button><button class="btn ghost" data-act="arredo">囲み直す</button></div>`;
+ return h}
+function areaRead(){const e=S.ed;e.res='busy';rerender(false);setTimeout(()=>{if(S.ed!==e)return;const b=e.box;
+ const rs=ROWL.filter(r=>{const cy=(r.y0+r.y1)/2;return cy>=b.y&&cy<=b.y+b.h&&b.x<274&&b.x+b.w>226});
+ if(!rs.length){e.res='fail';rerender(false);return}
+ e.res=rs.map(r=>{const xr=(EXTRA[S.c]||[]).find(o=>o.name===r.lb),it={lb:r.lb,v:r.v,box:{x:200,y:r.y0,w:78,h:14},t:r.key||(xr?xr.k:'new')};it.t0=it.t;it.on=itState(it)!=='same';return it});
+ rerender(false)},1000)}
+function areaApply(){const e=S.ed,its=e.res.filter(i=>i.on);let na=0,nu=0;
+ its.forEach(it=>{if(it.t==='new'){const L=EXTRA[S.c]=EXTRA[S.c]||[];L.push({k:'x'+(++XN),name:it.lb,st:e.st,vals:{[e.p]:it.v},meta:{[e.p]:{how:'add',box:it.box,from:null,at:TODAY}}});na++}
+  else if(isX(it.t)){const r=EXTRA[S.c].find(o=>o.k===it.t),old=r.vals[e.p];r.vals[e.p]=it.v;r.st=e.st;r.meta=r.meta||{};r.meta[e.p]={how:old==null?'add':'reread',box:it.box,from:old==null?null:old,at:TODAY};nu++}
+  else{const x=cell(e.p,it.t),old=ED[ck(e.p,it.t)];ED[ck(e.p,it.t)]={v:it.v,how:'reread',from:old?old.from:x.v,at:TODAY,box:it.box};nu++}});
+ S.ed=null;rerender(false);toast([na?`${na} 行を足しました`:'',nu?`${nu} つを直しました`:''].filter(Boolean).join('・'))}
+function startArea(pu){const e=S.ed;
+ if(pu==='place'){const p=e.p,k=e.k,r=isX(k)?(EXTRA[S.c]||[]).find(o=>o.k===k):null,st=faceOf(k)||(r&&r.st)||(S.face&&S.face.p===p?S.face.st:'pl');
+  S.face={p,st};S.ed={mode:'area',pu,p,k,st,box:null,res:null,err:null}}
+ else S.ed={mode:'area',pu,p:S.face.p,st:S.face.st,box:null,res:null,err:null};
+ S.pick=false;rerender(true)}
+function placeApply(){const e=S.ed,b=Object.assign({},e.box);
+ if(isX(e.k)){const r=EXTRA[S.c].find(o=>o.k===e.k);r.st=e.st;r.meta=r.meta||{};r.meta[e.p]=Object.assign({how:'input'},r.meta[e.p],{box:b})}
+ else ED[ck(e.p,e.k)].box=b;
+ S.ed={p:e.p,k:e.k,mode:isX(e.k)?'input':null,box:null,res:null,err:null};rerender(false);toast('場所を付けました')}
 function doConfirm(){periods().forEach(p=>C().data[p]='ok');$('lb').classList.remove('on');S.ed=null;
  if(S.detour){toast('確認済みにしました');S.detour=null;S.view='s6';S.s6=3;render()}
  else{toast('確認済みにしました');setTimeout(()=>location.href=back('data'),900)}}
@@ -881,7 +970,14 @@ function edAct(k,x){const e=S.ed;
  else if(k==='edundo'){delete ED[ck(e.p,e.k)];S.ed={p:e.p,k:e.k,mode:null,box:null,res:null,err:null};rerender(false);toast('元に戻しました')}
  else if(k==='edgo')openEd(e.p,x.dataset.k);
  else if(k==='edfirst'){const b=stats().list.find(o=>o.t==='未読');if(b)openEd(b.p,b.k)}
- else if(k==='edadd'){S.ed={mode:'add',err:null};rerender(true)}
+ else if(k==='edadd'){S.ed={mode:'addq',err:null};rerender(true)}
+ else if(k==='edhand'){S.ed={mode:'add',err:null};rerender(true)}
+ else if(k==='arstart'){const pu=x.dataset.pu;if(pu==='tool'&&e&&e.mode==='area'&&e.pu==='tool'){S.ed=null;rerender(false)}else startArea(pu)}
+ else if(k==='arread')areaRead();
+ else if(k==='arapply')areaApply();
+ else if(k==='arplace')placeApply();
+ else if(k==='arredo'){e.box=null;e.res=null;rerender(false)}
+ else if(k==='arfix'){if(S.pick){S.pick=false;rerender(false)}else if(e&&e.k&&!isX(e.k)&&cell(e.p,e.k).v!=null&&e.mode!=='area'){if(e.mode!=='frame')edAct('edm',{dataset:{m:'frame'}})}else{S.ed=null;S.pick=true;rerender(false)}}
  else if(k==='adsave'){const n=$('adn').value.trim(),vals={};let bad=false;
   document.querySelectorAll('[data-adp]').forEach(i=>{if(i.value.trim()==='')return;const v=parseNum(i.value);if(isNaN(v))bad=true;else vals[i.dataset.adp]=v});
   if(!n||bad||!Object.keys(vals).length){e.err=!n?'科目名を入れてください':bad?'値は数字で入れてください':'どれか 1 期の値を入れてください';rerender(false);return}
@@ -925,23 +1021,27 @@ function bind(){const a=$('app');
  a.querySelectorAll('[data-ck]').forEach(x=>x.onchange=()=>{const id=x.dataset.ck;if(x.checked)S.sel[id]=1;else delete S.sel[id];render2()});
  a.querySelectorAll('[data-all]').forEach(x=>x.onclick=()=>{S.all=x.dataset.all==='1';defaults();render()});
  a.querySelectorAll('[data-zoom]').forEach(x=>x.onclick=()=>{const [did,pi]=x.dataset.zoom.split(':'),d=C().docs.find(y=>y.id===did);$('lbt').textContent=`${d.kind} 第${d.p}期 p.${+pi+1} ${LAB[PAGES[d.kind][+pi][0]]}`;$('lbb').innerHTML=pageSVG(d,+pi);$('lb').classList.add('on')});
- a.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{S.face.p=+x.dataset.fp;render()});
- a.querySelectorAll('[data-fs]').forEach(x=>x.onclick=()=>{S.face.st=x.dataset.fs;render()});
+ const arSync=()=>{if(S.ed&&S.ed.mode==='area'&&S.ed.pu!=='place'){S.ed.p=S.face.p;S.ed.st=S.face.st;S.ed.box=null;S.ed.res=null}else if(S.ed&&(S.ed.mode==='frame'||S.ed.mode==='area'))S.ed=null};
+ a.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{S.face.p=+x.dataset.fp;arSync();render()});
+ a.querySelectorAll('[data-fs]').forEach(x=>x.onclick=()=>{S.face.st=x.dataset.fs;arSync();render()});
  a.querySelectorAll('span.v').forEach(x=>{x.onmouseenter=()=>{const p=+x.dataset.p,st=x.dataset.st;if(!st)return;
    if(S.ed){if(S.face.p===p&&S.face.st===st&&S.ed.mode!=='frame')hl(x.dataset.k,true);return}
    if(S.face.p!==p||S.face.st!==st){S.face={p,st};const kd=C().docs.find(d=>d.kind==='決算書'&&d.p===p);$('face').innerHTML=kd?pageSVG(kd,st==='bs'?1:2,true):'';
     const h=a.querySelector('.faceh b');if(h)h.textContent=`原本　第${p}期 ${LAB[st]}`;a.querySelectorAll('[data-fp]').forEach(b=>b.classList.toggle('on',+b.dataset.fp===p));a.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',b.dataset.fs===st))}
    hl(x.dataset.k,true)};x.onmouseleave=()=>hl(S.ed&&S.ed.k&&S.ed.mode!=='frame'?S.ed.k:x.dataset.k,!!(S.ed&&S.ed.k));
-  x.onclick=()=>openEd(+x.dataset.p,x.dataset.k);x.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEd(+x.dataset.p,x.dataset.k)}}});
+  x.onclick=ev=>{if(ev.target.closest('.npm')){S.ed={p:+x.dataset.p,k:x.dataset.k};startArea('place')}else openEd(+x.dataset.p,x.dataset.k)};x.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEd(+x.dataset.p,x.dataset.k)}}});
  const ei=$('edin');if(ei)ei.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();edAct('edsave',ei)}};
  bindDrag();
+ a.querySelectorAll('#face .bx').forEach(b=>b.onclick=()=>{if(S.ed&&(S.ed.mode==='area'||S.ed.mode==='frame'))return;const k=b.dataset.k,pick=S.pick;S.pick=false;openEd(S.face.p,k);if(pick&&!isX(k))edAct('edm',{dataset:{m:'frame'}})});
+ a.querySelectorAll('[data-ari]').forEach(c=>c.onchange=()=>{S.ed.res[+c.dataset.ari].on=c.checked;rerender(false)});
+ a.querySelectorAll('[data-art]').forEach(c=>c.onchange=()=>{const it=S.ed.res[+c.dataset.art];it.t=c.value;it.on=itState(it)!=='same';rerender(false)});
  a.querySelectorAll('[data-ty]').forEach(x=>x.onclick=()=>{S.ty=x.dataset.ty;render()});
  a.querySelectorAll('.stp .s.link').forEach(x=>x.onclick=()=>{S.s6=+x.dataset.step;S.gen=false;render()});
  a.querySelectorAll('[data-act]').forEach(x=>x.onclick=()=>act(x.dataset.act,x))}
 function render2(){const n=selCount();document.querySelectorAll('[data-pg]').forEach(e=>e.classList.toggle('on',!!S.sel[e.dataset.pg]));
  const c=document.querySelector('.selbar .cnt');if(c)c.innerHTML=`選択<b>${n}</b>面 ・ 目安 約 ${Math.max(1,Math.round(n*8/60*10)/10)} 分`;const g=document.querySelector('[data-act=run]');if(g)g.disabled=!n}
 function act(k,x){
- if(k.startsWith('ed')||k==='adsave'||k==='xdel'||k==='reocr'||k==='confirm'){edAct(k,x);return}
+ if(k.startsWith('ed')||k.startsWith('ar')||k==='adsave'||k==='xdel'||k==='reocr'||k==='confirm'){edAct(k,x);return}
  if(k==='run')startRun();
  else if(k==='cancel'){clearTimeout(runT);S.view='s4sel';render()}
  else if(k==='tocheck'){S.face=null;S.view='s5';render()}
@@ -958,7 +1058,7 @@ function act(k,x){
 $('lbb').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
  if(t.dataset.lact==='go')doConfirm();else if(t.dataset.lact==='back')$('lb').classList.remove('on');
  else if(t.dataset.lp){$('lb').classList.remove('on');openEd(+t.dataset.lp,t.dataset.lk)}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.ed&&S.view==='s5'){S.ed=null;rerender(false)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.ed||S.pick)&&S.view==='s5'){S.ed=null;S.pick=false;rerender(false)}});
 $('lbx').onclick=()=>$('lb').classList.remove('on');
 $('lb').onclick=e=>{if(e.target.id==='lb')$('lb').classList.remove('on')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('lb').classList.remove('on')});
